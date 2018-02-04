@@ -12,5 +12,9 @@ This is a detailed documentation on what's changed in each major version, and gu
 * Package 'Appson.Composer.Web' is no longer available / supported
 * Root namespace changed to 'ComposerCore'
 * `ComposerLocalThreadBinder` is removed
-* Emitter interfaces and utilities removed from the ComposerCore.Definitions assembly
+* Emitter interfaces and utilities moved to ???
+* Interceptor functionality is moved to ???
+* Support for Windows Registry is removed from XML Configuration schema
+* Support for Remoting is removed (both Component Factory and XML configuration)
+* app.config / web.config support is moved to ???
 
