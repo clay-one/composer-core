@@ -1,8 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>netcoreapp2.0</TargetFramework>
-    </PropertyGroup>
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>ComposerCore.Tests.Performance</AssemblyName>
+    <RootNamespace>ComposerCore.Tests.Performance</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ComposerCore.Definitions\ComposerCore.Definitions.csproj" />
+    <ProjectReference Include="..\ComposerCore\ComposerCore.csproj" />
+  </ItemGroup>
 </Project>
