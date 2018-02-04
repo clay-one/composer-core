@@ -11,4 +11,6 @@ This is a detailed documentation on what's changed in each major version, and gu
   * 'Appson.Composer.Base' is changed to 'ComposerCore.Definitions'
 * Package 'Appson.Composer.Web' is no longer available / supported
 * Root namespace changed to 'ComposerCore'
+* `ComposerLocalThreadBinder` is removed
+* Emitter interfaces and utilities removed from the ComposerCore.Definitions assembly
 
