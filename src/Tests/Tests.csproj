@@ -11,7 +11,6 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComposerCore.Definitions\ComposerCore.Definitions.csproj" />
     <ProjectReference Include="..\ComposerCore\ComposerCore.csproj" />
     <ProjectReference Include="..\Tests.TestAssembly\Tests.TestAssembly.csproj" />
   </ItemGroup>

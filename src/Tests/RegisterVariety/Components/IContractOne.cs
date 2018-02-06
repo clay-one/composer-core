@@ -1,4 +1,4 @@
-﻿using ComposerCore.Definitions;
+﻿using ComposerCore.Attributes;
 
 namespace ComposerCore.Tests.RegisterVariety.Components
 {

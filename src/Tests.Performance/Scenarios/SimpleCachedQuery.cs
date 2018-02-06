@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.Performance.Components;
 
 namespace ComposerCore.Tests.Performance.Scenarios

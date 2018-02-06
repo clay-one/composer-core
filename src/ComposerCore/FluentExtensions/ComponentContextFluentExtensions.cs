@@ -1,4 +1,5 @@
 ﻿using System;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {

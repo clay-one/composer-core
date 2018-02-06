@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.CompositionListener.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.CompositionListener.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.CompositionListener

@@ -1,4 +1,4 @@
-﻿using ComposerCore.Definitions;
+﻿using ComposerCore.Extensibility;
 
 namespace ComposerCore.Factories
 {

@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.CompositionNotification.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.CompositionNotification.Components;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

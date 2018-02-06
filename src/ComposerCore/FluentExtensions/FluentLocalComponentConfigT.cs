@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Definitions;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {

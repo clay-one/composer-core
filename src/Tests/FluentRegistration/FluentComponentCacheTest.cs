@@ -1,5 +1,6 @@
-﻿using ComposerCore.Definitions.Cache;
+﻿using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

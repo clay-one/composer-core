@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.XmlValueParser.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.XmlValueParser.Components;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

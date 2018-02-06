@@ -5,6 +5,6 @@
     <RootNamespace>ComposerCore.Tests.TestAssembly</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComposerCore.Definitions\ComposerCore.Definitions.csproj" />
+    <ProjectReference Include="..\ComposerCore\ComposerCore.csproj" />
   </ItemGroup>
 </Project>

@@ -2,7 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using ComposerCore.Definitions;
+using ComposerCore.Extensibility;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.Factories
 {

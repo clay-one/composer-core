@@ -1,4 +1,4 @@
-﻿using ComposerCore.Definitions;
+﻿using ComposerCore.Implementation;
 using ComposerCore.Tests.ErrorConditions.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

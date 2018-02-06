@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.ComponentNaming.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.ComponentNaming.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.ComponentNaming

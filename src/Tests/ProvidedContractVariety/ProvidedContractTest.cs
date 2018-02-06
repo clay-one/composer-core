@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.ProvidedContractVariety.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.ProvidedContractVariety.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.ProvidedContractVariety

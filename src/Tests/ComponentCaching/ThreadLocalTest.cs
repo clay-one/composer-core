@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.ComponentCaching.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.ComponentCaching.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.ComponentCaching

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Definitions;
 using ComposerCore.Factories;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {

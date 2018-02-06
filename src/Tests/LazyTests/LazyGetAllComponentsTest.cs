@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using ComposerCore.Definitions.Utility;
+using ComposerCore.Implementation;
+using ComposerCore.Utility;
 using ComposerCore.Tests.LazyTests.Components;
 
 namespace ComposerCore.Tests.LazyTests

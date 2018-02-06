@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.CollectionOfComponents.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

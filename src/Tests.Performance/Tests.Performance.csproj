@@ -6,7 +6,6 @@
     <RootNamespace>ComposerCore.Tests.Performance</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComposerCore.Definitions\ComposerCore.Definitions.csproj" />
     <ProjectReference Include="..\ComposerCore\ComposerCore.csproj" />
   </ItemGroup>
 </Project>

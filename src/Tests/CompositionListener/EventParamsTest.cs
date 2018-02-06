@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using ComposerCore.Factories;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionListener.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

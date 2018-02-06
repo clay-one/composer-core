@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Definitions;
-using ComposerCore.Definitions.Cache;
+using ComposerCore.Cache;
+using ComposerCore.Extensibility;
+using ComposerCore.Implementation;
 
 
 namespace ComposerCore.Factories

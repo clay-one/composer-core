@@ -1,5 +1,6 @@
 ﻿using System;
 using ComposerCore.CompositionXml;
+using ComposerCore.Implementation;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

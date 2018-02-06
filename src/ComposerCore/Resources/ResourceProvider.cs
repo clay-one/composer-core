@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Resources;
 using System.Text.RegularExpressions;
-using ComposerCore.Definitions;
+using ComposerCore.Attributes;
+using ComposerCore.Extensibility;
 
 namespace ComposerCore.Resources
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.ConfigurationVariables

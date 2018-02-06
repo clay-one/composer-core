@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ComposerCore.Definitions;
+using ComposerCore.Extensibility;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.Factories
 {

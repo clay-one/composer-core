@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using ComposerCore.Implementation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.InitializationPointVariety.Components;
 using ComposerCore.Utility;
 

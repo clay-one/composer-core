@@ -1,6 +1,5 @@
-﻿
-using ComposerCore.Definitions;
-using ComposerCore.Definitions.Cache;
+﻿using ComposerCore.Attributes;
+using ComposerCore.Cache;
 
 namespace ComposerCore.Tests.ComponentCaching.Components
 {

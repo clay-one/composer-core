@@ -6,7 +6,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 using ComposerCore.CompositionXml;
 using ComposerCore.CompositionXml.Info;
-using ComposerCore.Definitions;
+using ComposerCore;
 
 
 namespace ComposerCore.Utility

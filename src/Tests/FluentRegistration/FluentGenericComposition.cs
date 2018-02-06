@@ -1,4 +1,5 @@
 ﻿using ComposerCore.FluentExtensions;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.RegisterVariety.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.RegisterVariety.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.RegisterVariety

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using ComposerCore.Definitions;
+﻿using ComposerCore.Implementation;
 using ComposerCore.Tests.Generics.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

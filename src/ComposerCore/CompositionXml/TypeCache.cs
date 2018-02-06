@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ComposerCore.Definitions;
+using ComposerCore.Implementation;
 using ComposerCore.Resources;
 
 

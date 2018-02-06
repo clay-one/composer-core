@@ -5,8 +5,9 @@ using System.Xml;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.CompositionXml.Info;
 using ComposerCore.CompositionXml.ValueParser;
-using ComposerCore.Definitions;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
+using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
 namespace ComposerCore.CompositionXml

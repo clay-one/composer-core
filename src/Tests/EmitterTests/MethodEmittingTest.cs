@@ -1,6 +1,5 @@
-using Appson.Composer.Emitter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Appson.Composer.Utility;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.EmitterTests.Components;
 
 namespace ComposerCore.Tests.EmitterTests

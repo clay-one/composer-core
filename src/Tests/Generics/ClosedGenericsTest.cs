@@ -1,4 +1,5 @@
-﻿using ComposerCore.Tests.Generics.Components;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Tests.Generics.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.Generics

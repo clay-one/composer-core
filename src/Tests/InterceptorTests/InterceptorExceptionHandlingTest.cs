@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Dynamic;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.InterceptorTests.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

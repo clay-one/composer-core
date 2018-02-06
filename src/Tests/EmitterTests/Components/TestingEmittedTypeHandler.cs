@@ -1,5 +1,4 @@
 using System;
-using Appson.Composer.Emitter;
 
 namespace ComposerCore.Tests.EmitterTests.Components
 {

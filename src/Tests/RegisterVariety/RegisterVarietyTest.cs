@@ -1,4 +1,5 @@
 ﻿using ComposerCore.Factories;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.RegisterVariety.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

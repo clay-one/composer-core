@@ -1,5 +1,5 @@
 ﻿using System;
-using ComposerCore.Definitions;
+using ComposerCore.Extensibility;
 
 namespace ComposerCore.CompositionalQueries
 {

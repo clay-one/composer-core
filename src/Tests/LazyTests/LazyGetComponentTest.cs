@@ -1,4 +1,5 @@
-﻿using ComposerCore.Definitions.Utility;
+﻿using ComposerCore.Implementation;
+using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.LazyTests.Components;
 

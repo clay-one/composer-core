@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
-using ComposerCore.Definitions;
+using ComposerCore.Attributes;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.EmitterTests.Components;
 
