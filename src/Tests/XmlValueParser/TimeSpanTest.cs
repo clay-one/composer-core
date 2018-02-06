@@ -40,7 +40,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanString");
 
@@ -52,7 +52,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanDays()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanDays");
 
@@ -64,7 +64,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanHours()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanHours");
 
@@ -76,7 +76,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanMinutes()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanMinutes");
 
@@ -88,7 +88,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanSeconds()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanSeconds");
 
@@ -100,7 +100,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanMilliseconds()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanMilliseconds");
 
@@ -112,7 +112,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanTicks()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanTicks");
 
@@ -124,7 +124,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTimeSpanAll()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanAll");
 
@@ -137,7 +137,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[ExpectedException(typeof(CompositionXmlValidationException))]
 		public void AttributeTimeSpanErrorString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			_context.GetVariable("timeSpanErrorString");
 		}
@@ -146,7 +146,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[ExpectedException(typeof(CompositionXmlValidationException))]
 		public void AttributeTimeSpanErrorTicks()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ATimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ATimeSpan.xml");
 
 			_context.GetVariable("timeSpanErrorTicks");
 		}
@@ -154,7 +154,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanString");
 
@@ -166,7 +166,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanDays()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanDays");
 
@@ -178,7 +178,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanHours()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanHours");
 
@@ -190,7 +190,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanMinutes()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanMinutes");
 
@@ -202,7 +202,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanSeconds()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanSeconds");
 
@@ -214,7 +214,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanMilliseconds()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanMilliseconds");
 
@@ -226,7 +226,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanTicks()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanTicks");
 
@@ -238,7 +238,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTimeSpanAll()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			var o = _context.GetVariable("timeSpanAll");
 
@@ -251,7 +251,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[ExpectedException(typeof(CompositionXmlValidationException))]
 		public void ElementTimeSpanErrorString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			_context.GetVariable("timeSpanErrorString");
 		}
@@ -260,7 +260,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[ExpectedException(typeof(CompositionXmlValidationException))]
 		public void ElementTimeSpanErrorTicks()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ETimeSpan.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ETimeSpan.xml");
 
 			_context.GetVariable("timeSpanErrorTicks");
 		}

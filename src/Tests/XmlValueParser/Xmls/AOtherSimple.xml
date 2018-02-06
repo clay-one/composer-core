@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <CompositionInfo xmlns="http://www.compositional.net/schema/compositionXml.1.0.xsd">
 
-	<UsingAssembly fullName="Appson.Composer.UnitTests"/>
-	<Using namespace="Appson.Composer.UnitTests.XmlValueParser.Components"/>
+	<UsingAssembly fullName="ComposerCore.Tests"/>
+	<Using namespace="ComposerCore.Tests.XmlValueParser.Components"/>
 
 	<SetVariable name="charA" char="A" />
 
@@ -28,12 +28,10 @@
 
 	<SetVariable name="typeISampleContract" typeName="ISampleContract" />
 
-	<SetVariable name="assembly" assemblyName="Appson.Composer.UnitTests" />
+	<SetVariable name="assembly" assemblyName="ComposerCore.Tests" />
 
 	<SetVariable name="contentsOfString" contentsOfVariableName="string" />
 
 	<SetVariable name="contentsOfByteArray" contentsOfVariableName="byteArray" />
-
-	<SetVariable name="registry" windowsRegistryKeyPath="HKEY_CURRENT_USER\Volatile Environment" windowsRegistryValueName="USERNAME" />
 
 </CompositionInfo>

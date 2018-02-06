@@ -38,7 +38,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void BooleanAttributeNumeric()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ABool.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ABool.xml");
 
 			var o0 = _context.GetVariable("bool0");
 			var o1 = _context.GetVariable("bool1");
@@ -59,7 +59,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void BooleanAttributeString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.ABool.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.ABool.xml");
 
 			var oTrue = _context.GetVariable("boolTrue");
 			var oFalse = _context.GetVariable("boolFalse");
@@ -80,7 +80,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void BooleanElementNumeric()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EBool.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EBool.xml");
 
 			var o0 = _context.GetVariable("bool0");
 			var o1 = _context.GetVariable("bool1");
@@ -101,7 +101,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void BooleanElementString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EBool.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EBool.xml");
 
 			var oTrue = _context.GetVariable("boolTrue");
 			var oFalse = _context.GetVariable("boolFalse");

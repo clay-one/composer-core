@@ -40,7 +40,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeSimpleObject()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("simpleObject");
 
@@ -57,7 +57,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeObjectWithPlugs()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("objectWithPlugs");
 
@@ -74,7 +74,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeObjectWithField()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("objectWithField");
 
@@ -93,7 +93,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeObjectWithProperty()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("objectWithProperty");
 
@@ -112,7 +112,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeObjectWithConstructorArg()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("objectWithConstructorArg");
 
@@ -131,7 +131,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeObjectWithEverything()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AObject.xml");
 
 			var o = _context.GetVariable("objectWithEverything");
 
@@ -152,7 +152,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementSimpleObject()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("simpleObject");
 
@@ -169,7 +169,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementObjectWithPlugs()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("objectWithPlugs");
 
@@ -186,7 +186,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementObjectWithField()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("objectWithField");
 
@@ -205,7 +205,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementObjectWithProperty()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("objectWithProperty");
 
@@ -224,7 +224,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementObjectWithConstructorArg()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("objectWithConstructorArg");
 
@@ -243,7 +243,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementObjectWithEverything()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EObject.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EObject.xml");
 
 			var o = _context.GetVariable("objectWithEverything");
 

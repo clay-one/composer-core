@@ -41,7 +41,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeCharA()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("charA");
 
@@ -55,7 +55,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeCharTilde()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("char~");
 
@@ -69,7 +69,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeDateTime()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("datetime");
 
@@ -83,7 +83,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("string");
 
@@ -97,7 +97,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeByteArray()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("byteArray");
 
@@ -114,7 +114,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeEnumOne()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("enumOne");
 
@@ -128,7 +128,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeEnumTen()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("enumTen");
 
@@ -143,7 +143,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		public void AttributeRefWithoutName()
 		{
 			_context.Register(typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("refWithoutName");
 
@@ -155,7 +155,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		public void AttributeRefWithName()
 		{
 			_context.Register("sampleContractName", typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("refWithName");
 
@@ -166,7 +166,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTypeInt()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("typeInt");
 
@@ -178,7 +178,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeTypeISampleContract()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("typeISampleContract");
 
@@ -190,7 +190,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeAssembly()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("assembly");
 
@@ -202,7 +202,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeContentsOfString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("contentsOfString");
 
@@ -216,7 +216,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void AttributeContentsOfByteArray()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
 			var o = _context.GetVariable("contentsOfByteArray");
 
@@ -231,21 +231,9 @@ namespace ComposerCore.Tests.XmlValueParser
 		}
 
 		[TestMethod]
-		public void AttributeRegistry()
-		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("registry");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
-			Assert.AreEqual(o, Environment.UserName);
-		}
-
-		[TestMethod]
 		public void ElementCharA()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("charA");
 
@@ -259,7 +247,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementCharTilde()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("char~");
 
@@ -273,7 +261,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementDateTime()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("datetime");
 
@@ -287,7 +275,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("string");
 
@@ -301,7 +289,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementByteArray()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("byteArray");
 
@@ -318,7 +306,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementNull()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("nullRef");
 
@@ -328,7 +316,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementComponentContext()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("componentContext");
 
@@ -340,7 +328,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementEnumOne()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("enumOne");
 
@@ -354,7 +342,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementEnumTen()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("enumTen");
 
@@ -369,7 +357,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		public void ElementRefWithoutName()
 		{
 			_context.Register(typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("refWithoutName");
 
@@ -381,7 +369,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		public void ElementRefWithName()
 		{
 			_context.Register("sampleContractName", typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("refWithName");
 
@@ -392,7 +380,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTypeInt()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("typeInt");
 
@@ -404,7 +392,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementTypeISampleContract()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("typeISampleContract");
 
@@ -416,7 +404,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementAssembly()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("assembly");
 
@@ -428,7 +416,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementContentsOfString()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("contentsOfString");
 
@@ -442,7 +430,7 @@ namespace ComposerCore.Tests.XmlValueParser
 		[TestMethod]
 		public void ElementContentsOfByteArray()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
 			var o = _context.GetVariable("contentsOfByteArray");
 
@@ -454,18 +442,6 @@ namespace ComposerCore.Tests.XmlValueParser
 
 			for (int i = 0; i < 32; i++)
 				Assert.AreEqual(bytes[i], i);
-		}
-
-		[TestMethod]
-		public void ElementRegistry()
-		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.XmlValueParser.Xmls.EOtherSimple.xml");
-
-			var o = _context.GetVariable("registry");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
-			Assert.AreEqual(o, Environment.UserName);
 		}
 	}
 }
