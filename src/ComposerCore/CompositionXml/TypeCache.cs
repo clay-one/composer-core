@@ -18,13 +18,12 @@ namespace ComposerCore.CompositionXml
 
 			// Import pre-defined assemblies:
 
-			CacheAssembly(typeof(IComposer).Assembly);			// Compositional.Composer
-			CacheAssembly(typeof(ComponentContext).Assembly);	// Compositional.Composer.Implementation
+			CacheAssembly(typeof(AssemblyPointer).Assembly);
 
 			// Add pre-defined namespaces:
 
-			NamespaceUsings.Add(typeof(IComposer).Namespace);			// Compositional.Composer
-			NamespaceUsings.Add(typeof(IResourcePointer).Namespace);	// Compositional.Composer.Resources
+			NamespaceUsings.Add(typeof(IComposer).Namespace);			// ComposerCore
+			NamespaceUsings.Add(typeof(IResourcePointer).Namespace);	// ComposerCore.Resources
 		}
 
 		public List<string> NamespaceUsings { get; }

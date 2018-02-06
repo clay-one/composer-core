@@ -60,7 +60,7 @@ namespace ComposerCore.Utility
 				throw new ArgumentNullException(nameof(configurationStream));
 
 			var xsdStream =
-				Assembly.GetExecutingAssembly().GetManifestResourceStream(
+				typeof(AssemblyPointer).Assembly.GetManifestResourceStream(
                     "ComposerCore.CompositionXml.Schema.compositionXml.1.0.xsd");
 
 			if (xsdStream == null)

@@ -42,10 +42,10 @@ namespace ComposerCore.Implementation
             InternalRegister(typeof(ComponentContext), null, componentContextFactory, false);
 
 			if (registerBuiltInComponents)
-				RegisterBuildInComponents();
+				RegisterBuiltInComponents();
 		}
 
-		private void RegisterBuildInComponents()
+		private void RegisterBuiltInComponents()
 		{
 		    InternalRegister(typeof (DefaultComponentCache), null,
 		        ComponentContextUtils.CreateLocalFactory(typeof (DefaultComponentCache)), false);
