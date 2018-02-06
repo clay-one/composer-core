@@ -1,4 +1,5 @@
-﻿using ComposerCore.Implementation;
+﻿using ComposerCore.Aop.Diagnostics;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionListener.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

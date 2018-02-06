@@ -1,4 +1,7 @@
-﻿using ComposerCore.Implementation;
+﻿using ComposerCore.Aop.Emitter;
+using ComposerCore.Aop.Interception;
+using ComposerCore.Aop.Utility;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.InterceptorTests.Components;
 

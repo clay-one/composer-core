@@ -1,3 +1,5 @@
+using ComposerCore.Aop.Emitter;
+using ComposerCore.Aop.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.EmitterTests.Components;

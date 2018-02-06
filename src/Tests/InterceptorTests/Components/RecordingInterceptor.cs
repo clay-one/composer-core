@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Dynamic;
+using ComposerCore.Aop.Interception;
 
 namespace ComposerCore.Tests.InterceptorTests.Components
 {
@@ -17,16 +17,14 @@ namespace ComposerCore.Tests.InterceptorTests.Components
 		{
 			BeforeCallInfo = new CallInfo(callInfo);
 
-			if (BeforeCallAction != null)
-				BeforeCallAction(callInfo);
+			BeforeCallAction?.Invoke(callInfo);
 		}
 
 		public void AfterCall(CallInfo callInfo)
 		{
 			AfterCallInfo = new CallInfo(callInfo);
 
-			if (AfterCallAction != null)
-				AfterCallAction(callInfo);
+			AfterCallAction?.Invoke(callInfo);
 		}
 
 		#endregion

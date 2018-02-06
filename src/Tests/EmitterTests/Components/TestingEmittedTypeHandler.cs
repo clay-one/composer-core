@@ -1,4 +1,5 @@
 using System;
+using ComposerCore.Aop.Emitter;
 
 namespace ComposerCore.Tests.EmitterTests.Components
 {

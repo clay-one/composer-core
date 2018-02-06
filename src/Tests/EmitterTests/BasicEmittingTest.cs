@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection.Emit;
+using ComposerCore.Aop.Emitter;
+using ComposerCore.Aop.Utility;
 using ComposerCore.Attributes;
 using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

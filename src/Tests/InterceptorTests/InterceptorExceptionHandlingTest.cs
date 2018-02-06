@@ -1,5 +1,7 @@
 ﻿using System;
-using System.Dynamic;
+using ComposerCore.Aop.Emitter;
+using ComposerCore.Aop.Interception;
+using ComposerCore.Aop.Utility;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.InterceptorTests.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
