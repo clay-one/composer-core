@@ -39,7 +39,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		[TestMethod]
 		public void OptConfigProvided()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.RequiredAndOptionalInitPoint.Xmls.OptConfigProvided.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.OptConfigProvided.xml");
 
 			var c = _context.GetComponent<ComponentWithOptionalConfig>();
 
@@ -75,7 +75,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		[TestMethod]
 		public void OptNamedConfigProvidedByReg()
 		{
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.RequiredAndOptionalInitPoint.Xmls.OptNamedConfigProvidedByReg.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.OptNamedConfigProvidedByReg.xml");
 
 			var c = _context.GetComponent<ComponentWithOptionalNamedConfig>();
 

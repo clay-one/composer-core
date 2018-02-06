@@ -15,4 +15,24 @@
     <ProjectReference Include="..\ComposerCore\ComposerCore.csproj" />
     <ProjectReference Include="..\Tests.TestAssembly\Tests.TestAssembly.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="CompositionNotification\Xmls\Composition.xml" />
+    <None Remove="InitializePlugs\Xmls\Composition.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\OptConfigProvided.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\OptNamedConfigProvidedByReg.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\OptNamedPlugRedirected.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqConfigProvided.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqNamedConfigProvidedByReg.xml" />
+    <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqNamedPlugRedirected.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CompositionNotification\Xmls\Composition.xml" />
+    <EmbeddedResource Include="InitializePlugs\Xmls\Composition.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\OptConfigProvided.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\OptNamedConfigProvidedByReg.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\OptNamedPlugRedirected.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqConfigProvided.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedConfigProvidedByReg.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedPlugRedirected.xml" />
+  </ItemGroup>
 </Project>

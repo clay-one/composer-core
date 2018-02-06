@@ -27,7 +27,7 @@ namespace ComposerCore.Tests.InitializePlugs
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.ProcessCompositionXmlFromResource("Appson.Composer.UnitTests.InitializePlugs.Xmls.Composition.xml");
+			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.InitializePlugs.Xmls.Composition.xml");
 		}
 
 		[TestCleanup]

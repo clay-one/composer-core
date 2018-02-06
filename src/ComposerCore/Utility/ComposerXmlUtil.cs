@@ -61,7 +61,7 @@ namespace ComposerCore.Utility
 
 			var xsdStream =
 				Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    "Appson.Composer.CompositionXml.Schema.compositionXml.1.0.xsd");
+                    "ComposerCore.CompositionXml.Schema.compositionXml.1.0.xsd");
 
 			if (xsdStream == null)
 				throw new NullReferenceException("Could not load XSD resource from DLL.");
