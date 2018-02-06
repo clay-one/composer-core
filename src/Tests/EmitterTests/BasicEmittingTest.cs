@@ -6,6 +6,7 @@ using ComposerCore.Attributes;
 using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.EmitterTests.Components;
+using ComposerCore.Utility;
 
 namespace ComposerCore.Tests.EmitterTests
 {
@@ -33,6 +34,7 @@ namespace ComposerCore.Tests.EmitterTests
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
+			_context.RegisterAssembly(typeof(Aop.AssemblyPointer).Assembly);
 			_classEmitter = _context.GetComponent<IClassEmitter>();
 
 //			UNCOMMENT FOLLOWING FOR DEBUGGING

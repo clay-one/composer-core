@@ -4,6 +4,7 @@ using ComposerCore.Aop.Interception;
 using ComposerCore.Aop.Utility;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.InterceptorTests.Components;
+using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.InterceptorTests
@@ -31,6 +32,7 @@ namespace ComposerCore.Tests.InterceptorTests
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
+			_context.RegisterAssembly(typeof(Aop.AssemblyPointer).Assembly);
 			_classEmitter = _context.GetComponent<IClassEmitter>();
 		}
 
