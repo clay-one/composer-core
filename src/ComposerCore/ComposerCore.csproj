@@ -1,7 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <None Remove="CompositionXml\Schema\compositionXml.1.0.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CompositionXml\Schema\compositionXml.1.0.xsd" />
+  </ItemGroup>
 </Project>
