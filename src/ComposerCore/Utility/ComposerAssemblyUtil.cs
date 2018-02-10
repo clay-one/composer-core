@@ -28,7 +28,7 @@ namespace ComposerCore.Utility
 
 		public static void RegisterAssemblyFile(this IComponentContext context, string path)
 		{
-			var assembly = Assembly.LoadFile(path);
+			var assembly = Assembly.LoadFrom(path);
 			context.RegisterAssembly(assembly);
 		}
 
