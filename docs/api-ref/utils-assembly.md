@@ -1,3 +1,3 @@
-# Composer API Reference - Assembly Utilities
+# ComposerCore API Reference - Assembly Utilities
 
 TODO

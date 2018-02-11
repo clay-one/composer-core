@@ -1,4 +1,4 @@
-# Composer API Reference - IComponentContext
+# ComposerCore API Reference - IComponentContext
 
 Here's the definition of `IComponentContext` interface:
 
@@ -27,7 +27,7 @@ Here's the definition of `IComponentContext` interface:
 	}
 ```
 
-Composer's implementation class, `ComponentContext`, implements `IComponentContext` and provides the above
+ComposerCore's implementation class, `ComponentContext`, implements `IComponentContext` and provides the above
 functionality. This document summarizes the usage of each of the methods above.
 
 
@@ -41,9 +41,9 @@ These behaviors apply to all methods in this interface:
 None of the methods in this interface is thread-safe. You should practice caution when calling
 these methods where there might be race conditions.
 
-As a best practice, either initialize Composer and make all registrations on application startup 
+As a best practice, either initialize ComposerCore and make all registrations on application startup 
 and on the main thread, where you're sure there's no concurrency going on, or use `lock` or other
-concurrency control structures to make sure no more than a single thread enter Composer methods
+concurrency control structures to make sure no more than a single thread enter `ComponentContext` methods
 at a time while you're making registration changes.
 
 #### IComponentContext is a Contract itself
@@ -57,7 +57,7 @@ in the Composer upon creation of the `ComponentContext` class. So, you can reach
 
 ## Registering components
 
-Different overloads of `Register` method are used to introduce Composer to the new component types, and
+Different overloads of `Register` method are used to introduce new component types to `ComponentContext`, and
 make them available for the composition and injection.
 
 TODO

@@ -1,3 +1,3 @@
-# Composer Patterns - Configuration parameters
+# ComposerCore Patterns - Configuration parameters
 
 TODO

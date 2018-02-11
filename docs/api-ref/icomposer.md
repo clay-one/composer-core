@@ -1,4 +1,4 @@
-# Composer API Reference - IComposer
+# ComposerCore API Reference - IComposer
 
 Here's the defintion of `IComposer` interface:
 
@@ -34,7 +34,7 @@ Here's the defintion of `IComposer` interface:
 	}
 ```
 
-Composer's implementation class, `ComponentContext`, implements `IComposer` and provides the above
+ComposerCore's implementation class, `ComponentContext`, implements `IComposer` and provides the above
 functionality. This document summarizes the usage of each of the methods above.
 
 
@@ -62,7 +62,7 @@ component instances (when cached) even if called concurrently.
 #### IComposer is a Contract itself
 
 The `IComposer` interface is itself marked with `[Contract]` attribute, and automatically registered
-in the Composer upon creation of the `ComponentContext` class. So, you can reach an instance of the
+in the ComposerCore upon creation of the `ComponentContext` class. So, you can reach an instance of the
 `IComposer` similar to any other components in the composition (like as a constructor argument, using
 `[ComponentPlug]` on a property or a field, ...)
 
@@ -70,14 +70,14 @@ in the Composer upon creation of the `ComponentContext` class. So, you can reach
 
 ## Configuration
 
-The `Configuration` property encapsulates configuration settings that Composer uses to function.
+The `Configuration` property encapsulates configuration settings that ComposerCore uses to function.
 For more information about it, see [Configuration](configuration.md) documentation.
 
 
 
 ## GetComponent overloads
 
-Different `GetComponent` overloads are used to query Composer for a component. The type you pass to these
+Different `GetComponent` overloads are used to query ComposerCore for a component. The type you pass to these
 methods, is the contract type that the component provides.
 
 Generic overloads (which has a `TContract` type parameter) can be used to avoid casting, and results in
@@ -88,7 +88,7 @@ exact, they look for a `ContractIdentity` with the specified type and `null` nam
 
 #### Not-found behavior
 
-The query methods return `null` in case no component is registered with the composer that
+The query methods return `null` in case no component is registered with the ComposerCore that
 provides the requested contract, with the requested name. It doesn't throw any exceptions.
 
 ## Multiple-registrations per contract identity
@@ -101,7 +101,7 @@ any one of the registered ones).
 
 ## GetAllComponents overloads
 
-Different components can be registered with the same contract in the Composer. Even the same component
+Different components can be registered with the same contract in the ComposerCore. Even the same component
 can be registered multiple times. While `GetComponent` returns one of them, `GetAllComponents` return
 all of them.
 
@@ -125,7 +125,7 @@ concatenating the result.
 
 ## GetVariable
 
-Returns the contents of a Composer variable, given its name. Composer variables are means of storing 
+Returns the contents of a ComposerCore variable, given its name. ComposerCore variables are means of storing 
 arbitrary objects on the `ComponentContext` and pass them around your application, mostly used for 
 configuration data.
 
@@ -134,14 +134,14 @@ configuration data.
 ## InitializePlugs overloads
 
 You may have a case that you can't (or don't want to) take control for creation of an object, 
-so you can't / don't want to make it a component and ask Composer to instantiate it, or manage 
+so you can't / don't want to make it a component and ask ComposerCore to instantiate it, or manage 
 its lifecycle. An example can be instantiation of `View` objects, where a framework does the
 work.
 
 But you may still need to use dependencies, and want them injected. In such a case, you can
-declare `[ComponentPlugs]` and `[ConfigurationPoints]` as before, and ask Composer to fill them
+declare `[ComponentPlugs]` and `[ConfigurationPoints]` as before, and ask ComposerCore to fill them
 on an already-instantiated object, using `InitializePlugs` method.
 
-In this case, Composer will reflect on the object, identify dependencies and fills them up.
-Composer will not cache or keep an instance to the object when initialized in this way, and you
+In this case, ComposerCore will reflect on the object, identify dependencies and fills them up.
+ComposerCore will not cache or keep an instance to the object when initialized in this way, and you
 (or the framework of your choice) is responsible to manage the object / component's lifecycle.

@@ -1,3 +1,3 @@
-# Composer Patterns - Aspect Oriented Programming (AOP)
+# ComposerCore Patterns - Aspect Oriented Programming (AOP)
 
 TODO

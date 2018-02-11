@@ -3,8 +3,8 @@
   <metadata>
     <id>ComposerCore</id>
     <version>2.0.1</version>
-    <title>ComposerCore</title>
-    <summary>ComposerCore</summary>
+    <title>ComposerCore.Aop</title>
+    <summary>ComposerCore.Aop</summary>
     <authors>ClayOne</authors>
     <owners>ClayOne</owners>
     <licenseUrl>https://github.com/clay-one/composer-core</licenseUrl>
@@ -20,6 +20,7 @@
     <copyright>Copyright ClayOne 2018</copyright>
     <tags>composer composer-core iocdi ioc-di dependency-injection</tags>
     <dependencies>
+        <dependency id="ComposerCore" version="2.0.1" />
     </dependencies>
   </metadata>
 </package>

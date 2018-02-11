@@ -1,3 +1,3 @@
-# Extending Composer - Custom component caching
+# Extending ComposerCore - Custom component caching
 
 TODO

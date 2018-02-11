@@ -24,6 +24,7 @@
     <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqConfigProvided.xml" />
     <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqNamedConfigProvidedByReg.xml" />
     <None Remove="RequiredAndOptionalInitPoint\Xmls\ReqNamedPlugRedirected.xml" />
+    <None Remove="InitializationPointVariety\Xmls\ResourceComposition.xml" />
     <None Remove="XmlValueParser\Xmls\ABool.xml" />
     <None Remove="XmlValueParser\Xmls\ACollection.xml" />
     <None Remove="XmlValueParser\Xmls\ADouble.xml" />
@@ -52,6 +53,7 @@
     <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqConfigProvided.xml" />
     <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedConfigProvidedByReg.xml" />
     <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedPlugRedirected.xml" />
+    <EmbeddedResource Include="InitializationPointVariety\Xmls\ResourceComposition.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ABool.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ACollection.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ADouble.xml" />
@@ -70,5 +72,18 @@
     <EmbeddedResource Include="XmlValueParser\Xmls\ESingle.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ETimeSpan.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\EUInt.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="InitializationPointVariety\Resources\SampleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SampleResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="InitializationPointVariety\Resources\SampleResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SampleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

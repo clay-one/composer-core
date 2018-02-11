@@ -4,7 +4,9 @@
 >
 > [FAQ](FAQ.md) - Frequently Asked Questions and Answers
 >
-> [Release notes](release-notes.md) - Version release history and changes
+> [Release notes](release-notes.md) - Detailed version release history and changes
+>
+> [Migration](migration.md) - Changes across major releases and how to upgrade
 >
 > [Roadmap](roadmap.md) - What to expect in the future versions
 

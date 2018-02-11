@@ -1,3 +1,3 @@
-# Composer XML Reference - Value nodes
+# ComposerCore XML Reference - Value nodes
 
 TODO

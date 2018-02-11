@@ -1,3 +1,3 @@
-# Composer XML Reference - Introduction
+# ComposerCore XML Reference - Introduction
 
 TODO

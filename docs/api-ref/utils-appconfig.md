@@ -1,3 +1,3 @@
-# Composer API Reference - app.config utilities
+# ComposerCore API Reference - app.config utilities
 
 TODO

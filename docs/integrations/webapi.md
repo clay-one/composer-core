@@ -1,4 +1,4 @@
 
-# Composer WebAPI Integration guide
+# ComposerCore WebAPI Integration guide
 
 TODO

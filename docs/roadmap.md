@@ -1,5 +1,5 @@
 
-# Composer Roadmap
+# ComposerCore Roadmap
 
 These features / changes are considered for future releases of Composer, in no particular order:
 
@@ -10,7 +10,7 @@ These features / changes are considered for future releases of Composer, in no p
 * Support for Live Composition - so that when you change the composition, already-instantiated components are changed according to the new settings
 * Support for Live Configuration - so that when configuration variables are changed, they will be re-injected into the previously-instantiated components in memory
 * Easy support for Remote components or Service proxies
-* Refactor XML configuration into components
+* Refactor XML (or JSON) configuration into components and make it extensible
 * Easier / more natural integration with app.config settings
 * Composition visualization / reporting / diagnostic tools
 

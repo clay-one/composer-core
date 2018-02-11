@@ -1,15 +1,15 @@
 
-# Composer Sample - Quick Start scenario two
+# ComposerCore Sample - Quick Start scenario two
 
 In this sample, the first quick start sample is extended to show how
-components can depend upon each other, and how Composer detects and injects 
+components can depend upon each other, and how ComposerCore detects and injects 
 dependencies among them.
 
 [Complete source of this sample](../../samples/quickstart-2)
 
 
 
-When you ask Composer to prepare a component for you, it will also inject any declared dependencies
+When you ask ComposerCore to prepare a component for you, it will also inject any declared dependencies
 on the component to other components. Here's an example, where you have three contracts declared as below:
 
 ```csharp
@@ -39,7 +39,7 @@ lookup the customer id, and it will also need someone with `IOrderData` capabili
 the new order. All of them will also need to log some data for later.
 
 By placing `[ComponentPlug]` attribute on properties, each component can declare 
-**required contracts**. It means that the component needs Composer to provide them with an
+**required contracts**. It means that the component needs ComposerCore to provide them with an
 implementation of the contract before the component can function properly. Here's the code:
 
 ```csharp
@@ -85,8 +85,8 @@ implementation of the contract before the component can function properly. Here'
     }
 ```
 
-When registering these components, Composer will identify these required contracts and build a graph.
-Upon querying, when Composer instantiates the components, it will then **compose** them to each other
+When registering these components, ComposerCore will identify these required contracts and build a graph.
+Upon querying, when ComposerCore instantiates the components, it will then **compose** them to each other
 and form a completely initialized component before returning it.
 
 After registering all components:

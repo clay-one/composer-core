@@ -1,3 +1,3 @@
-# Extending Composer - Custom component factories
+# Extending ComposerCore - Custom component factories
 
 TODO

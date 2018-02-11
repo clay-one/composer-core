@@ -1,3 +1,3 @@
-# Extending Composer - Custom IComposer implementation
+# Extending ComposerCore - Custom IComposer implementation
 
 TODO

@@ -1,3 +1,3 @@
-# Composer XML Reference - Registration and Configuration
+# ComposerCore XML Reference - Registration and Configuration
 
 TODO
