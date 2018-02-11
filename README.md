@@ -40,4 +40,4 @@ The items below are high-level benefits of building software in Compositional ar
 
 ComposerCore is based on, and adapted from, the [Composer](https://github.com/appson/composer) project. It is restructured and ported to .NET Core.
 
-If you're already using Composer, see [Migration Guild](docs/migration.md) for a comprehensive list of changes.
+If you're already using Composer, see [Migration Guide](docs/migration.md) for a comprehensive list of changes.
