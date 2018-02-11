@@ -1,11 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.0.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.0.0
 MinimumVisualStudioVersion = 10.0.0.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComposerCore", "ComposerCore\ComposerCore.csproj", "{F336D593-891B-4E04-8CFA-0DD1ED35F091}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComposerCore.Definitions", "ComposerCore.Definitions\ComposerCore.Definitions.csproj", "{ABECD6E6-4C87-4B36-8518-CA304C4DDF53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{58DCD1EF-6827-4298-8B3F-D250B17EBEE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.TestAssembly", "Tests.TestAssembly\Tests.TestAssembly.csproj", "{14B085FE-4015-48E7-B6CC-B494D30E200A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Performance", "Tests.Performance\Tests.Performance.csproj", "{8CA48BD5-D6CC-4A0A-8782-3DCF64F241DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComposerCore.Aop", "ComposerCore.Aop\ComposerCore.Aop.csproj", "{9FBA54DC-2AE0-4826-8FF5-4159B35A6910}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +23,22 @@ Global
 		{F336D593-891B-4E04-8CFA-0DD1ED35F091}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F336D593-891B-4E04-8CFA-0DD1ED35F091}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F336D593-891B-4E04-8CFA-0DD1ED35F091}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ABECD6E6-4C87-4B36-8518-CA304C4DDF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ABECD6E6-4C87-4B36-8518-CA304C4DDF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ABECD6E6-4C87-4B36-8518-CA304C4DDF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ABECD6E6-4C87-4B36-8518-CA304C4DDF53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58DCD1EF-6827-4298-8B3F-D250B17EBEE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DCD1EF-6827-4298-8B3F-D250B17EBEE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DCD1EF-6827-4298-8B3F-D250B17EBEE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DCD1EF-6827-4298-8B3F-D250B17EBEE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14B085FE-4015-48E7-B6CC-B494D30E200A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14B085FE-4015-48E7-B6CC-B494D30E200A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14B085FE-4015-48E7-B6CC-B494D30E200A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14B085FE-4015-48E7-B6CC-B494D30E200A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CA48BD5-D6CC-4A0A-8782-3DCF64F241DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CA48BD5-D6CC-4A0A-8782-3DCF64F241DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CA48BD5-D6CC-4A0A-8782-3DCF64F241DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CA48BD5-D6CC-4A0A-8782-3DCF64F241DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FBA54DC-2AE0-4826-8FF5-4159B35A6910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FBA54DC-2AE0-4826-8FF5-4159B35A6910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FBA54DC-2AE0-4826-8FF5-4159B35A6910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FBA54DC-2AE0-4826-8FF5-4159B35A6910}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,3 @@
+# ComposerCore Patterns - Diagnostics
+
+TODO
