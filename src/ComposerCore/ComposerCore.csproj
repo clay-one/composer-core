@@ -1,6 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>ComposerCore</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>clay-one</Authors>
+    <Company>clay-one</Company>
+    <Product>ComposerCore</Product>
+    <PackageProjectUrl>https://github.com/clay-one/composer-core</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/clay-one/composer-core/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/clay-one/composer-core.git</RepositoryUrl>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <FileVersion>0.0.1</FileVersion>
+    <Description>
+      An extensible compositional architecture framework,
+      providing a set of functionality such as Inversion of Control container (IoC),
+      Dependency Injection (DI), Plug-in framework,
+      Aspect Oriented Programming (AOP), Configurability and Composability for components.
+    </Description>
+    <Copyright>Copyright clay-one 2018</Copyright>
+    <PackageTags>composer composer-core iocdi ioc-di dependency-injection</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="CompositionXml\Schema\compositionXml.1.0.xsd" />
