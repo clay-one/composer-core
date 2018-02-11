@@ -1,4 +1,4 @@
 
-# Composer Conventions and Defaults
+# ComposerCore Conventions and Defaults
 
 TODO

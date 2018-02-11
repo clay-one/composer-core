@@ -1,3 +1,3 @@
-# Composer Concepts
+# ComposerCore Concepts
 
 TODO

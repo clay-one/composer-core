@@ -73,4 +73,17 @@
     <EmbeddedResource Include="XmlValueParser\Xmls\ETimeSpan.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\EUInt.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="InitializationPointVariety\Resources\SampleResource.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SampleResource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="InitializationPointVariety\Resources\SampleResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SampleResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

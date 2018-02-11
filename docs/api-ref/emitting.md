@@ -1,3 +1,3 @@
-# Composer API Reference - Emitting
+# ComposerCore API Reference - Emitting
 
 TODO

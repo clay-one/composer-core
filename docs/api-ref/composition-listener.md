@@ -1,3 +1,3 @@
-# Composer API Reference - Composition Listeners
+# ComposerCore API Reference - Composition Listeners
 
 TODO

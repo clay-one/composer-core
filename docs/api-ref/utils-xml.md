@@ -1,3 +1,3 @@
-# Composer API Reference - XML Utilities
+# ComposerCore API Reference - XML Utilities
 
 TODO

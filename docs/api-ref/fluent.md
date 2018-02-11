@@ -1,8 +1,8 @@
-# Composer API Reference - Fluent Configuration
+# ComposerCore API Reference - Fluent Configuration
 
-Composer provides a set of Fluent APIs to register and configure components in a readable way.
+ComposerCore provides a set of Fluent APIs to register and configure components in a readable way.
 
-**Note:** If you're using Fluent APIs to register types not decorated with `[Component]` and `[Contract]` (or other) attributes for configuration, you should disable attribute checking. See [Composer Configuration](configuration.md) for more details.
+**Note:** If you're using Fluent APIs to register types not decorated with `[Component]` and `[Contract]` (or other) attributes for configuration, you should disable attribute checking. See [ComposerCore Configuration](configuration.md) for more details.
 
 ## Simple component registration
 
@@ -14,7 +14,7 @@ composer
     .RegisterWith<IContractType>();
 ```
 
-You can also use `Register()` with no contract type specified, so that Composer looks for all provided contracts on the specified component:
+You can also use `Register()` with no contract type specified, so that ComposerCore looks for all provided contracts on the specified component:
 
 ```csharp
 composer.ForComponent<ComponentType>().Register();
@@ -22,7 +22,7 @@ composer.ForComponent<ComponentType>().Register();
 
 Between `ForComponent<T>()` method call and `RegisterWith<T>()` method call, you can add any number of configuration method calls (listed below) to more accurately describe the component initialization procedure.
 
-You can also register an already-instantiated component (an `object`) in composer using the `ForObject(...)` extension method. It's equivalent of using `PreInitializedComponentFactory` to register a component. Here's the sample:
+You can also register an already-instantiated component (an `object`) in ComposerCore using the `ForObject(...)` extension method. It's equivalent of using `PreInitializedComponentFactory` to register a component. Here's the sample:
 
 ```csharp
 composer.ForObject(o).RegisterWith<IContract>();
@@ -30,7 +30,7 @@ composer.ForObject(o).RegisterWith<IContract>();
 
 ## Initialization features
 
-There are various methods for you to specify how Composer should instantiate and initialize the component. Here's a relatively complete sample:
+There are various methods for you to specify how ComposerCore should instantiate and initialize the component. Here's a relatively complete sample:
 
 ```csharp
 composer
@@ -56,7 +56,7 @@ Here's what each method will do:
 
 #### SetComponent
 > can be used to specify that a member should be initialized with another component
-> that should be queried from Composer. 
+> that should be queried from ComposerCore. 
 > The contract type is inferred from the lambda-expression 
 > (can be specified as an argument in non-generic version), 
 > and contract name can be specified. 
@@ -71,11 +71,11 @@ Here's what each method will do:
 #### SetValueFromVariable
 > is same as `SetValue` (and the same effect can be achieved using that)
 > but it's a more convenient way of setting a property
-> or method with the contents of a variable from Composer.
+> or method with the contents of a variable from ComposerCore.
 
 #### UseConstructor
 > receives a `Type[]` and can be used to specify which constructor should
-> Composer use to instantiate the component. **Specifying the constructor is
+> ComposerCore use to instantiate the component. **Specifying the constructor is
 > optional most of the times, even if you're using a non-default constructor.**
 > But if you might have a `null` argument for the constructor, you will **have to**
 > specify the constructor using this method, because in that case inferring the
