@@ -112,7 +112,8 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void ReqNamedPlugRedirectedUponRegistration()
 		{
 			_context.Register("someOtherName", typeof(PluggedComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.ReqNamedPlugRedirected.xml");
+			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.ReqNamedPlugRedirected.xml");
 
 			var c = _context.GetComponent<ComponentWithRequiredNamedPlug>();
 

@@ -1,4 +1,5 @@
-﻿using ComposerCore.Implementation;
+﻿using System.Runtime.CompilerServices;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.InitializationPointVariety.Components;
 using ComposerCore.Utility;
@@ -24,10 +25,12 @@ namespace ComposerCore.Tests.InitializationPointVariety
 		}
 
 		[TestInitialize]
+		[MethodImpl(MethodImplOptions.NoInlining)]
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.InitializationPointVariety.Xmls.ResourceComposition.xml");
+			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+				"ComposerCore.Tests.InitializationPointVariety.Xmls.ResourceComposition.xml");
 		}
 
 		[TestCleanup]

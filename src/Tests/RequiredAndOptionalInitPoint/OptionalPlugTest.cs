@@ -122,7 +122,8 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void OptNamedPlugRedirectedUponRegistration()
 		{
 			_context.Register("someOtherName", typeof(PluggedComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.OptNamedPlugRedirected.xml");
+			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.OptNamedPlugRedirected.xml");
 
 			var c = _context.GetComponent<ComponentWithOptionalNamedPlug>();
 
