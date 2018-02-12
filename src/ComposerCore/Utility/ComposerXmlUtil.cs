@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -35,6 +36,10 @@ namespace ComposerCore.Utility
 			xmlProcessingContext.ThrowIfErrors();
 		}
 
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		[Obsolete("Use the overload that receives the assembly. " +
+		          "This method can behave differently in Debug vs Release builds because of inlining." +
+		          "See the documentation on Assembly.GetCallingAssembly method for more info.")]
 		public static void ProcessCompositionXmlFromResource(this IComponentContext context, string configurationResourceName)
 		{
 			context.ProcessCompositionXmlFromResource(Assembly.GetCallingAssembly(), configurationResourceName);
