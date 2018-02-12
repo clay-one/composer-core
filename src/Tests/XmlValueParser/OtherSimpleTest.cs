@@ -7,441 +7,471 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.XmlValueParser
 {
-	[TestClass]
-	public class OtherSimpleTest
-	{
-		public TestContext TestContext { get; set; }
-		private ComponentContext _context;
+    [TestClass]
+    public class OtherSimpleTest
+    {
+        public TestContext TestContext { get; set; }
+        private ComponentContext _context;
 
-		#region Additional test attributes
+        #region Additional test attributes
 
-		[ClassInitialize]
-		public static void ClassInitialize(TestContext testContext)
-		{
-		}
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext testContext)
+        {
+        }
 
-		[ClassCleanup]
-		public static void ClassCleanup()
-		{
-		}
+        [ClassCleanup]
+        public static void ClassCleanup()
+        {
+        }
 
-		[TestInitialize]
-		public void TestInitialize()
-		{
-			_context = new ComponentContext();
-		}
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            _context = new ComponentContext();
+        }
 
-		[TestCleanup]
-		public void TestCleanup()
-		{
-		}
+        [TestCleanup]
+        public void TestCleanup()
+        {
+        }
 
-		#endregion
+        #endregion
 
-		[TestMethod]
-		public void AttributeCharA()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+        [TestMethod]
+        public void AttributeCharA()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			var o = _context.GetVariable("charA");
+            var o = _context.GetVariable("charA");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(char));
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(char));
 
-			var c = (char)o;
-			Assert.AreEqual(c, 'A');
-		}
+            var c = (char) o;
+            Assert.AreEqual(c, 'A');
+        }
+
+        [TestMethod]
+        public void AttributeCharTilde()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-		[TestMethod]
-		public void AttributeCharTilde()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            var o = _context.GetVariable("char~");
 
-			var o = _context.GetVariable("char~");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(char));
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(char));
+            var c = (char) o;
+            Assert.AreEqual(c, '~');
+        }
 
-			var c = (char)o;
-			Assert.AreEqual(c, '~');
-		}
+        [TestMethod]
+        public void AttributeDateTime()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-		[TestMethod]
-		public void AttributeDateTime()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            var o = _context.GetVariable("datetime");
 
-			var o = _context.GetVariable("datetime");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(DateTime));
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(DateTime));
+            var dt = (DateTime) o;
+            Assert.AreEqual(dt, new DateTime(2010, 12, 22));
+        }
 
-			var dt = (DateTime)o;
-			Assert.AreEqual(dt, new DateTime(2010, 12, 22));
-		}
+        [TestMethod]
+        public void AttributeString()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+
+            var o = _context.GetVariable("string");
+
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(string));
 
-		[TestMethod]
-		public void AttributeString()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            var s = (string) o;
+            Assert.AreEqual(s, "sampleString");
+        }
+
+        [TestMethod]
+        public void AttributeByteArray()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+
+            var o = _context.GetVariable("byteArray");
+
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(byte[]));
+
+            var bytes = (byte[]) o;
+            Assert.IsTrue(bytes.Length == 32);
 
-			var o = _context.GetVariable("string");
+            for (int i = 0; i < 32; i++)
+                Assert.AreEqual(bytes[i], i);
+        }
+
+        [TestMethod]
+        public void AttributeEnumOne()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+
+            var o = _context.GetVariable("enumOne");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
-
-			var s = (string)o;
-			Assert.AreEqual(s, "sampleString");
-		}
-
-		[TestMethod]
-		public void AttributeByteArray()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("byteArray");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(byte[]));
-
-			var bytes = (byte[])o;
-			Assert.IsTrue(bytes.Length == 32);
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(SampleEnum));
 
-			for (int i = 0; i < 32; i++)
-				Assert.AreEqual(bytes[i], i);
-		}
-
-		[TestMethod]
-		public void AttributeEnumOne()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("enumOne");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(SampleEnum));
-
-			var e = (SampleEnum)o;
-			Assert.AreEqual(e, SampleEnum.ValueOne);
-		}
-
-		[TestMethod]
-		public void AttributeEnumTen()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("enumTen");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(SampleEnum));
-
-			var e = (SampleEnum)o;
-			Assert.AreEqual(e, SampleEnum.ValueTen);
-		}
-
-		[TestMethod]
-		public void AttributeRefWithoutName()
-		{
-			_context.Register(typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("refWithoutName");
-
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(ISampleContract));
-		}
-	
-		[TestMethod]
-		public void AttributeRefWithName()
-		{
-			_context.Register("sampleContractName", typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
-
-			var o = _context.GetVariable("refWithName");
+            var e = (SampleEnum) o;
+            Assert.AreEqual(e, SampleEnum.ValueOne);
+        }
+
+        [TestMethod]
+        public void AttributeEnumTen()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+
+            var o = _context.GetVariable("enumTen");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(ISampleContract));
-		}
-
-		[TestMethod]
-		public void AttributeTypeInt()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(SampleEnum));
 
-			var o = _context.GetVariable("typeInt");
+            var e = (SampleEnum) o;
+            Assert.AreEqual(e, SampleEnum.ValueTen);
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Type));
-			Assert.AreEqual(o, typeof(int));
-		}
-	
-		[TestMethod]
-		public void AttributeTypeISampleContract()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+        [TestMethod]
+        public void AttributeRefWithoutName()
+        {
+            _context.Register(typeof(SampleComponent));
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			var o = _context.GetVariable("typeISampleContract");
+            var o = _context.GetVariable("refWithoutName");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Type));
-			Assert.AreEqual(o, typeof(ISampleContract));
-		}
-	
-		[TestMethod]
-		public void AttributeAssembly()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(ISampleContract));
+        }
 
-			var o = _context.GetVariable("assembly");
+        [TestMethod]
+        public void AttributeRefWithName()
+        {
+            _context.Register("sampleContractName", typeof(SampleComponent));
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Assembly));
-			Assert.AreEqual(o, typeof(ISampleContract).Assembly);
-		}
+            var o = _context.GetVariable("refWithName");
 
-		[TestMethod]
-		public void AttributeContentsOfString()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(ISampleContract));
+        }
 
-			var o = _context.GetVariable("contentsOfString");
+        [TestMethod]
+        public void AttributeTypeInt()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
+            var o = _context.GetVariable("typeInt");
 
-			var s = (string)o;
-			Assert.AreEqual(s, "sampleString");
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Type));
+            Assert.AreEqual(o, typeof(int));
+        }
 
-		[TestMethod]
-		public void AttributeContentsOfByteArray()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
+        [TestMethod]
+        public void AttributeTypeISampleContract()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			var o = _context.GetVariable("contentsOfByteArray");
+            var o = _context.GetVariable("typeISampleContract");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(byte[]));
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Type));
+            Assert.AreEqual(o, typeof(ISampleContract));
+        }
 
-			var bytes = (byte[])o;
-			Assert.IsTrue(bytes.Length == 32);
+        [TestMethod]
+        public void AttributeAssembly()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			for (int i = 0; i < 32; i++)
-				Assert.AreEqual(bytes[i], i);
-		}
+            var o = _context.GetVariable("assembly");
 
-		[TestMethod]
-		public void ElementCharA()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Assembly));
+            Assert.AreEqual(o, typeof(ISampleContract).Assembly);
+        }
 
-			var o = _context.GetVariable("charA");
+        [TestMethod]
+        public void AttributeContentsOfString()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(char));
+            var o = _context.GetVariable("contentsOfString");
 
-			var c = (char)o;
-			Assert.AreEqual(c, 'A');
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(string));
 
-		[TestMethod]
-		public void ElementCharTilde()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var s = (string) o;
+            Assert.AreEqual(s, "sampleString");
+        }
 
-			var o = _context.GetVariable("char~");
+        [TestMethod]
+        public void AttributeContentsOfByteArray()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.AOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(char));
+            var o = _context.GetVariable("contentsOfByteArray");
 
-			var c = (char)o;
-			Assert.AreEqual(c, '~');
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(byte[]));
 
-		[TestMethod]
-		public void ElementDateTime()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var bytes = (byte[]) o;
+            Assert.IsTrue(bytes.Length == 32);
 
-			var o = _context.GetVariable("datetime");
+            for (int i = 0; i < 32; i++)
+                Assert.AreEqual(bytes[i], i);
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(DateTime));
+        [TestMethod]
+        public void ElementCharA()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var dt = (DateTime)o;
-			Assert.AreEqual(dt, new DateTime(2010, 12, 22));
-		}
+            var o = _context.GetVariable("charA");
 
-		[TestMethod]
-		public void ElementString()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(char));
 
-			var o = _context.GetVariable("string");
+            var c = (char) o;
+            Assert.AreEqual(c, 'A');
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
+        [TestMethod]
+        public void ElementCharTilde()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var s = (string)o;
-			Assert.AreEqual(s, "sampleString");
-		}
+            var o = _context.GetVariable("char~");
 
-		[TestMethod]
-		public void ElementByteArray()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(char));
 
-			var o = _context.GetVariable("byteArray");
+            var c = (char) o;
+            Assert.AreEqual(c, '~');
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(byte[]));
+        [TestMethod]
+        public void ElementDateTime()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var bytes = (byte[])o;
-			Assert.IsTrue(bytes.Length == 32);
+            var o = _context.GetVariable("datetime");
 
-			for (int i = 0; i < 32; i++)
-				Assert.AreEqual(bytes[i], i);
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(DateTime));
 
-		[TestMethod]
-		public void ElementNull()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var dt = (DateTime) o;
+            Assert.AreEqual(dt, new DateTime(2010, 12, 22));
+        }
 
-			var o = _context.GetVariable("nullRef");
+        [TestMethod]
+        public void ElementString()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			Assert.IsNull(o);
-		}
+            var o = _context.GetVariable("string");
 
-		[TestMethod]
-		public void ElementComponentContext()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(string));
 
-			var o = _context.GetVariable("componentContext");
+            var s = (string) o;
+            Assert.AreEqual(s, "sampleString");
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(ComponentContext));
-			Assert.AreSame(o, _context);
-		}
+        [TestMethod]
+        public void ElementByteArray()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-		[TestMethod]
-		public void ElementEnumOne()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var o = _context.GetVariable("byteArray");
 
-			var o = _context.GetVariable("enumOne");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(byte[]));
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(SampleEnum));
+            var bytes = (byte[]) o;
+            Assert.IsTrue(bytes.Length == 32);
 
-			var e = (SampleEnum)o;
-			Assert.AreEqual(e, SampleEnum.ValueOne);
-		}
+            for (int i = 0; i < 32; i++)
+                Assert.AreEqual(bytes[i], i);
+        }
 
-		[TestMethod]
-		public void ElementEnumTen()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+        [TestMethod]
+        public void ElementNull()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var o = _context.GetVariable("enumTen");
+            var o = _context.GetVariable("nullRef");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(SampleEnum));
+            Assert.IsNull(o);
+        }
 
-			var e = (SampleEnum)o;
-			Assert.AreEqual(e, SampleEnum.ValueTen);
-		}
+        [TestMethod]
+        public void ElementComponentContext()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-		[TestMethod]
-		public void ElementRefWithoutName()
-		{
-			_context.Register(typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var o = _context.GetVariable("componentContext");
 
-			var o = _context.GetVariable("refWithoutName");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(ComponentContext));
+            Assert.AreSame(o, _context);
+        }
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(ISampleContract));
-		}
+        [TestMethod]
+        public void ElementEnumOne()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-		[TestMethod]
-		public void ElementRefWithName()
-		{
-			_context.Register("sampleContractName", typeof(SampleComponent));
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var o = _context.GetVariable("enumOne");
 
-			var o = _context.GetVariable("refWithName");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(SampleEnum));
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(ISampleContract));
-		}
+            var e = (SampleEnum) o;
+            Assert.AreEqual(e, SampleEnum.ValueOne);
+        }
 
-		[TestMethod]
-		public void ElementTypeInt()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+        [TestMethod]
+        public void ElementEnumTen()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var o = _context.GetVariable("typeInt");
+            var o = _context.GetVariable("enumTen");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Type));
-			Assert.AreEqual(o, typeof(int));
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(SampleEnum));
 
-		[TestMethod]
-		public void ElementTypeISampleContract()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            var e = (SampleEnum) o;
+            Assert.AreEqual(e, SampleEnum.ValueTen);
+        }
 
-			var o = _context.GetVariable("typeISampleContract");
+        [TestMethod]
+        public void ElementRefWithoutName()
+        {
+            _context.Register(typeof(SampleComponent));
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Type));
-			Assert.AreEqual(o, typeof(ISampleContract));
-		}
+            var o = _context.GetVariable("refWithoutName");
 
-		[TestMethod]
-		public void ElementAssembly()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(ISampleContract));
+        }
 
-			var o = _context.GetVariable("assembly");
+        [TestMethod]
+        public void ElementRefWithName()
+        {
+            _context.Register("sampleContractName", typeof(SampleComponent));
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(Assembly));
-			Assert.AreEqual(o, typeof(ISampleContract).Assembly);
-		}
+            var o = _context.GetVariable("refWithName");
 
-		[TestMethod]
-		public void ElementContentsOfString()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(ISampleContract));
+        }
 
-			var o = _context.GetVariable("contentsOfString");
+        [TestMethod]
+        public void ElementTypeInt()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(string));
+            var o = _context.GetVariable("typeInt");
 
-			var s = (string)o;
-			Assert.AreEqual(s, "sampleString");
-		}
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Type));
+            Assert.AreEqual(o, typeof(int));
+        }
 
-		[TestMethod]
-		public void ElementContentsOfByteArray()
-		{
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+        [TestMethod]
+        public void ElementTypeISampleContract()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			var o = _context.GetVariable("contentsOfByteArray");
+            var o = _context.GetVariable("typeISampleContract");
 
-			Assert.IsNotNull(o);
-			Assert.IsInstanceOfType(o, typeof(byte[]));
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Type));
+            Assert.AreEqual(o, typeof(ISampleContract));
+        }
 
-			var bytes = (byte[])o;
-			Assert.IsTrue(bytes.Length == 32);
+        [TestMethod]
+        public void ElementAssembly()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
 
-			for (int i = 0; i < 32; i++)
-				Assert.AreEqual(bytes[i], i);
-		}
-	}
+            var o = _context.GetVariable("assembly");
+
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(Assembly));
+            Assert.AreEqual(o, typeof(ISampleContract).Assembly);
+        }
+
+        [TestMethod]
+        public void ElementContentsOfString()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+
+            var o = _context.GetVariable("contentsOfString");
+
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(string));
+
+            var s = (string) o;
+            Assert.AreEqual(s, "sampleString");
+        }
+
+        [TestMethod]
+        public void ElementContentsOfByteArray()
+        {
+            _context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+                "ComposerCore.Tests.XmlValueParser.Xmls.EOtherSimple.xml");
+
+            var o = _context.GetVariable("contentsOfByteArray");
+
+            Assert.IsNotNull(o);
+            Assert.IsInstanceOfType(o, typeof(byte[]));
+
+            var bytes = (byte[]) o;
+            Assert.IsTrue(bytes.Length == 32);
+
+            for (int i = 0; i < 32; i++)
+                Assert.AreEqual(bytes[i], i);
+        }
+    }
 }

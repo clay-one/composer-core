@@ -29,7 +29,8 @@ namespace ComposerCore.Tests.InitializationPointVariety
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.InitializationPointVariety.Xmls.ResourceComposition.xml");
+			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+				"ComposerCore.Tests.InitializationPointVariety.Xmls.ResourceComposition.xml");
 		}
 
 		[TestCleanup]

@@ -29,7 +29,8 @@ namespace ComposerCore.Tests.CompositionNotification
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.ProcessCompositionXmlFromResource("ComposerCore.Tests.CompositionNotification.Xmls.Composition.xml");
+			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
+				"ComposerCore.Tests.CompositionNotification.Xmls.Composition.xml");
 		}
 
 		[TestCleanup]
