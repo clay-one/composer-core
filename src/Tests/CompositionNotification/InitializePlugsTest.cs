@@ -1,4 +1,5 @@
-﻿using ComposerCore.Implementation;
+﻿using System.Runtime.CompilerServices;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionNotification.Components;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,6 +25,7 @@ namespace ComposerCore.Tests.CompositionNotification
 		}
 
 		[TestInitialize]
+		[MethodImpl(MethodImplOptions.NoInlining)]
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();

@@ -1,4 +1,5 @@
-﻿using ComposerCore.Implementation;
+﻿using System.Runtime.CompilerServices;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ComposerCore.Tests.InitializePlugs.Components;
 using ComposerCore.Utility;
@@ -24,6 +25,7 @@ namespace ComposerCore.Tests.InitializePlugs
 		}
 
 		[TestInitialize]
+		[MethodImpl(MethodImplOptions.NoInlining)]
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();

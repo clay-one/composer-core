@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -35,6 +36,7 @@ namespace ComposerCore.Utility
 			xmlProcessingContext.ThrowIfErrors();
 		}
 
+		[MethodImpl(MethodImplOptions.NoInlining)]
 		public static void ProcessCompositionXmlFromResource(this IComponentContext context, string configurationResourceName)
 		{
 			context.ProcessCompositionXmlFromResource(Assembly.GetCallingAssembly(), configurationResourceName);
