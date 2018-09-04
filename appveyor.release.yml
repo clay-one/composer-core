@@ -62,7 +62,7 @@ dotnet_csproj:
   file_version: $(CLAY_ONE_ASSEMBLY_VERSION)
   informational_version: $(CLAY_ONE_ASSEMBLY_VERSION)
 before_build:
-- cmd: nuget restore src\ComposerCore.sln
+- cmd: nuget restore composer-core.sln
 build:
   publish_nuget: true
   publish_nuget_symbols: true
