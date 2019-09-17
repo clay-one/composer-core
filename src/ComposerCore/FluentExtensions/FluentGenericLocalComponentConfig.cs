@@ -56,43 +56,37 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-//        public FluentGenericLocalComponentConfig UseConstructor(params Type[] argTypes)
-//        {
-//            Factory.TargetConstructor = Factory.TargetType.GetConstructor(argTypes);
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
-//        {
-//            return AddConstructorComponent(typeof(TPlugContract), contractName, required);
-//        }
-//
-//        public FluentGenericLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
-//        {
-//            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig AddConstructorValue(object value)
-//        {
-//            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
-//        {
-//            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
-//                new FuncValueQuery(c => valueCalculator(c))));
-//
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
-//        {
-//            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
-//            return this;
-//        }
-//
+        public FluentGenericLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
+        {
+            return AddConstructorComponent(typeof(TPlugContract), contractName, required);
+        }
+
+        public FluentGenericLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
+        {
+            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            return this;
+        }
+
+        public FluentGenericLocalComponentConfig AddConstructorValue(object value)
+        {
+            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            return this;
+        }
+
+        public FluentGenericLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
+        {
+            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
+                new FuncValueQuery(c => valueCalculator(c))));
+
+            return this;
+        }
+
+        public FluentGenericLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
+        {
+            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            return this;
+        }
+
         public FluentGenericLocalComponentConfig SetValue(string memberName, object value)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, false, 
@@ -117,27 +111,27 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-//        public FluentGenericLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
-//        {
-//            Factory.CompositionNotificationMethods.Add(initAction);
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
-//        {
-//            if (cacheContractType == null)
-//                Factory.ComponentCacheQuery = new NullQuery();
-//            else
-//                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
-//
-//            return this;
-//        }
-//
-//        public FluentGenericLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
-//        {
-//            return UseComponentCache(typeof(TCacheContract), cacheContractName);
-//        }
-//
+        public FluentGenericLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
+        {
+            Factory.CompositionNotificationMethods.Add(initAction);
+            return this;
+        }
+
+        public FluentGenericLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
+        {
+            if (cacheContractType == null)
+                Factory.ComponentCacheQuery = new NullQuery();
+            else
+                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
+
+            return this;
+        }
+
+        public FluentGenericLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
+        {
+            return UseComponentCache(typeof(TCacheContract), cacheContractName);
+        }
+
         #endregion
     }
 }

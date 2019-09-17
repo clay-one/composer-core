@@ -5,7 +5,12 @@
         
     }
 
-    public class OpenGenericComponent<T> : IGenericContract<T>
+    public interface IAnotherGenericContract<T>
+    {
+        
+    }
+
+    public class OpenGenericComponent<T> : IGenericContract<T>, IAnotherGenericContract<T>
     {
         
     }

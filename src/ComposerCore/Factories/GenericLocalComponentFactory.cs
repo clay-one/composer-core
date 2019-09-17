@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
@@ -21,11 +22,15 @@ namespace ComposerCore.Factories
 
         private readonly ConcurrentDictionary<Type, LocalComponentFactory> _subFactories;
         private readonly Type _targetType;
+        
+        private List<ConstructorArgSpecification> _constructorArgs;
         private readonly List<InitializationPointSpecification> _initializationPoints;
+        private List<Action<IComposer, object>> _compositionNotificationMethods;
+        private ICompositionalQuery _componentCacheQuery;
 
         public GenericLocalComponentFactory(Type targetType)
         {
-            if ((!targetType.ContainsGenericParameters) || (!targetType.IsGenericType))
+            if (!targetType.ContainsGenericParameters || !targetType.IsGenericType)
                 throw new ArgumentException("TargetType in GenericLocalComponentFactory should be an open generic type.");
 
             _targetType = targetType;
@@ -33,7 +38,9 @@ namespace ComposerCore.Factories
 
             _contractTypes = new Dictionary<Type, Type>();
             _subFactories = new ConcurrentDictionary<Type, LocalComponentFactory>();
+            _constructorArgs = new List<ConstructorArgSpecification>();
             _initializationPoints = new List<InitializationPointSpecification>();
+            _compositionNotificationMethods = new List<Action<IComposer, object>>();
 
             ExtractContractTypes();
         }
@@ -82,7 +89,11 @@ namespace ComposerCore.Factories
             var subFactory = _subFactories.GetOrAdd(closedTargetType, type =>
             {
                 var newSubFactory = new LocalComponentFactory(type);
+                
+                newSubFactory.ConstructorArgs.AddRange(_constructorArgs);
                 newSubFactory.InitializationPoints.AddRange(_initializationPoints);
+                newSubFactory.ComponentCacheQuery = _componentCacheQuery;
+                newSubFactory.CompositionNotificationMethods.AddRange(_compositionNotificationMethods);
                 newSubFactory.Initialize(_composer);
                 return newSubFactory;
             });
@@ -93,6 +104,17 @@ namespace ComposerCore.Factories
         #endregion
 
         #region Public methods and properties
+        
+        public List<ConstructorArgSpecification> ConstructorArgs
+        {
+            get
+            {
+                if (_composer != null)
+                    throw new InvalidOperationException("Cannot access ConstructorArgs when the factory is initialized.");
+
+                return _constructorArgs ?? (_constructorArgs = new List<ConstructorArgSpecification>());
+            }
+        }
 
         public List<InitializationPointSpecification> InitializationPoints
         {
@@ -104,6 +126,36 @@ namespace ComposerCore.Factories
                 return _initializationPoints;
             }
         }
+        
+        public List<Action<IComposer, object>> CompositionNotificationMethods
+        {
+            get
+            {
+                if (_composer != null)
+                    throw new InvalidOperationException("Cannot access CompositionNotificationMethods when the factory is initialized.");
+
+                return _compositionNotificationMethods ?? (_compositionNotificationMethods = new List<Action<IComposer, object>>());
+            }
+        }
+
+        public ICompositionalQuery ComponentCacheQuery
+        {
+            get
+            {
+                if (_composer != null)
+                    throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
+
+                return _componentCacheQuery;
+            }
+            set
+            {
+                if (_composer != null)
+                    throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
+
+                _componentCacheQuery = value;
+            }
+        }
+
 
         public void AddOpenGenericContract(Type openContractType)
         {
