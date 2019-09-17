@@ -1,4 +1,5 @@
-﻿using ComposerCore.FluentExtensions;
+﻿using ComposerCore.Cache;
+using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -51,9 +52,7 @@ namespace ComposerCore.Tests.FluentRegistration
         [TestMethod]
         public void OpenGeneric()
         {
-            Assert.Inconclusive("Fluent configuration for Open Generics are not yet planned");
-
-            _context.ForComponent(typeof(OpenGenericComponent<>))
+            _context.ForGenericComponent(typeof(OpenGenericComponent<>))
                 .RegisterWith(typeof(IGenericContract<>));
 
             var c = _context.GetComponent<IGenericContract<string>>();
@@ -62,17 +61,58 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        [ExpectedException(typeof(CompositionException))]
         public void IncompatibleGenericTypeInContract()
         {
-            Assert.Inconclusive("Fluent configuration for Open Generics are not yet planned");
-
             _context.ForComponent<ClosedGenericComponent>()
                 .RegisterWith<IGenericContract<int>>();
+        }
+        
+        [TestMethod]
+        public void RegisterWithDefaultCache()
+        {
+            _context
+                .ForGenericComponent(typeof(OpenGenericComponent<>))
+                .RegisterWith(typeof(IGenericContract<>));
 
-            var c = _context.GetComponent<IGenericContract<int>>();
+            var c1 = _context.GetComponent<IGenericContract<string>>();
+            var c2 = _context.GetComponent<IGenericContract<string>>();
 
-            Assert.IsNotNull(c);
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsTrue(ReferenceEquals(c1, c2));
         }
 
+        [TestMethod]
+        public void RegisterWithContractAgnosticCache()
+        {
+            _context
+                .ForGenericComponent(typeof(OpenGenericComponent<>))
+                .UseComponentCache<ContractAgnosticComponentCache>()
+                .RegisterWith(typeof(IGenericContract<>));
+
+            var c1 = _context.GetComponent<IGenericContract<string>>();
+            var c2 = _context.GetComponent<IGenericContract<string>>();
+
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsTrue(ReferenceEquals(c1, c2));
+        }
+
+        [TestMethod]
+        public void RegisterWithNoCache()
+        {
+            _context
+                .ForGenericComponent(typeof(OpenGenericComponent<>))
+                .UseComponentCache(null)
+                .RegisterWith(typeof(IGenericContract<>));
+
+            var c1 = _context.GetComponent<IGenericContract<string>>();
+            var c2 = _context.GetComponent<IGenericContract<string>>();
+
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsFalse(ReferenceEquals(c1, c2));
+        }
     }
 }
