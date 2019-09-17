@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
+using ComposerCore.Utility;
 
 namespace ComposerCore.Factories
 {
@@ -39,8 +40,17 @@ namespace ComposerCore.Factories
 
         #region Implementation of IComponentFactory
 
+        public bool ValidateContractType(Type contract)
+        {
+            return _targetType.IsAssignableToGenericType(contract);
+        }
+
         public void Initialize(IComposer composer)
         {
+            if (_contractTypes.Count < 1)
+                throw new CompositionException($"No open contracts found nor added for the type {_targetType.Name}. " +
+                                               "Use [Contract] attribute or use Fluent syntax to introduce contracts");
+            
             _composer = composer;
         }
 
@@ -82,7 +92,7 @@ namespace ComposerCore.Factories
 
         #endregion
 
-        #region Public Properties
+        #region Public methods and properties
 
         public List<InitializationPointSpecification> InitializationPoints
         {
@@ -93,6 +103,18 @@ namespace ComposerCore.Factories
 
                 return _initializationPoints;
             }
+        }
+
+        public void AddOpenGenericContract(Type openContractType)
+        {
+            if (!openContractType.ContainsGenericParameters || !openContractType.IsGenericType)
+            {
+                throw new ArgumentException($"The contract type {openContractType.FullName} is not an open generic type.");
+            }
+
+            var genericTypeDefinition = openContractType.GetGenericTypeDefinition();
+            if (!_contractTypes.ContainsKey(genericTypeDefinition))
+                _contractTypes.Add(genericTypeDefinition, openContractType);
         }
 
         #endregion
@@ -108,15 +130,12 @@ namespace ComposerCore.Factories
             {
                 _contractTypes.Add(openContract.GetGenericTypeDefinition(), openContract);
             }
-
-            if (_contractTypes.Count < 1)
-                throw new CompositionException("No open contracts found on the type " + _targetType.Name);
         }
 
         private Type CloseGenericType(Type openType, Type templateType, Type closedType)
         {
-            Type[] templateTypeParams = templateType.GetGenericArguments();
-            Type[] closedTypeParams = closedType.GetGenericArguments();
+            var templateTypeParams = templateType.GetGenericArguments();
+            var closedTypeParams = closedType.GetGenericArguments();
 
             var currentType = openType;
 
@@ -141,7 +160,20 @@ namespace ComposerCore.Factories
                         closedTypeParamIndex = i;
 
                 if (closedTypeParamIndex < 0)
+                {
+                    // Attempt to match by name, in case the generic contract is provided externally
+                    // (eg. Fluent interface)
+                    
+                    for (int i = 0; i < templateTypeParams.Length; i++)
+                        if (templateTypeParams[i].Name == currentTypeParam.Name)
+                            closedTypeParamIndex = i;
+                }
+
+                if (closedTypeParamIndex < 0)
+                {
+                    // Neither found by type matching nor name
                     return null;
+                }
 
                 Type closedTypeParam = closedTypeParams[closedTypeParamIndex];
 

@@ -51,9 +51,7 @@ namespace ComposerCore.Tests.FluentRegistration
         [TestMethod]
         public void OpenGeneric()
         {
-            Assert.Inconclusive("Fluent configuration for Open Generics are not yet planned");
-
-            _context.ForComponent(typeof(OpenGenericComponent<>))
+            _context.ForGenericComponent(typeof(OpenGenericComponent<>))
                 .RegisterWith(typeof(IGenericContract<>));
 
             var c = _context.GetComponent<IGenericContract<string>>();
@@ -62,17 +60,11 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        [ExpectedException(typeof(CompositionException))]
         public void IncompatibleGenericTypeInContract()
         {
-            Assert.Inconclusive("Fluent configuration for Open Generics are not yet planned");
-
             _context.ForComponent<ClosedGenericComponent>()
                 .RegisterWith<IGenericContract<int>>();
-
-            var c = _context.GetComponent<IGenericContract<int>>();
-
-            Assert.IsNotNull(c);
         }
-
     }
 }

@@ -42,6 +42,11 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
+		public bool ValidateContractType(Type contract)
+		{
+			return contract.IsAssignableFrom(_targetType);
+		}
+
 		public void Initialize(IComposer composer)
 		{
 			if (_composer != null)

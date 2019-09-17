@@ -13,10 +13,10 @@ namespace ComposerCore.FluentExtensions
 
         #region Constructors
 
-        public FluentLocalComponentConfig(ComponentContext context, Type componentType)
+        public FluentLocalComponentConfig(ComponentContext context, LocalComponentFactory factory)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            Factory = (LocalComponentFactory) ComponentContextUtils.CreateLocalFactory(componentType);
+            Factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion
@@ -36,6 +36,11 @@ namespace ComposerCore.FluentExtensions
         public void RegisterWith(Type contractType, string contractName = null)
         {
             Context.Register(contractType, contractName, Factory);
+        }
+
+        public void RegisterAsItself(string contractName = null)
+        {
+            RegisterWith(Factory.TargetType, contractName);
         }
 
         public FluentLocalComponentConfig SetComponent<TPlugContract>(
