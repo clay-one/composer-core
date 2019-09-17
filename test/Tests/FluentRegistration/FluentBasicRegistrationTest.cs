@@ -91,6 +91,16 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        public void RegisterAsItself()
+        {
+            _context.ForComponent<NonAttributedComponent>().RegisterAsItself();
+
+            var c = _context.GetComponent<NonAttributedComponent>();
+
+            Assert.IsNotNull(c);
+        }
+
+        [TestMethod]
         public void RegisterObjectWithContract()
         {
             var o = new NonAttributedComponent();
@@ -116,5 +126,11 @@ namespace ComposerCore.Tests.FluentRegistration
             Assert.IsTrue(ReferenceEquals(c, o));
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(CompositionException))]
+        public void RegisterWithInvalidContract()
+        {
+            _context.ForComponent<ComponentOne>().RegisterWith<IComponentTwo>();
+        }
     }
 }

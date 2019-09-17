@@ -351,6 +351,11 @@ namespace ComposerCore.Implementation
 			if (performChecking && !Configuration.DisableAttributeChecking)
 				ComponentContextUtils.ThrowIfNotContract(contract);
 
+			if (!factory.ValidateContractType(contract))
+				throw new CompositionException("This component type / factory cannot be registered with the contract " +
+				                               $"{contract.FullName}. The component type is not assignable to the contract " +
+				                               "or the factory logic prevents such registration.");
+			
 			factory.Initialize(this);
 
 			_repository.Add(new ContractIdentity(contract, name), factory);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
@@ -9,7 +10,8 @@ namespace ComposerCore.FluentExtensions
     {
         #region Constructors
 
-        public FluentLocalComponentConfig(ComponentContext context) : base(context, typeof(TComponent))
+        public FluentLocalComponentConfig(ComponentContext context) 
+            : base(context, new LocalComponentFactory(typeof(TComponent)))
         {
         }
 
