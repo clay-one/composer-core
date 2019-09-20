@@ -5,6 +5,7 @@ using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ComposerCore.AspNet
@@ -27,10 +28,10 @@ namespace ComposerCore.AspNet
                 .UseComponentCache(typeof(DefaultComponentCache))
                 .RegisterWith<IServiceProvider>();
             
-//            composer
-//                .ForComponent<HttpContextAccessor>()
-//                .UseComponentCache(typeof(DefaultComponentCache))
-//                .RegisterWith<IHttpContextAccessor>();
+            composer
+                .ForComponent<HttpContextAccessor>()
+                .UseComponentCache(typeof(DefaultComponentCache))
+                .RegisterWith<IHttpContextAccessor>();
 
             composer.ForComponent<AspNetCoreRequestComponentCache>().Register();
             
