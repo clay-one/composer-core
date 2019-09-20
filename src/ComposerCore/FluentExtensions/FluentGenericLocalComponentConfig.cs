@@ -4,6 +4,7 @@ using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
+using ComposerCore.Utility;
 
 namespace ComposerCore.FluentExtensions
 {
@@ -36,7 +37,7 @@ namespace ComposerCore.FluentExtensions
 
         public void RegisterWith(Type contractType, string contractName = null)
         {
-            if (contractType.ContainsGenericParameters && contractType.IsGenericType)
+            if (contractType.IsOpenGenericType())
                 Factory.AddOpenGenericContract(contractType);
             
             Context.Register(contractType, contractName, Factory);

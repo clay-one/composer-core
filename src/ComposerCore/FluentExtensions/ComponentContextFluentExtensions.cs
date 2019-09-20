@@ -1,6 +1,7 @@
 ﻿using System;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
+using ComposerCore.Utility;
 
 namespace ComposerCore.FluentExtensions
 {
@@ -13,7 +14,7 @@ namespace ComposerCore.FluentExtensions
 
         public static FluentLocalComponentConfig ForComponent(this ComponentContext context, Type componentType)
         {
-            if (componentType.ContainsGenericParameters && componentType.IsGenericType)
+            if (componentType.IsOpenGenericType())
                 throw new ArgumentException($"Type {componentType.FullName} is generic. Use 'ForGenericComponent' method instead.");
             
             return new FluentLocalComponentConfig(context, new LocalComponentFactory(componentType));
@@ -21,7 +22,7 @@ namespace ComposerCore.FluentExtensions
 
         public static FluentGenericLocalComponentConfig ForGenericComponent(this ComponentContext context, Type componentType)
         {
-            if (!componentType.ContainsGenericParameters || !componentType.IsGenericType)
+            if (!componentType.IsOpenGenericType())
                 throw new ArgumentException($"Type {componentType.FullName} is not generic.");
             
             return new FluentGenericLocalComponentConfig(context, new GenericLocalComponentFactory(componentType));
