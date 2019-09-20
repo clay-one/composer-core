@@ -132,7 +132,7 @@ namespace ComposerCore.Implementation
 			EnsureWritable(memberInfo);
 
 			// If the member is a component plug, prepare and 
-			// add the initializtion point based on plug info.
+			// add the initialization point based on plug info.
 			// If it is a configuration point, prepare the
 			// initialization point accordingly.
 
@@ -330,28 +330,7 @@ namespace ComposerCore.Implementation
 
 		internal static IEnumerable<Type> FindContracts(Type type)
 		{
-			return FindContractsFromBaseClasses(type).Concat(FindContractsFromInterfaces(type)).Distinct();
-		}
-
-		private static IEnumerable<Type> FindContractsFromInterfaces(Type type)
-		{
-			return type.GetInterfaces().Where(HasContractAttribute);
-		}
-
-		private static IEnumerable<Type> FindContractsFromBaseClasses(Type type)
-		{
-			Type candidateContract = type;
-			var result = new List<Type>();
-
-			while (candidateContract != null)
-			{
-				if (HasContractAttribute(candidateContract))
-					result.Add(candidateContract);
-
-				candidateContract = candidateContract.BaseType;
-			}
-
-			return result;
+			return type.GetBaseTypes(true).Concat(type.GetInterfaces()).Distinct().Where(HasContractAttribute);
 		}
 
 		internal static IEnumerable<InitializationPointSpecification> ExtractInitializationPoints(IComposer composer, Type type)

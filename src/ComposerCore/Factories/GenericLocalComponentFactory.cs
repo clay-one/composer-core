@@ -86,6 +86,16 @@ namespace ComposerCore.Factories
             var originalGenericContractType = _contractTypes[requestedGenericContractType];
             var closedTargetType = CloseGenericType(_targetType, originalGenericContractType, requestedClosedContractType);
 
+            if (closedTargetType == null)
+            {
+                throw new CompositionException("Failed to construct a closed generic type.\n" +
+                                               "Please provide the following information when you register an issue:\n" +
+                                               $"Component's open generic type: {_targetType.FullName}\n" +
+                                               $"Requested closed contract type: {requestedClosedContractType.FullName}\n" +
+                                               $"Requested open contract type: {requestedGenericContractType.FullName}\n" +
+                                               $"Original generic contract type: {originalGenericContractType.FullName}");
+            }
+
             var subFactory = _subFactories.GetOrAdd(closedTargetType, type =>
             {
                 var newSubFactory = new LocalComponentFactory(type);
@@ -164,9 +174,29 @@ namespace ComposerCore.Factories
                 throw new ArgumentException($"The contract type {openContractType.FullName} is not an open generic type.");
             }
 
-            var genericTypeDefinition = openContractType.GetGenericTypeDefinition();
-            if (!_contractTypes.ContainsKey(genericTypeDefinition))
-                _contractTypes.Add(genericTypeDefinition, openContractType);
+            var boundGenericContract = _targetType
+                .GetBaseTypes(true)
+                .Concat(_targetType.GetInterfaces())
+                .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == openContractType);
+
+            if (boundGenericContract == null)
+                throw new CompositionException($"The open contract type {openContractType.FullName} could not be" +
+                                               $"found in the hierarchy of tar get type {_targetType.FullName}");
+
+            var unresolvableGenericArgs = 
+                _targetType.GetGenericArguments().Except(boundGenericContract.GetGenericArguments()).ToArray();
+            if (unresolvableGenericArgs.Any())
+            {
+                var unresolvableGenericArgsString =
+                    string.Join(";\n", unresolvableGenericArgs.Select(a => a.ToString()));
+                throw new CompositionException($"The contract type {openContractType.FullName} does not contain " +
+                                               "enough type arguments to allow constructing a completely closed " +
+                                               $"component type out of {_targetType.FullName}. The missing type " +
+                                               $"arguments are:\n{unresolvableGenericArgsString}");
+            }
+
+            if (!_contractTypes.ContainsKey(openContractType))
+                _contractTypes.Add(openContractType, boundGenericContract);
         }
 
         #endregion
@@ -175,12 +205,13 @@ namespace ComposerCore.Factories
 
         private void ExtractContractTypes()
         {
-            var openContracts = ComponentContextUtils.FindContracts(_targetType)
+            var boundGenericContracts = ComponentContextUtils.FindContracts(_targetType)
                 .Where(t => t.IsOpenGenericType());
 
-            foreach (var openContract in openContracts)
+            foreach (var boundGenericContract in boundGenericContracts)
             {
-                _contractTypes.Add(openContract.GetGenericTypeDefinition(), openContract);
+                var openContract = boundGenericContract.GetGenericTypeDefinition();
+                _contractTypes.Add(openContract, boundGenericContract);
             }
         }
 

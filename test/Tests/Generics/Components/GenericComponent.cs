@@ -75,6 +75,34 @@ namespace ComposerCore.Tests.Generics.Components
 	}
 
 	[Component]
+	public class ReverseOpenComponentTwo<T1, T2> : IGenericContractTwo<T2, T1>
+	{
+		public T2 Something(T1 t2)
+		{
+			return default;
+		}
+
+		public T1 AnotherThing(T2 t1)
+		{
+			return default;
+		}
+	}
+
+	[Component]
+	public class ReverseOpenComponentTwoWithDifferentNames<T3, T4> : IGenericContractTwo<T4, T3>
+	{
+		public T4 Something(T3 t2)
+		{
+			return default;
+		}
+
+		public T3 AnotherThing(T4 t1)
+		{
+			return default;
+		}
+	}
+
+	[Component]
 	public class HalfOpenComponent<T> : IGenericContractTwo<string, T>
 	{
 		#region Implementation of IGenericContractTwo<string,T>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ComposerCore.Utility
 {
@@ -26,6 +27,18 @@ namespace ComposerCore.Utility
         public static bool IsOpenGenericType(this Type type)
         {
             return type.ContainsGenericParameters && type.IsGenericType;
+        }
+
+        public static IEnumerable<Type> GetBaseTypes(this Type type, bool includeSelf = false)
+        {
+            if (!includeSelf)
+                type = type.BaseType;
+
+            while (type != null)
+            {
+                yield return type;
+                type = type.BaseType;
+            }
         }
     }
 }
