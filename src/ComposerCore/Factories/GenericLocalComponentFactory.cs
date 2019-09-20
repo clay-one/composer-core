@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
@@ -24,7 +23,7 @@ namespace ComposerCore.Factories
         private readonly Type _targetType;
         
         private List<ConstructorArgSpecification> _constructorArgs;
-        private readonly List<InitializationPointSpecification> _initializationPoints;
+        private List<InitializationPointSpecification> _initializationPoints;
         private List<Action<IComposer, object>> _compositionNotificationMethods;
         private ICompositionalQuery _componentCacheQuery;
 
@@ -38,9 +37,9 @@ namespace ComposerCore.Factories
 
             _contractTypes = new Dictionary<Type, Type>();
             _subFactories = new ConcurrentDictionary<Type, LocalComponentFactory>();
-            _constructorArgs = new List<ConstructorArgSpecification>();
-            _initializationPoints = new List<InitializationPointSpecification>();
-            _compositionNotificationMethods = new List<Action<IComposer, object>>();
+            _constructorArgs = null;
+            _initializationPoints = null;
+            _compositionNotificationMethods = null;
 
             ExtractContractTypes();
         }
@@ -100,10 +99,17 @@ namespace ComposerCore.Factories
             {
                 var newSubFactory = new LocalComponentFactory(type);
                 
-                newSubFactory.ConstructorArgs.AddRange(_constructorArgs);
-                newSubFactory.InitializationPoints.AddRange(_initializationPoints);
+                if (_constructorArgs != null)
+                    newSubFactory.ConstructorArgs.AddRange(_constructorArgs);
+                
+                if (_initializationPoints != null)
+                    newSubFactory.InitializationPoints.AddRange(_initializationPoints);
+                
                 newSubFactory.ComponentCacheQuery = _componentCacheQuery;
-                newSubFactory.CompositionNotificationMethods.AddRange(_compositionNotificationMethods);
+                
+                if (_compositionNotificationMethods != null)
+                    newSubFactory.CompositionNotificationMethods.AddRange(_compositionNotificationMethods);
+                
                 newSubFactory.Initialize(_composer);
                 return newSubFactory;
             });
@@ -133,7 +139,7 @@ namespace ComposerCore.Factories
                 if (_composer != null)
                     throw new InvalidOperationException("Cannot access InitializationPoints when the factory is initialized.");
 
-                return _initializationPoints;
+                return _initializationPoints ?? (_initializationPoints = new List<InitializationPointSpecification>());
             }
         }
         
