@@ -39,7 +39,7 @@ namespace ComposerCore.Utility
             }
         }
         
-        public static Type GetEnumerableTypeArgument(this Type type)
+        public static Type GetEnumerableElementType(this Type type)
         {
             if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 return type.GetGenericArguments()[0];
