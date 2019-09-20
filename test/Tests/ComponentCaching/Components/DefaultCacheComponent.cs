@@ -6,22 +6,22 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[Contract]
 	[Component]
 	[ComponentCache(typeof(DefaultComponentCache))]
-	public class SpcComponent : ISomeContract, IAnotherContract
+	public class DefaultCacheComponent : ISomeContract, IAnotherContract
 	{
 	}
 
 	[Contract]
 	[Component]
 	[ComponentCache(typeof(DefaultComponentCache))]
-	public class SpcComponentWithPlugs
+	public class DefaultCacheComponentWithPlugs
 	{
 		[ComponentPlug]
-		public SprComponent SprComponent { get; set; }
+		public ContractAgnosticComponent ContractAgnosticComponent { get; set; }
 
 		[ComponentPlug]
-		public SpcComponent SpcComponent { get; set; }
+		public DefaultCacheComponent DefaultCacheComponent { get; set; }
 
 		[ComponentPlug]
-		public NonSharedComponent NonSharedComponent { get; set; }
+		public UncachedComponent UncachedComponent { get; set; }
 	}
 }

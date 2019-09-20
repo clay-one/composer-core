@@ -67,10 +67,40 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        public void RegisterWithSingletonHelper()
+        {
+            _context.ForComponent<NonAttributedComponent>()
+                .AsSingleton()
+                .RegisterWith<INonAttributedContract>();
+
+            var c1 = _context.GetComponent<INonAttributedContract>();
+            var c2 = _context.GetComponent<INonAttributedContract>();
+
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsTrue(ReferenceEquals(c1, c2));
+        }
+
+        [TestMethod]
         public void RegisterWithNoCache()
         {
             _context.ForComponent<NonAttributedComponent>()
                 .UseComponentCache(null)
+                .RegisterWith<INonAttributedContract>();
+
+            var c1 = _context.GetComponent<INonAttributedContract>();
+            var c2 = _context.GetComponent<INonAttributedContract>();
+
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsFalse(ReferenceEquals(c1, c2));
+        }
+        
+        [TestMethod]
+        public void RegisterWithTransientHelper()
+        {
+            _context.ForComponent<NonAttributedComponent>()
+                .AsTransient()
                 .RegisterWith<INonAttributedContract>();
 
             var c1 = _context.GetComponent<INonAttributedContract>();

@@ -61,6 +61,76 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        public void OpenGenericWithDifferentName()
+        {
+            _context.ForGenericComponent(typeof(OpenGenericComponentWithDifferentName<>))
+                .RegisterWith(typeof(IGenericContract<>));
+
+            var c = _context.GetComponent<IGenericContract<string>>();
+
+            Assert.IsNotNull(c);
+        }
+
+        [TestMethod]
+        public void DoubleOpenGeneric()
+        {
+            _context.ForGenericComponent(typeof(DoubleOpenGenericComponent<,>))
+                .RegisterWith(typeof(IDoubleGenericContract<,>));
+
+            var c = _context.GetComponent<IDoubleGenericContract<string, int>>();
+
+            Assert.IsNotNull(c);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(CompositionException))]
+        public void DoubleOpenGenericWithSingleParameterContract()
+        {
+            _context.ForGenericComponent(typeof(DoubleOpenGenericComponent<,>))
+                .RegisterWith(typeof(IGenericContract<>));
+        }
+
+        [TestMethod]
+        public void ReverseDoubleOpenGeneric()
+        {
+            _context.ForGenericComponent(typeof(ReverseDoubleOpenGenericComponent<,>))
+                .RegisterWith(typeof(IDoubleGenericContract<,>));
+
+            var c = _context.GetComponent<IDoubleGenericContract<string, int>>();
+
+            Assert.IsNotNull(c);
+        }
+
+        [TestMethod]
+        public void ReverseDoubleOpenGenericComponentWithDifferentNames()
+        {
+            _context.ForGenericComponent(typeof(ReverseDoubleOpenGenericComponentWithDifferentNames<,>))
+                .RegisterWith(typeof(IDoubleGenericContract<,>));
+            
+            var c = _context.GetComponent<IDoubleGenericContract<string, int>>();
+
+            Assert.IsNotNull(c);
+        }
+
+        [TestMethod]
+        public void OpenGenericWithSpecificTypeParams()
+        {
+            _context.ForComponent<OpenGenericComponent<string>>()
+                .RegisterWith<IGenericContract<string>>();
+             
+            _context.ForComponent(typeof(OpenGenericComponent<int>))
+                .RegisterWith(typeof(IGenericContract<int>));
+            
+            var c1 = _context.GetComponent<IGenericContract<string>>();
+            var c2 = _context.GetComponent<IGenericContract<int>>();
+            var c3 = _context.GetComponent<IGenericContract<long>>();
+            
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsNull(c3);
+        }
+        
+        [TestMethod]
         [ExpectedException(typeof(CompositionException))]
         public void IncompatibleGenericTypeInContract()
         {
