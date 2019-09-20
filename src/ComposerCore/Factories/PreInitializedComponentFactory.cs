@@ -20,6 +20,11 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
+		public bool ValidateContractType(Type contract)
+		{
+			return contract.IsInstanceOfType(_componentInstance);
+		}
+
 		public void Initialize(IComposer composer)
 		{
 		}

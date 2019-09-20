@@ -1,6 +1,6 @@
 version: 0.0.{build}
 skip_tags: true
-image: Visual Studio 2017
+image: Visual Studio 2019
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
@@ -10,7 +10,7 @@ dotnet_csproj:
   file_version: '{version}'
   informational_version: '{version}'
 before_build:
-- cmd: nuget restore src\ComposerCore.sln
+- cmd: nuget restore composer-core.sln
 build:
   publish_nuget: true
   publish_nuget_symbols: true

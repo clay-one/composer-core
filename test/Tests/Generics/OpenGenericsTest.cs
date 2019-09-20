@@ -64,6 +64,34 @@ namespace ComposerCore.Tests.Generics
 		}
 
 		[TestMethod]
+		public void ComponentWithTwoReverseOpenGenericParams()
+		{
+			_context.Register(typeof(ReverseOpenComponentTwo<,>));
+
+			var c1 = _context.GetComponent<IGenericContractOne<string>>();
+			var c2 = _context.GetComponent<IGenericContractOne<int>>();
+			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
+
+			Assert.IsNull(c1);
+			Assert.IsNull(c2);
+			Assert.IsNotNull(c3);
+		}
+
+		[TestMethod]
+		public void ComponentWithTwoReverseOpenGenericParamsWithDifferentNames()
+		{
+			_context.Register(typeof(ReverseOpenComponentTwoWithDifferentNames<,>));
+
+			var c1 = _context.GetComponent<IGenericContractOne<string>>();
+			var c2 = _context.GetComponent<IGenericContractOne<int>>();
+			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
+
+			Assert.IsNull(c1);
+			Assert.IsNull(c2);
+			Assert.IsNotNull(c3);
+		}
+
+		[TestMethod]
 		public void ComponentWithHalfOpenGenericParams()
 		{
 			_context.Register(typeof(HalfOpenComponent<>));

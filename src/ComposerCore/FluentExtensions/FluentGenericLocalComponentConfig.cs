@@ -1,20 +1,21 @@
-﻿using System;
+using System;
 using System.Reflection;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
+using ComposerCore.Utility;
 
 namespace ComposerCore.FluentExtensions
 {
-    public class FluentLocalComponentConfig
+    public class FluentGenericLocalComponentConfig
     {
         protected readonly ComponentContext Context;
-        protected readonly LocalComponentFactory Factory;
+        protected readonly GenericLocalComponentFactory Factory;
 
         #region Constructors
 
-        public FluentLocalComponentConfig(ComponentContext context, LocalComponentFactory factory)
+        public FluentGenericLocalComponentConfig(ComponentContext context, GenericLocalComponentFactory factory)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
@@ -36,21 +37,19 @@ namespace ComposerCore.FluentExtensions
 
         public void RegisterWith(Type contractType, string contractName = null)
         {
+            if (contractType.IsOpenGenericType())
+                Factory.AddOpenGenericContract(contractType);
+            
             Context.Register(contractType, contractName, Factory);
         }
 
-        public void RegisterAsItself(string contractName = null)
-        {
-            RegisterWith(Factory.TargetType, contractName);
-        }
-
-        public FluentLocalComponentConfig SetComponent<TPlugContract>(
+        public FluentGenericLocalComponentConfig SetComponent<TPlugContract>(
             string memberName, string contractName = null, bool required = true)
         {
             return SetComponent(memberName, typeof(TPlugContract), contractName, required);
         }
 
-        public FluentLocalComponentConfig SetComponent(
+        public FluentGenericLocalComponentConfig SetComponent(
             string memberName, Type contractType, string contractName = null, bool required = true)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
@@ -59,30 +58,24 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
-        {
-            Factory.TargetConstructor = Factory.TargetType.GetConstructor(argTypes);
-            return this;
-        }
-
-        public FluentLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
+        public FluentGenericLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
         {
             return AddConstructorComponent(typeof(TPlugContract), contractName, required);
         }
 
-        public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
+        public FluentGenericLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValue(object value)
+        public FluentGenericLocalComponentConfig AddConstructorValue(object value)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentGenericLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -90,13 +83,13 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
+        public FluentGenericLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
             return this;
         }
 
-        public FluentLocalComponentConfig SetValue(string memberName, object value)
+        public FluentGenericLocalComponentConfig SetValue(string memberName, object value)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, false, 
                 new SimpleValueQuery(value)));
@@ -104,7 +97,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentGenericLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -112,7 +105,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool required = true)
+        public FluentGenericLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool required = true)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new VariableQuery(variableName)));
@@ -120,13 +113,13 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
+        public FluentGenericLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
         {
             Factory.CompositionNotificationMethods.Add(initAction);
             return this;
         }
 
-        public FluentLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
+        public FluentGenericLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
         {
             if (cacheContractType == null)
                 Factory.ComponentCacheQuery = new NullQuery();
@@ -136,17 +129,17 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
+        public FluentGenericLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
         {
             return UseComponentCache(typeof(TCacheContract), cacheContractName);
         }
 
-        public FluentLocalComponentConfig AsSingleton()
+        public FluentGenericLocalComponentConfig AsSingleton()
         {
             return UseComponentCache(typeof(ContractAgnosticComponentCache));
         }
 
-        public FluentLocalComponentConfig AsTransient()
+        public FluentGenericLocalComponentConfig AsTransient()
         {
             return UseComponentCache(null);
         }
