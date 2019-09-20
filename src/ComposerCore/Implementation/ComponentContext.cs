@@ -198,24 +198,13 @@ namespace ComposerCore.Implementation
 
 	    public ComposerConfiguration Configuration { get; }
 
-	    public virtual TContract GetComponent<TContract>()
-			where TContract : class
-		{
-			return GetComponent(typeof (TContract), null) as TContract;
-		}
-
-        public virtual TContract GetComponent<TContract>(string name)
+        public virtual TContract GetComponent<TContract>(string name = null)
 			where TContract : class
 		{
 			return GetComponent(typeof (TContract), name) as TContract;
 		}
 
-        public virtual object GetComponent(Type contract)
-		{
-			return GetComponent(contract, null);
-		}
-
-        public virtual object GetComponent(Type contract, string name)
+        public virtual object GetComponent(Type contract, string name = null)
 		{
 			if (contract.ContainsGenericParameters)
 				throw new CompositionException("Requested contract type " + contract.Name +
@@ -240,24 +229,13 @@ namespace ComposerCore.Implementation
 		    return null;
 		}
 
-        public virtual IEnumerable<TContract> GetAllComponents<TContract>()
-			where TContract : class
-		{
-			return GetAllComponents(typeof (TContract), null).Cast<TContract>();
-		}
-
-        public virtual IEnumerable<TContract> GetAllComponents<TContract>(string name)
+        public virtual IEnumerable<TContract> GetAllComponents<TContract>(string name = null)
 			where TContract : class
 		{
 			return GetAllComponents(typeof (TContract), name).Cast<TContract>();
 		}
 
-        public virtual IEnumerable<object> GetAllComponents(Type contract)
-		{
-			return GetAllComponents(contract, null);
-		}
-
-        public virtual IEnumerable<object> GetAllComponents(Type contract, string name)
+        public virtual IEnumerable<object> GetAllComponents(Type contract, string name = null)
 		{
 			var identity = new ContractIdentity(contract, name);
 			var factories = _repository.FindFactories(identity);

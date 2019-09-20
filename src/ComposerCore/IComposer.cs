@@ -17,15 +17,11 @@ namespace ComposerCore
 
 		// Component Lookup methods
 
-		TContract GetComponent<TContract>() where TContract : class;
-		TContract GetComponent<TContract>(string name) where TContract : class;
-		object GetComponent(Type contract);
-		object GetComponent(Type contract, string name);
+		TContract GetComponent<TContract>(string name = null) where TContract : class;
+		object GetComponent(Type contract, string name = null);
 
-		IEnumerable<TContract> GetAllComponents<TContract>() where TContract : class;
-		IEnumerable<TContract> GetAllComponents<TContract>(string name) where TContract : class;
-		IEnumerable<object> GetAllComponents(Type contract);
-		IEnumerable<object> GetAllComponents(Type contract, string name);
+		IEnumerable<TContract> GetAllComponents<TContract>(string name = null) where TContract : class;
+		IEnumerable<object> GetAllComponents(Type contract, string name = null);
 
 		IEnumerable<TContract> GetComponentFamily<TContract>();
 		IEnumerable<object> GetComponentFamily(Type contract);
