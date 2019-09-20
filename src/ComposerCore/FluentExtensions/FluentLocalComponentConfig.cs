@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -140,6 +141,16 @@ namespace ComposerCore.FluentExtensions
             return UseComponentCache(typeof(TCacheContract), cacheContractName);
         }
 
+        public FluentLocalComponentConfig AsSingleton()
+        {
+            return UseComponentCache(typeof(ContractAgnosticComponentCache));
+        }
+
+        public FluentLocalComponentConfig AsTransient()
+        {
+            return UseComponentCache(null);
+        }
+        
         #endregion
     }
 }

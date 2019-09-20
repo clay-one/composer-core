@@ -30,7 +30,7 @@ namespace ComposerCore.Factories
 
         public GenericLocalComponentFactory(Type targetType)
         {
-            if (!targetType.ContainsGenericParameters || !targetType.IsGenericType)
+            if (!targetType.IsOpenGenericType())
                 throw new ArgumentException("TargetType in GenericLocalComponentFactory should be an open generic type.");
 
             _targetType = targetType;
@@ -159,7 +159,7 @@ namespace ComposerCore.Factories
 
         public void AddOpenGenericContract(Type openContractType)
         {
-            if (!openContractType.ContainsGenericParameters || !openContractType.IsGenericType)
+            if (!openContractType.IsOpenGenericType())
             {
                 throw new ArgumentException($"The contract type {openContractType.FullName} is not an open generic type.");
             }
@@ -176,7 +176,7 @@ namespace ComposerCore.Factories
         private void ExtractContractTypes()
         {
             var openContracts = ComponentContextUtils.FindContracts(_targetType)
-                .Where(t => t.ContainsGenericParameters && t.IsGenericType);
+                .Where(t => t.IsOpenGenericType());
 
             foreach (var openContract in openContracts)
             {

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ComposerCore.Tests.ComponentCaching
 {
 	[TestClass]
-	public class SharedPerRegistrationTest
+	public class DefaultCacheTest
 	{
 		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
@@ -26,8 +26,8 @@ namespace ComposerCore.Tests.ComponentCaching
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.Register(typeof(SprComponent));
-			_context.Register(typeof(SprComponentWithPlugs));
+			_context.Register(typeof(DefaultCacheComponent));
+			_context.Register(typeof(DefaultCacheComponentWithPlugs));
 		}
 
 		[TestCleanup]
@@ -40,9 +40,9 @@ namespace ComposerCore.Tests.ComponentCaching
 		[TestMethod]
 		public void RegisterTwoTimesQueryBySelf()
 		{
-			_context.Register(typeof(SprComponent));
+			_context.Register(typeof(DefaultCacheComponent)); // Register for second time
 
-			var all = _context.GetAllComponents<SprComponent>();
+			var all = _context.GetAllComponents<DefaultCacheComponent>();
 			Assert.IsNotNull(all);
 			Assert.IsTrue(all.Count() == 2);
 
@@ -55,7 +55,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		[TestMethod]
 		public void RegisterTwoTimesQueryByContract()
 		{
-			_context.Register(typeof(SprComponent));
+			_context.Register(typeof(DefaultCacheComponent));
 
 			var all = _context.GetAllComponents<ISomeContract>();
 			Assert.IsNotNull(all);
@@ -72,11 +72,11 @@ namespace ComposerCore.Tests.ComponentCaching
 		{
 			var c0 = _context.GetComponent<ISomeContract>();
 			var c1 = _context.GetComponent<IAnotherContract>();
-			var c2 = _context.GetComponent<SprComponent>();
+			var c2 = _context.GetComponent<DefaultCacheComponent>();
 
-			Assert.AreSame(c0, c1);
-			Assert.AreSame(c0, c2);
-			Assert.AreSame(c1, c2);
+			Assert.AreNotSame(c0, c1);
+			Assert.AreNotSame(c0, c2);
+			Assert.AreNotSame(c1, c2);
 		}
 
 		[TestMethod]
@@ -91,8 +91,8 @@ namespace ComposerCore.Tests.ComponentCaching
 		[TestMethod]
 		public void QueryTwoTimesBySelf()
 		{
-			var c0 = _context.GetComponent<SprComponent>();
-			var c1 = _context.GetComponent<SprComponent>();
+			var c0 = _context.GetComponent<DefaultCacheComponent>();
+			var c1 = _context.GetComponent<DefaultCacheComponent>();
 
 			Assert.AreSame(c0, c1);
 		}
@@ -100,11 +100,11 @@ namespace ComposerCore.Tests.ComponentCaching
 		[TestMethod]
 		public void QueryTwoTimesIndirect()
 		{
-			_context.Register(typeof(SprComponentWithPlugs));
-			_context.Register(typeof(SpcComponent));
-			_context.Register(typeof(NonSharedComponent));
+			_context.Register(typeof(DefaultCacheComponentWithPlugs));
+			_context.Register(typeof(ContractAgnosticComponent));
+			_context.Register(typeof(UncachedComponent));
 
-			var all = _context.GetAllComponents<SprComponentWithPlugs>();
+			var all = _context.GetAllComponents<DefaultCacheComponentWithPlugs>();
 			Assert.IsNotNull(all);
 			Assert.IsTrue(all.Count() == 2);
 
@@ -112,7 +112,7 @@ namespace ComposerCore.Tests.ComponentCaching
 			var c0 = allArray[0];
 			var c1 = allArray[1];
 			Assert.AreNotSame(c0, c1);
-			Assert.AreSame(c0.SprComponent, c1.SprComponent);
+			Assert.AreSame(c0.DefaultCacheComponent, c1.DefaultCacheComponent);
 		}
 	}
 }

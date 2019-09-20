@@ -6,6 +6,7 @@ using System.Linq;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Attributes;
 using ComposerCore.Factories;
+using ComposerCore.Utility;
 
 
 namespace ComposerCore.Implementation
@@ -461,7 +462,7 @@ namespace ComposerCore.Implementation
 	    internal static ILocalComponentFactory CreateLocalFactory(Type component)
 	    {
 	        ILocalComponentFactory result;
-	        if ((component.IsGenericType) && (component.ContainsGenericParameters))
+	        if (component.IsOpenGenericType())
 	            result = new GenericLocalComponentFactory(component);
 	        else
 	            result = new LocalComponentFactory(component);

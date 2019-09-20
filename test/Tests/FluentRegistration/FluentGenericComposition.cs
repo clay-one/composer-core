@@ -61,6 +61,24 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
+        public void OpenGenericWithSpecificTypeParams()
+        {
+            _context.ForComponent<OpenGenericComponent<string>>()
+                .RegisterWith<IGenericContract<string>>();
+            
+            _context.ForComponent(typeof(OpenGenericComponent<int>))
+                .RegisterWith(typeof(IGenericContract<int>));
+            
+            var c1 = _context.GetComponent<IGenericContract<string>>();
+            var c2 = _context.GetComponent<IGenericContract<int>>();
+            var c3 = _context.GetComponent<IGenericContract<long>>();
+            
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsNull(c3);
+        }
+        
+        [TestMethod]
         [ExpectedException(typeof(CompositionException))]
         public void IncompatibleGenericTypeInContract()
         {

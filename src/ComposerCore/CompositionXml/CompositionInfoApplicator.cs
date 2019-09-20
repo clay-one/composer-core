@@ -232,7 +232,7 @@ namespace ComposerCore.CompositionXml
 			IComponentFactory componentFactory;
 			List<InitializationPointSpecification> initializationPoints;
 
-			if (componentType.IsGenericType && componentType.ContainsGenericParameters)
+			if (componentType.IsOpenGenericType())
 			{
 				var genericLocalComponentFactory = new GenericLocalComponentFactory(componentType);
 

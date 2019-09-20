@@ -21,6 +21,11 @@ namespace ComposerCore.Utility
             if (baseType == null) return false;
 
             return IsAssignableToGenericType(baseType, genericType);
-        }        
+        }
+
+        public static bool IsOpenGenericType(this Type type)
+        {
+            return type.ContainsGenericParameters && type.IsGenericType;
+        }
     }
 }
