@@ -4,8 +4,6 @@ using ComposerCore.Attributes;
 
 namespace ComposerCore
 {
-//	public delegate void CompositionCompletionNotificationDelegate();
-
 	/// <summary>
 	/// Specifies the interface using which the code can query the Composer and
 	/// ask for component instances.
@@ -17,6 +15,8 @@ namespace ComposerCore
 
 		// Component Lookup methods
 
+		bool IsResolvable<TContract>(string name = null) where TContract : class;
+		bool IsResolvable(Type contract, string name = null);
 		TContract GetComponent<TContract>(string name = null) where TContract : class;
 		object GetComponent(Type contract, string name = null);
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CollectionOfComponents.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -243,6 +244,23 @@ namespace ComposerCore.Tests.CollectionOfComponents
 
 			Assert.IsNotNull(cs);
 			Assert.AreEqual(0, cs.Count());
+		}
+		
+		[TestMethod]
+		public void RuntimeTypeIsCastToContract()
+		{
+			_context.Register(typeof(SampleComponentOne));
+			_context.Register(typeof(SampleComponentOne));
+			_context.Register(typeof(SampleComponentOne));
+			_context.Register(typeof(SampleComponentTwo));
+			_context.Register(typeof(SampleComponentTwo));
+
+			var cs = _context.GetAllComponents(typeof(ISampleContract)) as IEnumerable<ISampleContract>;
+			Assert.IsNotNull(cs);
+			Assert.AreEqual(5, cs.Count());
+
+			Assert.AreEqual(3, cs.Count(o => o is SampleComponentOne));
+			Assert.AreEqual(2, cs.Count(o => o is SampleComponentTwo));
 		}
 	}
 }

@@ -5,6 +5,7 @@ using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
+using ComposerCore.Utility;
 
 
 namespace ComposerCore.Implementation
@@ -198,7 +199,22 @@ namespace ComposerCore.Implementation
 
 	    public ComposerConfiguration Configuration { get; }
 
-        public virtual TContract GetComponent<TContract>(string name = null)
+	    public bool IsResolvable<TContract>(string name = null) where TContract : class
+	    {
+		    return IsResolvable(typeof(TContract), name);
+	    }
+
+	    public bool IsResolvable(Type contract, string name = null)
+	    {
+		    if (contract.ContainsGenericParameters)
+			    throw new CompositionException("Requested contract type " + contract.Name +
+			                                   " contains open generic parameters. Can not construct a concrete type.");
+
+		    var identity = new ContractIdentity(contract, name);
+		    return _repository.FindFactories(identity)?.Any() ?? false;
+	    }
+
+	    public virtual TContract GetComponent<TContract>(string name = null)
 			where TContract : class
 		{
 			return GetComponent(typeof (TContract), name) as TContract;
@@ -242,7 +258,8 @@ namespace ComposerCore.Implementation
 
 			return factories
 				.Select(f => f.GetComponentInstance(identity, _compositionListeners.Values))
-				.Where(result => result != null);
+				.Where(result => result != null)
+				.CastToRuntimeType(contract);
 		}
 
         public virtual IEnumerable<TContract> GetComponentFamily<TContract>()
@@ -255,8 +272,9 @@ namespace ComposerCore.Implementation
 			var identities = _repository.GetContractIdentityFamily(contract);
 
 			return identities.SelectMany(identity => _repository.FindFactories(identity),
-			                             (identity, factory) =>
-			                             factory.GetComponentInstance(identity, _compositionListeners.Values));
+				(identity, factory) =>
+					factory.GetComponentInstance(identity, _compositionListeners.Values))
+			.CastToRuntimeType(contract);
 		}
 
         public virtual object GetVariable(string name)

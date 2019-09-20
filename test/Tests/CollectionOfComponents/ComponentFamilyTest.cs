@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CollectionOfComponents.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable PossibleMultipleEnumeration
 
 namespace ComposerCore.Tests.CollectionOfComponents
 {
@@ -234,6 +236,25 @@ namespace ComposerCore.Tests.CollectionOfComponents
 
 			Assert.IsNotNull(cs);
 			Assert.AreEqual(0, cs.Count());
+		}
+		
+		[TestMethod]
+		public void RuntimeTypeIsCastToContract()
+		{
+			_context.Register(typeof(SampleComponentOne));
+			_context.Register(typeof(SampleComponentTwo));
+			_context.Register("name", typeof(SampleComponentOne));
+			_context.Register("name", typeof(SampleComponentOne));
+			_context.Register("name", typeof(SampleComponentOne));
+			_context.Register("name", typeof(SampleComponentTwo));
+			_context.Register("name", typeof(SampleComponentTwo));
+
+			var cs = _context.GetComponentFamily(typeof(ISampleContract)) as IEnumerable<ISampleContract>;
+			Assert.IsNotNull(cs);
+			Assert.AreEqual(7, cs.Count());
+
+			Assert.AreEqual(4, cs.Count(o => o is SampleComponentOne));
+			Assert.AreEqual(3, cs.Count(o => o is SampleComponentTwo));
 		}
 	}
 }

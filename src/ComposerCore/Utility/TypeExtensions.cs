@@ -18,10 +18,8 @@ namespace ComposerCore.Utility
             if (givenType.IsGenericType && givenType.GetGenericTypeDefinition() == genericType)
                 return true;
 
-            Type baseType = givenType.BaseType;
-            if (baseType == null) return false;
-
-            return IsAssignableToGenericType(baseType, genericType);
+            var baseType = givenType.BaseType;
+            return baseType != null && IsAssignableToGenericType(baseType, genericType);
         }
 
         public static bool IsOpenGenericType(this Type type)
@@ -39,6 +37,21 @@ namespace ComposerCore.Utility
                 yield return type;
                 type = type.BaseType;
             }
+        }
+        
+        public static Type GetEnumerableTypeArgument(this Type type)
+        {
+            if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                return type.GetGenericArguments()[0];
+            
+            foreach (Type interfaceType in type.GetInterfaces()) 
+            {
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) 
+                {
+                    return interfaceType.GetGenericArguments()[0];
+                }
+            }
+            return null;
         }
     }
 }
