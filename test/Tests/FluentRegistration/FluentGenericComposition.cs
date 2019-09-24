@@ -1,4 +1,5 @@
-﻿using ComposerCore.Cache;
+﻿using ComposerCore.Attributes;
+using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
@@ -183,6 +184,25 @@ namespace ComposerCore.Tests.FluentRegistration
             Assert.IsNotNull(c1);
             Assert.IsNotNull(c2);
             Assert.IsFalse(ReferenceEquals(c1, c2));
+        }
+
+        [TestMethod]
+        public void RegisterWithConstructorResolutionPolicy()
+        {
+            _context.Register(typeof(ComponentOne));
+            _context
+                .ForGenericComponent(typeof(GenericComponentWithManyConstructors<>))
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)
+                .RegisterWith(typeof(IGenericContract<>));
+
+            var i = _context.GetComponent<IGenericContract<string>>();
+            var c = i as GenericComponentWithManyConstructors<string>;
+
+            Assert.IsNotNull(i);
+            Assert.IsNotNull(c);
+            Assert.IsNotNull(c.One);
+            Assert.IsNull(c.Two);
+            Assert.AreSame(GenericComponentWithManyConstructors<string>.ContractAConstructor, c.InvokedConstructor);
         }
     }
 }

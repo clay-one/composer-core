@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -171,6 +172,12 @@ namespace ComposerCore.FluentExtensions
         public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)
         {
             base.UseComponentCache<TCacheContract>(cacheContractName);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
+        {
+            base.SetConstructorResolutionPolicy(policy);
             return this;
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
@@ -143,7 +144,15 @@ namespace ComposerCore.FluentExtensions
         {
             return UseComponentCache(null);
         }
-        
+
+        public FluentGenericLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
+        {
+//            Factory.ConstructorResolutionPolicy = policy;
+//            return this;
+
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

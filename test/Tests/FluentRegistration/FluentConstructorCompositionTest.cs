@@ -1,4 +1,6 @@
-﻿using ComposerCore.FluentExtensions;
+﻿using System.Linq;
+using ComposerCore.Attributes;
+using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -167,15 +169,49 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
-        public void ConstructorResolutionPolicy()
+        public void SetConstructorResolutionPolicy()
         {
-            Assert.Fail();
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)
+                .RegisterWith<INonAttributedContract>();
+            
+            var i = _context.GetComponent<INonAttributedContract>();
+            var c = i as NonAttributedComponent;
+
+            Assert.IsNotNull(i);
+            Assert.IsNotNull(c);
+            Assert.IsNotNull(c.ComponentOne);
+            Assert.IsNull(c.ComponentTwo);
+            Assert.IsNull(c.SomeValue);
+            Assert.AreEqual(default, c.SomeOtherValue);
         }
 
         [TestMethod]
-        public void ConstructorResolutionWithGetAllComponents()
+        public void SetConstructorResolutionWithGetAllComponents()
         {
-            Assert.Fail();
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)
+                .RegisterWith<INonAttributedContract>();
+            
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)
+                .RegisterWith<INonAttributedContract>();
+
+            var ii = _context.GetAllComponents<INonAttributedContract>().ToList();
+            
+            Assert.IsNotNull(ii);
+            Assert.IsTrue(ii.All(i => i is NonAttributedComponent));
+
+            var cc = ii.Cast<NonAttributedComponent>().ToList();
+            
+            Assert.IsNotNull(cc);
+            Assert.IsTrue(cc.All(c => c != null));
+            Assert.IsTrue(cc.All(c => c.ComponentTwo == default));
+            Assert.IsTrue(cc.All(c => c.SomeValue == default));
+            Assert.IsTrue(cc.All(c => c.SomeOtherValue == default));
+            
+            Assert.IsTrue(cc.Any(c => c.ComponentOne == default));
+            Assert.IsTrue(cc.Any(c => c.ComponentOne != default));
         }
     }
 }

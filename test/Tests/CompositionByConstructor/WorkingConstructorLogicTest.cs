@@ -7,7 +7,6 @@ namespace ComposerCore.Tests.CompositionByConstructor
 	[TestClass]
 	public class WorkingConstructorLogicTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes

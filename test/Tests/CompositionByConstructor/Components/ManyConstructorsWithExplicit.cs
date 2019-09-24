@@ -36,25 +36,25 @@ namespace ComposerCore.Tests.CompositionByConstructor.Components
             InvokedConstructor = IntegerConstructor;
         }
         
-        public ManyConstructorsWithExplicit(string s)
+        public ManyConstructorsWithExplicit(string s) : this()
         {
             String = s;
             InvokedConstructor = StringConstructor;
         }
         
-        public ManyConstructorsWithExplicit(ISampleContractA a)
+        public ManyConstructorsWithExplicit(ISampleContractA a) : this()
         {
             ContractA = a;
             InvokedConstructor = ContractAConstructor;
         }
         
-        public ManyConstructorsWithExplicit(ISampleContractB b)
+        public ManyConstructorsWithExplicit(ISampleContractB b) : this()
         {
             ContractB = b;
             InvokedConstructor = ContractBConstructor;
         }
         
-        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b)
+        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b) : this()
         {
             ContractA = a;
             ContractB = b;
@@ -62,7 +62,7 @@ namespace ComposerCore.Tests.CompositionByConstructor.Components
         }
         
         [CompositionConstructor]
-        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b, int i)
+        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b, int i) : this()
         {
             ContractA = a;
             ContractB = b;
@@ -70,7 +70,7 @@ namespace ComposerCore.Tests.CompositionByConstructor.Components
             InvokedConstructor = ContractAAndBAndIntegerConstructor;
         }
         
-        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b, int i, string s)
+        public ManyConstructorsWithExplicit(ISampleContractA a, ISampleContractB b, int i, string s) : this()
         {
             ContractA = a;
             ContractB = b;

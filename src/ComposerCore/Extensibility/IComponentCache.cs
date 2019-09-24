@@ -1,5 +1,8 @@
-﻿namespace ComposerCore.Extensibility
+﻿using ComposerCore.Attributes;
+
+namespace ComposerCore.Extensibility
 {
+	[Contract]
 	public interface IComponentCache
 	{
 		ComponentCacheEntry GetFromCache(ContractIdentity contract);

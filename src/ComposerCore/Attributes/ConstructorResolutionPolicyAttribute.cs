@@ -3,9 +3,9 @@ using System;
 namespace ComposerCore.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public class ConstructorResolutionPolicyAttribyte : Attribute
+    public class ConstructorResolutionPolicyAttribute : Attribute
     {
-        public ConstructorResolutionPolicyAttribyte(ConstructorResolutionPolicy policy)
+        public ConstructorResolutionPolicyAttribute(ConstructorResolutionPolicy policy)
         {
             this.ConstructorResolutionPolicy = policy;
         }

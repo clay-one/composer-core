@@ -1,9 +1,6 @@
-using ComposerCore.Attributes;
-
-namespace ComposerCore.Tests.CompositionByConstructor.Components
+namespace ComposerCore.Tests.FluentRegistration.Components
 {
-    [Contract, Component, Transient]
-    public class ManyConstructors
+    public class GenericComponentWithManyConstructors<T> : IGenericContract<T>, IAnotherGenericContract<T>
     {
         public const string DefaultConstructor = nameof(DefaultConstructor);
         public const string IntegerConstructor = nameof(IntegerConstructor);
@@ -19,10 +16,10 @@ namespace ComposerCore.Tests.CompositionByConstructor.Components
         
         public int Integer { get; }
         public string String { get; }
-        public ISampleContractA ContractA { get; }
-        public ISampleContractB ContractB { get; }
+        public IComponentOne One { get; }
+        public IComponentTwo Two { get; }
         
-        public ManyConstructors()
+        public GenericComponentWithManyConstructors()
         {
             Integer = 1;
             String = string.Empty;
@@ -30,49 +27,49 @@ namespace ComposerCore.Tests.CompositionByConstructor.Components
             InvokedConstructor = DefaultConstructor;
         }
         
-        public ManyConstructors(int i) : this()
+        public GenericComponentWithManyConstructors(int i) : this()
         {
             Integer = i;
             InvokedConstructor = IntegerConstructor;
         }
         
-        public ManyConstructors(string s) : this()
+        public GenericComponentWithManyConstructors(string s) : this()
         {
             String = s;
             InvokedConstructor = StringConstructor;
         }
         
-        public ManyConstructors(ISampleContractA a) : this()
+        public GenericComponentWithManyConstructors(IComponentOne one) : this()
         {
-            ContractA = a;
+            One = one;
             InvokedConstructor = ContractAConstructor;
         }
         
-        public ManyConstructors(ISampleContractB b) : this()
+        public GenericComponentWithManyConstructors(IComponentTwo two) : this()
         {
-            ContractB = b;
+            Two = two;
             InvokedConstructor = ContractBConstructor;
         }
         
-        public ManyConstructors(ISampleContractA a, ISampleContractB b) : this()
+        public GenericComponentWithManyConstructors(IComponentOne one, IComponentTwo two) : this()
         {
-            ContractA = a;
-            ContractB = b;
+            One = one;
+            Two = two;
             InvokedConstructor = ContractAAndBConstructor;
         }
         
-        public ManyConstructors(ISampleContractA a, ISampleContractB b, int i) : this()
+        public GenericComponentWithManyConstructors(IComponentOne one, IComponentTwo two, int i) : this()
         {
-            ContractA = a;
-            ContractB = b;
+            One = one;
+            Two = two;
             Integer = i;
             InvokedConstructor = ContractAAndBAndIntegerConstructor;
         }
         
-        public ManyConstructors(ISampleContractA a, ISampleContractB b, int i, string s) : this()
+        public GenericComponentWithManyConstructors(IComponentOne one, IComponentTwo two, int i, string s) : this()
         {
-            ContractA = a;
-            ContractB = b;
+            One = one;
+            Two = two;
             Integer = i;
             String = s;
             InvokedConstructor = ContractAAndBAndIntegerAndStringConstructor;
