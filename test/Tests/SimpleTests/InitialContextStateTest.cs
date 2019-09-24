@@ -1,4 +1,5 @@
-﻿using ComposerCore.Implementation;
+﻿using ComposerCore.Attributes;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.SimpleTests
@@ -69,5 +70,25 @@ namespace ComposerCore.Tests.SimpleTests
 			Assert.AreSame(c2, c3);
 		}
 
+		[TestMethod]
+		public void DefaultAttributeCheckingConfig()
+		{
+			Assert.IsFalse(_context.Configuration.DisableAttributeChecking);
+		}
+
+		[TestMethod]
+		public void DefaultRequiredOrOptionalConfig()
+		{
+			Assert.IsTrue(_context.Configuration.ConstructorArgumentRequiredByDefault);
+			Assert.IsTrue(_context.Configuration.ComponentPlugRequiredByDefault);
+			Assert.IsTrue(_context.Configuration.ConfigurationPointRequiredByDefault);
+		}
+
+		[TestMethod]
+		public void DefaultConstructorResolutionConfig()
+		{
+			Assert.AreEqual(ConstructorResolutionPolicy.SingleOrDefault, 
+				_context.Configuration.DefaultConstructorResolutionPolicy);
+		}
 	}
 }

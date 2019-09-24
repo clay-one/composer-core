@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ComposerCore.Tests.FluentRegistration
 {
     [TestClass]
-    public class FluentSetConstructorArgsTest
+    public class FluentConstructorCompositionTest
     {
         public TestContext TestContext { get; set; }
         private ComponentContext _context;
@@ -166,6 +166,16 @@ namespace ComposerCore.Tests.FluentRegistration
             Assert.AreEqual(5, c.SomeOtherValue);
         }
 
+        [TestMethod]
+        public void ConstructorResolutionPolicy()
+        {
+            Assert.Fail();
+        }
 
+        [TestMethod]
+        public void ConstructorResolutionWithGetAllComponents()
+        {
+            Assert.Fail();
+        }
     }
 }

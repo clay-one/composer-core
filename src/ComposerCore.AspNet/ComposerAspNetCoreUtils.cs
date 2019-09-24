@@ -42,30 +42,30 @@ namespace ComposerCore.AspNet
                 {
                     if (service.ImplementationType.IsOpenGenericType())
                     {
-//                        var constructors = service.ImplementationType.GetConstructors();
-//                        Type[] constructorParamTypes = null;
+                        var constructors = service.ImplementationType.GetConstructors();
+                        Type[] constructorParamTypes = null;
                     
-//                        foreach (var constructor in constructors)
-//                        {
-//                            if (constructorParamTypes == null || 
-//                                constructor.GetParameters().Length < constructorParamTypes.Length)
-//                            {
-//                                constructorParamTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
-//                            }
-//                        }
+                        foreach (var constructor in constructors)
+                        {
+                            if (constructorParamTypes == null || 
+                                constructor.GetParameters().Length < constructorParamTypes.Length)
+                            {
+                                constructorParamTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
+                            }
+                        }
                     
                         var config = composer
                             .ForGenericComponent(service.ImplementationType)
                             .UseComponentCache(MapComponentCacheType(service.Lifetime));
 
-//                        foreach (var constructorParamType in constructorParamTypes ?? Enumerable.Empty<Type>())
-//                        {
+                        foreach (var constructorParamType in constructorParamTypes ?? Enumerable.Empty<Type>())
+                        {
 //                            var enumerableTypeArg = constructorParamType.GetEnumerableTypeArgument();
 //                            if (enumerableTypeArg != null)
 //                                config.AddConstructorValue(c => c.GetAllComponents(enumerableTypeArg), false);
 //                            else
-//                                config.AddConstructorComponent(constructorParamType, required: false);
-//                        }
+                                config.AddConstructorComponent(constructorParamType, required: false);
+                        }
                         
                         config.RegisterWith(service.ServiceType);
                     }

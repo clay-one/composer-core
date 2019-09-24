@@ -115,6 +115,5 @@ namespace ComposerCore.Tests.CompositionByConstructor
 			Assert.AreNotSame(c.DefaultA, c.NamedA);
 			Assert.AreSame(c.DefaultB, c.UnnamedB);
 		}
-
 	}
 }
