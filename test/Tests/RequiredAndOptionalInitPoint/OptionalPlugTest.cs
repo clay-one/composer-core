@@ -8,7 +8,6 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 	[TestClass]
 	public class OptionalPlugTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes

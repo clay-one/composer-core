@@ -2,8 +2,7 @@
 
 namespace ComposerCore.Tests.RequiredAndOptionalInitPoint.Components
 {
-	[Contract]
-	[Component]
+	[Contract, Component, Transient]
 	public class ComponentWithRequiredNamedPlug
 	{
 		[ComponentPlug("contractName", true)]

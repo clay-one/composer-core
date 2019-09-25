@@ -164,7 +164,7 @@ public static class ComponentContextUtils
 				initializationPoints.Add(
 					new InitializationPointSpecification(memberInfo.Name,
 					                                     memberInfo.MemberType,
-					                                     GetComponentPlugAttribute(memberInfo).Required,
+					                                     GetComponentPlugAttribute(memberInfo).Required.GetValueOrDefault(true),
 					                                     new ComponentQuery(contractType,
 					                                                        GetComponentPlugAttribute(memberInfo).Name)));
 			}
@@ -219,7 +219,7 @@ public static class ComponentContextUtils
 					// If the variable name is not provided and the configuration point
 					// is required, throw.
 
-					if (configurationPointAttribute.Required)
+					if (configurationPointAttribute.Required.GetValueOrDefault(true))
 						throw new CompositionException(
 							"Configuration points marked as required should either have a variable name set, or be initialized in the component configuration by caller.");
 
@@ -235,7 +235,7 @@ public static class ComponentContextUtils
 					initializationPoints.Add(
 						new InitializationPointSpecification(memberInfo.Name,
 						                                     memberInfo.MemberType,
-						                                     configurationPointAttribute.Required,
+						                                     configurationPointAttribute.Required.GetValueOrDefault(true),
 						                                     new VariableQuery(configurationPointAttribute.ConfigurationVariableName)));
 				}
 			}

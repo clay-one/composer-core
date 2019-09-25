@@ -11,7 +11,7 @@ namespace ComposerCore.Attributes
 	public class ConfigurationPointAttribute : Attribute
 	{
 		public ConfigurationPointAttribute()
-			: this(null, false)
+			: this(null)
 		{
 		}
 
@@ -20,7 +20,13 @@ namespace ComposerCore.Attributes
 		{
 		}
 
-		public ConfigurationPointAttribute(string configurationVariableName, bool required = true)
+		public ConfigurationPointAttribute(string configurationVariableName)
+		{
+			ConfigurationVariableName = configurationVariableName;
+			Required = null;
+		}
+
+		public ConfigurationPointAttribute(string configurationVariableName, bool required)
 		{
 			ConfigurationVariableName = configurationVariableName;
 			Required = required;
@@ -28,6 +34,6 @@ namespace ComposerCore.Attributes
 
 		public string ConfigurationVariableName { get; }
 
-		public bool Required { get; }
+		public bool? Required { get; }
 	}
 }

@@ -127,10 +127,9 @@ namespace ComposerCore.Tests.FluentRegistration
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CompositionException))]
         public void RegisterWithInvalidContract()
         {
-            _context.ForComponent<ComponentOne>().RegisterWith<IComponentTwo>();
+            Expect.ToThrow<CompositionException>(() => _context.ForComponent<ComponentOne>().RegisterWith<IComponentTwo>());
         }
     }
 }

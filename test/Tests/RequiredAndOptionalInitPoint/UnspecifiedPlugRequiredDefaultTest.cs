@@ -1,13 +1,13 @@
-﻿using ComposerCore.Implementation;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.RequiredAndOptionalInitPoint.Components;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 {
-	[TestClass]
-	public class RequiredPlugTest
-	{
+    [TestClass]
+    public class UnspecifiedPlugRequiredDefaultTest
+    {
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -26,6 +26,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
+			_context.Configuration.ComponentPlugRequiredByDefault = true;
 		}
 
 		[TestCleanup]
@@ -38,73 +39,68 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		[TestMethod]
 		public void ReqPlugProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedPlug));
 			_context.Register(typeof(PluggedComponent));
 
-			var c = _context.GetComponent<ComponentWithRequiredPlug>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedPlug>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.PluggedContract);
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqPlugProvidedWithDifferentName()
 		{
-			_context.Register(typeof(ComponentWithRequiredPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedPlug));
 			_context.Register("someOtherName", typeof(PluggedComponent));
 
-			_context.GetComponent<ComponentWithRequiredPlug>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedPlug>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqPlugNotProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedPlug));
 
-			_context.GetComponent<ComponentWithRequiredPlug>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedPlug>());
 		}
 
 		[TestMethod]
 		public void ReqNamedPlugProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedPlug));
 			_context.Register("contractName", typeof(PluggedComponent));
 
-			var c = _context.GetComponent<ComponentWithRequiredNamedPlug>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedNamedPlug>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.PluggedContract);
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqNamedPlugProvidedWithDifferentName()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedPlug));
 			_context.Register("someOtherName", typeof(PluggedComponent));
 
-			_context.GetComponent<ComponentWithRequiredNamedPlug>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedNamedPlug>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqNamedPlugProvidedWithoutName()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedPlug));
 			_context.Register(typeof(PluggedComponent));
 
-			_context.GetComponent<ComponentWithRequiredNamedPlug>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedNamedPlug>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqNamedPlugNotProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedPlug));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedPlug));
 
-			_context.GetComponent<ComponentWithRequiredNamedPlug>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedNamedPlug>());
 		}
 
 		[TestMethod]
@@ -112,12 +108,12 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		{
 			_context.Register("someOtherName", typeof(PluggedComponent));
 			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
-				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.ReqNamedPlugRedirected.xml");
+				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.UnsNamedPlugRedirected.xml");
 
-			var c = _context.GetComponent<ComponentWithRequiredNamedPlug>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedNamedPlug>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.PluggedContract);
 		}
-	}
+    }
 }

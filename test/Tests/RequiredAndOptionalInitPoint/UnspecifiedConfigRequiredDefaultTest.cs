@@ -1,4 +1,4 @@
-﻿using ComposerCore.Implementation;
+using ComposerCore.Implementation;
 using ComposerCore.Tests.RequiredAndOptionalInitPoint.Components;
 using ComposerCore.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,9 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 {
 	[TestClass]
-	public class RequiredConfigTest
-	{
-		private ComponentContext _context;
+    public class UnspecifiedConfigRequiredDefaultTest
+    {
+	    private ComponentContext _context;
 
 		#region Additional test attributes
 
@@ -26,6 +26,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
+			_context.Configuration.ConfigurationPointRequiredByDefault = true;
 		}
 
 		[TestCleanup]
@@ -39,9 +40,9 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void ReqConfigProvided()
 		{
 			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
-				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.ReqConfigProvided.xml");
+				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.UnsConfigProvided.xml");
 
-			var c = _context.GetComponent<ComponentWithRequiredConfig>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedConfig>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.SomeConfig);
@@ -49,19 +50,20 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqConfigNotProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredConfig));
+			_context.Register(typeof(ComponentWithUnspecifiedConfig));
+
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedConfig>());
 		}
 
 		[TestMethod]
 		public void ReqNamedConfigProvidedByVar()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedConfig));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedConfig));
 			_context.SetVariableValue("someVariable", "SomeConfigValue");
 
-			var c = _context.GetComponent<ComponentWithRequiredNamedConfig>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedNamedConfig>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.SomeConfig);
@@ -72,9 +74,9 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void ReqNamedConfigProvidedByReg()
 		{
 			_context.ProcessCompositionXmlFromResource(typeof(AssemblyPointer).Assembly,
-				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.ReqNamedConfigProvidedByReg.xml");
+				"ComposerCore.Tests.RequiredAndOptionalInitPoint.Xmls.UnsNamedConfigProvidedByReg.xml");
 
-			var c = _context.GetComponent<ComponentWithRequiredNamedConfig>();
+			var c = _context.GetComponent<ComponentWithUnspecifiedNamedConfig>();
 
 			Assert.IsNotNull(c);
 			Assert.IsNotNull(c.SomeConfig);
@@ -82,12 +84,11 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqNamedConfigNotProvided()
 		{
-			_context.Register(typeof(ComponentWithRequiredNamedConfig));
+			_context.Register(typeof(ComponentWithUnspecifiedNamedConfig));
 
-			_context.GetComponent<ComponentWithRequiredNamedConfig>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedNamedConfig>());
 		}
-	}
+    }
 }

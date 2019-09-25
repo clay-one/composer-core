@@ -1,4 +1,3 @@
-using System;
 using ComposerCore.Attributes;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionByConstructor.Components;
@@ -43,17 +42,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Register(typeof(SampleComponentA));
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
 
-            try
-            {
-                _context.GetComponent<ISampleContractA>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there is no marked constructors.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
         }
 
         [TestMethod]
@@ -64,18 +53,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Register(typeof(SingleNonDefaultConstructor));
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
 
-
-            try
-            {
-                _context.GetComponent<SingleNonDefaultConstructor>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there is no marked constructors.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<SingleNonDefaultConstructor>());
         }
 
         [TestMethod]
@@ -158,17 +136,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
 
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.SingleOrDefault;
 
-            try
-            {
-                _context.GetComponent<NoDefaultMultipleUnmarkedConstructors>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there are multiple constructors with no default.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<NoDefaultMultipleUnmarkedConstructors>());
         }
 
         [TestMethod]
@@ -200,17 +168,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostParameters;
             _context.Configuration.ConstructorArgumentRequiredByDefault = false;
 
-            try
-            {
-                _context.GetComponent<MultipleLeastAndMostParams>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there are multiple constructors matched with policy.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultipleLeastAndMostParams>());
         }
 
         [TestMethod]
@@ -257,17 +215,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.LeastParameters;
             _context.Configuration.ConstructorArgumentRequiredByDefault = false;
 
-            try
-            {
-                _context.GetComponent<MultipleLeastAndMostParams>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there are multiple constructors matched with policy.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultipleLeastAndMostParams>());
         }
 
         [TestMethod]
@@ -315,17 +263,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
             _context.Configuration.ConstructorArgumentRequiredByDefault = true;
 
-            try
-            {
-                _context.GetComponent<NoDefaultMultipleUnmarkedConstructors>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there are no constructors matched with policy.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<NoDefaultMultipleUnmarkedConstructors>());
         }
 
         [TestMethod]
@@ -335,17 +273,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
             _context.Configuration.ConstructorArgumentRequiredByDefault = false;
 
-            try
-            {
-                _context.GetComponent<MultipleLeastAndMostParams>();
-            }
-            catch (CompositionException)
-            {
-                // Test is passed: expected exception is thrown.
-                return;
-            }
-            
-            Assert.Fail("Expected CompositionException when there are multiple constructors matched with policy.");
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultipleLeastAndMostParams>());
         }
 
         [TestMethod]
@@ -379,7 +307,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
         }
 
         [TestMethod]
-        public void ConstructorResolutionPolicyIsInherited()
+        public void ConstructorResolutionPolicyAttributeIsInherited()
         {
             _context.Register(typeof(SampleComponentA));
             _context.Register(typeof(ComponentWithInheritedPolicyMetadata));
@@ -390,6 +318,61 @@ namespace ComposerCore.Tests.CompositionByConstructor
             Assert.AreEqual(2, c.InvokedConstructor);
             Assert.IsNotNull(c.A);
             Assert.IsNull(c.B);
+        }
+        
+        [TestMethod]
+        public void DefaultResolutionPolicyIsEnforcedAtResolutionTime()
+        {
+            _context.Register(typeof(SampleComponentA));
+            
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
+
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.SingleOrDefault;
+            Assert.IsNotNull(_context.GetComponent<ISampleContractA>());
+
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
+        }
+
+        [TestMethod]
+        public void DefaultRequiredConfigIsEnforcedAtResolutionTime()
+        {
+            _context.Register(typeof(SampleComponentA));
+            _context.Register(typeof(SampleComponentB));
+            _context.Register(typeof(ManyConstructors));
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
+            
+            
+            _context.Configuration.ConstructorArgumentRequiredByDefault = true;
+            var c1 = _context.GetComponent<ManyConstructors>();
+            
+            Assert.IsNotNull(c1);
+            Assert.AreEqual(ManyConstructors.ContractAAndBConstructor, c1.InvokedConstructor);
+            Assert.IsNotNull(c1.ContractA);
+            Assert.IsNotNull(c1.ContractB);
+            Assert.AreNotEqual(default, c1.Integer);
+            Assert.AreNotEqual(default, c1.String);
+
+            _context.Configuration.ConstructorArgumentRequiredByDefault = false;
+            var c2 = _context.GetComponent<ManyConstructors>();
+            
+            Assert.IsNotNull(c2);
+            Assert.AreEqual(ManyConstructors.ContractAAndBAndIntegerAndStringConstructor, c2.InvokedConstructor);
+            Assert.IsNotNull(c2.ContractA);
+            Assert.IsNotNull(c2.ContractB);
+            Assert.AreEqual(default, c2.Integer);
+            Assert.AreEqual(default, c2.String);
+
+            _context.Configuration.ConstructorArgumentRequiredByDefault = true;
+            var c3 = _context.GetComponent<ManyConstructors>();
+            
+            Assert.IsNotNull(c3);
+            Assert.AreEqual(ManyConstructors.ContractAAndBConstructor, c3.InvokedConstructor);
+            Assert.IsNotNull(c3.ContractA);
+            Assert.IsNotNull(c3.ContractB);
+            Assert.AreNotEqual(default, c3.Integer);
+            Assert.AreNotEqual(default, c3.String);
         }
     }
 }

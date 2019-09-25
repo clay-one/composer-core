@@ -19,7 +19,13 @@ namespace ComposerCore.Attributes
 		{
 		}
 
-		public ComponentPlugAttribute(string name, bool required = true)
+		public ComponentPlugAttribute(string name)
+		{
+			Name = name;
+			Required = null;
+		}
+		
+		public ComponentPlugAttribute(string name, bool required)
 		{
 			Name = name;
 			Required = required;
@@ -27,6 +33,6 @@ namespace ComposerCore.Attributes
 
 		public string Name { get; }
 
-		public bool Required { get; }
+		public bool? Required { get; }
 	}
 }

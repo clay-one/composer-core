@@ -7,7 +7,7 @@ namespace ComposerCore.Attributes
 	/// other components based on provided contracts, and ask for functionality from
 	/// other components by having "Plugs", based on required contracts.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 	public sealed class ComponentAttribute : Attribute
 	{
 		public ComponentAttribute()
