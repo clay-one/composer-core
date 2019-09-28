@@ -69,9 +69,8 @@ namespace ComposerCore.Factories
 				// degrades performance. So, create without locking.
 
 				var newComponent = CreateComponent(contract, listenerChain);
-				return NotifyRetrieved(newComponent.ComponentInstance,
-				                       newComponent.OriginalComponentInstance,
-				                       contract, listenerChain);
+				listenerChain.NotifyRetrieved(
+					newComponent.ComponentInstance, newComponent.OriginalComponentInstance, contract, this);
 			}
 
 			// Check if the component is cached, and ready to deliver
@@ -79,9 +78,8 @@ namespace ComposerCore.Factories
 			var componentCacheEntry = _componentCache.GetFromCache(contract);
 			if (componentCacheEntry != null)
 			{
-				return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-				                       componentCacheEntry.OriginalComponentInstance,
-				                       contract, listenerChain);
+				return listenerChain.NotifyRetrieved(
+					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
 			}
 
 			// If the component is cached, then lock the component instance
@@ -95,15 +93,13 @@ namespace ComposerCore.Factories
 				componentCacheEntry = _componentCache.GetFromCache(contract);
 				if (componentCacheEntry != null)
 				{
-					return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-					                       componentCacheEntry.OriginalComponentInstance,
-					                       contract, listenerChain);
+					return listenerChain.NotifyRetrieved(
+						componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
 				}
 
 				componentCacheEntry = CreateComponent(contract, listenerChain);
-				return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-				                       componentCacheEntry.OriginalComponentInstance,
-				                       contract, listenerChain);
+				return listenerChain.NotifyRetrieved(
+					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
 			}
 		}
 
@@ -299,7 +295,7 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			object componentInstance = NotifyCreated(originalComponentInstance, contract, listenerChain);
+			object componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this);
 
 			// Store the cache, so that if there is a circular dependency,
 			// applying initialization points is not blocked and chained
@@ -323,7 +319,8 @@ namespace ComposerCore.Factories
 			// Inform all composition listeners of the newly composed
 			// component instance by calling OnComponentComposed method.
 
-			NotifyComposed(componentInstance, originalComponentInstance, initializationPointResults, contract, listenerChain);
+			listenerChain.NotifyComposed(
+				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, this);
 
 			// The composition is now finished for the component instance.
 			// See if an [OnCompositionComplete] method is specified, call it.
@@ -356,46 +353,6 @@ namespace ComposerCore.Factories
 				constructorArguments.Add(argumentValue);
 			}
 			return constructorArguments;
-		}
-
-		private object NotifyCreated(object originalComponentInstance, ContractIdentity contract,
-		                             IEnumerable<ICompositionListener> listenerChain)
-		{
-			var componentInstance = originalComponentInstance;
-
-			foreach (var compositionListener in listenerChain)
-			{
-				compositionListener.OnComponentCreated(contract, this, TargetType, ref componentInstance, originalComponentInstance);
-			}
-
-			return componentInstance;
-		}
-
-		private void NotifyComposed(object componentInstance, object originalComponentInstance,
-		                            List<object> initializationPointResults, ContractIdentity contract,
-		                            IEnumerable<ICompositionListener> listenerChain)
-		{
-			foreach (var compositionListener in listenerChain)
-			{
-				compositionListener.OnComponentComposed(contract, _initializationPoints, initializationPointResults, TargetType,
-				                                        componentInstance, originalComponentInstance);
-			}
-		}
-
-		private object NotifyRetrieved(object componentInstance, object originalComponentInstance, ContractIdentity contract,
-		                               IEnumerable<ICompositionListener> listenerChain)
-		{
-			// The component is ready to be delivered.
-			// Inform composition listeners about the retrieval.
-
-			var result = componentInstance;
-
-			foreach (var compositionListener in listenerChain)
-			{
-				compositionListener.OnComponentRetrieved(contract, this, TargetType, ref result, originalComponentInstance);
-			}
-
-			return result;
 		}
 
 		private ConstructorInfo FindTargetConstructor(List<object> constructorArguments)
