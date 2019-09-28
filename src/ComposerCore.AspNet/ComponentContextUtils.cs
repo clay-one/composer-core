@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Resources;
 using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.Factories
@@ -457,9 +458,9 @@ public static class ComponentContextUtils
 			throw new ArgumentException("Specified member type is not supported: " + memberType);
 		}
 
-	    internal static ILocalComponentFactory CreateLocalFactory(Type component)
+	    internal static IComponentFactory CreateLocalFactory(Type component)
 	    {
-	        ILocalComponentFactory result;
+	        IComponentFactory result;
 	        if ((component.IsGenericType) && (component.ContainsGenericParameters))
 	            result = new GenericLocalComponentFactory(component);
 	        else

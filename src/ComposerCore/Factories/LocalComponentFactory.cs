@@ -10,69 +10,55 @@ using ComposerCore.Implementation;
 
 namespace ComposerCore.Factories
 {
-	public class LocalComponentFactory : ILocalComponentFactory
+	public class LocalComponentFactory : LocalComponentFactoryBase
 	{
-		private IComposer _composer;
-
-		private readonly Type _targetType;
 		private IComponentCache _componentCache;
 
 		private ConstructorInfo _targetConstructor;
-		private List<ConstructorArgSpecification> _constructorArgs;
-		private readonly List<InitializationPointSpecification> _initializationPoints;
-		private List<Action<IComposer, object>> _compositionNotificationMethods;
-	    private ICompositionalQuery _componentCacheQuery;
 
 		#region Constructors
 
-		public LocalComponentFactory(Type targetType)
+		public LocalComponentFactory(Type targetType) : base(targetType)
 		{
-            _targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
-
-			_composer = null;
 			_componentCache = null;
-            _componentCacheQuery = null;
 			_targetConstructor = null;
-			_constructorArgs = null;
-			_initializationPoints = new List<InitializationPointSpecification>();
-			_compositionNotificationMethods = null;
 		}
 
 		#endregion
 
 		#region IComponentFactory Members
 
-		public bool ValidateContractType(Type contract)
+		public override bool ValidateContractType(Type contract)
 		{
-			return contract.IsAssignableFrom(_targetType);
+			return contract.IsAssignableFrom(TargetType);
 		}
 
-		public void Initialize(IComposer composer)
+		public override void Initialize(IComposer composer)
 		{
-			if (_composer != null)
-				return;
-
-			if (_targetType == null)
-				throw new InvalidOperationException("TargetType is not specified.");
-
-			if (!composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasComponentAttribute(_targetType))
-				throw new CompositionException("The type '" + _targetType +
-				                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
-
-			_composer = composer;
-			CompleteConfiguration();
+			base.Initialize(composer);
+			try
+			{
+				LoadInitializationPoints();
+				LoadTargetConstructor();
+				LoadComponentCacheQuery();
+				LoadComponentCache();
+				LoadCompositionNotificationMethods();
+			}
+			catch(Exception e)
+			{
+				throw new CompositionException(
+					$"Could not initialize LocalComponentFactory for type '{TargetType.FullName}'", e);
+			}
 		}
 
-		public IEnumerable<Type> GetContractTypes()
+		public override IEnumerable<Type> GetContractTypes()
 		{
-			return ComponentContextUtils.FindContracts(_targetType);
+			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
-		public object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+		public override object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
 		{
-			// Check if the factory is initialized
-
-			if (_composer == null)
+			if (!Initialized)
 				throw new InvalidOperationException(
 					"LocalComponentFactory should be initialized before calling GetComponentInstance method.");
 
@@ -123,103 +109,21 @@ namespace ComposerCore.Factories
 
 		#endregion
 
-		#region Override methods
-
-		public override string ToString()
-		{
-			return _targetType != null ? _targetType.AssemblyQualifiedName : base.ToString();
-		}
-
-		#endregion
-
 		#region Public properties
 
-		public Type TargetType => _targetType;
-
-	    public ConstructorInfo TargetConstructor
+		public ConstructorInfo TargetConstructor
 		{
 			get => _targetConstructor;
 	        set
 			{
-				if (_composer != null)
-					throw new InvalidOperationException("Cannot change TargetConstructor when the factory is initialized.");
-
+				EnsureNotInitialized("change TargetConstructor");
 				_targetConstructor = value;
 			}
 		}
 
-		public List<ConstructorArgSpecification> ConstructorArgs
-		{
-			get
-			{
-			    if (_composer != null)
-					throw new InvalidOperationException("Cannot access ConstructorArgs when the factory is initialized.");
-
-			    return _constructorArgs ?? (_constructorArgs = new List<ConstructorArgSpecification>());
-			}
-		}
-
-		public List<InitializationPointSpecification> InitializationPoints
-		{
-			get
-			{
-				if (_composer != null)
-					throw new InvalidOperationException("Cannot access InitializationPoints when the factory is initialized.");
-
-				return _initializationPoints;
-			}
-		}
-
-	    public List<Action<IComposer, object>> CompositionNotificationMethods
-	    {
-	        get
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access CompositionNotificationMethods when the factory is initialized.");
-
-	            return _compositionNotificationMethods ?? (_compositionNotificationMethods = new List<Action<IComposer, object>>());
-	        }
-        }
-
-	    public ICompositionalQuery ComponentCacheQuery
-	    {
-	        get
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-	            return _componentCacheQuery;
-	        }
-	        set
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-	            _componentCacheQuery = value;
-	        }
-	    }
-
 	    #endregion
 
 		#region Private helper methods
-
-		private void CompleteConfiguration()
-		{
-		    try
-		    {
-		        LoadInitializationPoints();
-		        LoadTargetConstructor();
-		        LoadComponentCacheQuery();
-		        LoadComponentCache();
-		        LoadCompositionNotificationMethods();
-		    }
-		    catch(Exception e)
-		    {
-		        throw new CompositionException(
-                    $"Could not initialize LocalComponentFactory for type '{_targetType.FullName}'", 
-                    e);
-		    }
-		}
 
 		private void LoadTargetConstructor()
 		{
@@ -242,14 +146,14 @@ namespace ComposerCore.Factories
 				//     3. If there's the default constructor, use it.
 				// And it is an exception if none of the above is found.
 
-				var candidateConstructors = _targetType.GetConstructors();
-				_targetConstructor = FindMarkedConstructor(_targetType, candidateConstructors) ??
+				var candidateConstructors = TargetType.GetConstructors();
+				_targetConstructor = FindMarkedConstructor(TargetType, candidateConstructors) ??
 				                     FindSingleConstructor(candidateConstructors) ??
 				                     FindDefaultConstructor(candidateConstructors);
 
 				if (_targetConstructor == null)
 					throw new CompositionException(
-						"There's no appropriate constructor identified as the composition constructor for type '" + _targetType.FullName +
+						"There's no appropriate constructor identified as the composition constructor for type '" + TargetType.FullName +
 						"'" +
 						"You can fix this by using [CompositionConstructor] attribute on the constructor that you intend to be used by Composer.");
 			}
@@ -262,9 +166,9 @@ namespace ComposerCore.Factories
 
 			foreach (var parameterInfo in _targetConstructor.GetParameters())
 			{
-				if (!_composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasContractAttribute(parameterInfo.ParameterType))
+				if (!Composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasContractAttribute(parameterInfo.ParameterType))
 					throw new CompositionException(
-					        $"Parameter '{parameterInfo.Name}' of the constructor of type '{_targetType.FullName}' is not of a Contract type. " +
+					        $"Parameter '{parameterInfo.Name}' of the constructor of type '{TargetType.FullName}' is not of a Contract type. " +
 					        "All parameters of the composition constructor must be of Contract types, so that Composer can query for a component and pass it to them.");
 
 				if ((queryNames != null) && (queryNames.Length > parameterInfo.Position))
@@ -277,7 +181,7 @@ namespace ComposerCore.Factories
 
 			if ((queryNames != null) && (queryNames.Length > _constructorArgs.Count))
 				throw new CompositionException("Extra names are specified for the constructor of type '" +
-				                               _targetType.FullName + "'");
+				                               TargetType.FullName + "'");
 		}
 
 		private void LoadInitializationPoints()
@@ -288,14 +192,16 @@ namespace ComposerCore.Factories
 			// Check and add them to the list of initialization points if they
 			// are not already registered.
 
-			foreach (var fieldInfo in _targetType.GetFields())
+			_initializationPoints = _initializationPoints ?? new List<InitializationPointSpecification>();
+			
+			foreach (var fieldInfo in TargetType.GetFields())
 			{
-				ComponentContextUtils.CheckAndAddInitializationPoint(_composer, _initializationPoints, fieldInfo);
+				ComponentContextUtils.CheckAndAddInitializationPoint(Composer, _initializationPoints, fieldInfo);
 			}
 
-			foreach (var fieldInfo in _targetType.GetProperties())
+			foreach (var fieldInfo in TargetType.GetProperties())
 			{
-				ComponentContextUtils.CheckAndAddInitializationPoint(_composer, _initializationPoints, fieldInfo);
+				ComponentContextUtils.CheckAndAddInitializationPoint(Composer, _initializationPoints, fieldInfo);
 			}
 		}
 
@@ -304,7 +210,7 @@ namespace ComposerCore.Factories
 	        if (_componentCacheQuery != null)
                 return;
 
-            var attribute = ComponentContextUtils.GetComponentCacheAttribute(_targetType);
+            var attribute = ComponentContextUtils.GetComponentCacheAttribute(TargetType);
 	        if (attribute == null)
 	        {
 	            _componentCacheQuery = new ComponentQuery(typeof(DefaultComponentCache), null);
@@ -328,34 +234,22 @@ namespace ComposerCore.Factories
 				return;
 			}
 
-			var result = _componentCacheQuery.Query(_composer);
+			var result = _componentCacheQuery.Query(Composer);
 			if (result == null)
-				throw new CompositionException($"Can not register component type {_targetType.FullName} because " +
+				throw new CompositionException($"Can not register component type {TargetType.FullName} because " +
 				                               $"the specified ComponentCache contract ({_componentCache}) could not be queried from Composer.");
 
-			if (!(result is IComponentCache))
-				throw new CompositionException($"Component cache type {result.GetType().FullName} that is specified " +
-				                               $"as component cache handler on component {_targetType.FullName} does not implement " +
-				                               "IComponentCache interface.");
-
-			_componentCache = (IComponentCache) result;
+			_componentCache = result as IComponentCache
+			                  ?? throw new CompositionException(
+				                  $"Component cache type {result.GetType().FullName} that is specified " +
+				                  $"as component cache handler on component {TargetType.FullName} does not implement " +
+				                  "IComponentCache interface.");
 		}
 
 		private void LoadCompositionNotificationMethods()
 		{
-		    var methodsFound = ComponentContextUtils.FindCompositionNotificationMethods(_targetType).ToList();
+		    var methodsFound = ComponentContextUtils.FindCompositionNotificationMethods(TargetType).ToList();
 		    _compositionNotificationMethods = _compositionNotificationMethods?.Concat(methodsFound).ToList() ?? methodsFound;
-		}
-
-		private void InvokeCompositionNotifications(object componentInstance)
-		{
-			if (_compositionNotificationMethods == null)
-				return;
-
-			foreach (var method in _compositionNotificationMethods)
-			{
-			    method(_composer, componentInstance);
-			}
 		}
 
 		private static ConstructorInfo FindMarkedConstructor(Type targetType,
@@ -451,13 +345,13 @@ namespace ComposerCore.Factories
 			{
 				if (cas.Query == null)
 					throw new CompositionException("Query is null for a constructor argument, for the type '" +
-					                               _targetType.FullName + "'");
+					                               TargetType.FullName + "'");
 
-				object argumentValue = cas.Query.Query(_composer);
+				object argumentValue = cas.Query.Query(Composer);
 
 				if ((argumentValue == null) && (cas.Required))
 					throw new CompositionException("Required constructor argument can not be queried for type '" +
-					                               _targetType.FullName + "'");
+					                               TargetType.FullName + "'");
 
 				constructorArguments.Add(argumentValue);
 			}
@@ -471,7 +365,7 @@ namespace ComposerCore.Factories
 
 			foreach (var compositionListener in listenerChain)
 			{
-				compositionListener.OnComponentCreated(contract, this, _targetType, ref componentInstance, originalComponentInstance);
+				compositionListener.OnComponentCreated(contract, this, TargetType, ref componentInstance, originalComponentInstance);
 			}
 
 			return componentInstance;
@@ -483,7 +377,7 @@ namespace ComposerCore.Factories
 		{
 			foreach (var compositionListener in listenerChain)
 			{
-				compositionListener.OnComponentComposed(contract, _initializationPoints, initializationPointResults, _targetType,
+				compositionListener.OnComponentComposed(contract, _initializationPoints, initializationPointResults, TargetType,
 				                                        componentInstance, originalComponentInstance);
 			}
 		}
@@ -498,7 +392,7 @@ namespace ComposerCore.Factories
 
 			foreach (var compositionListener in listenerChain)
 			{
-				compositionListener.OnComponentRetrieved(contract, this, _targetType, ref result, originalComponentInstance);
+				compositionListener.OnComponentRetrieved(contract, this, TargetType, ref result, originalComponentInstance);
 			}
 
 			return result;
@@ -511,16 +405,16 @@ namespace ComposerCore.Factories
 			if (targetConstructor == null)
 			{
                 if (constructorArguments.Any(arg => arg == null))
-                    throw new CompositionException($"Canntot find an appropriate constructor to initialize type {_targetType.FullName} " +
+                    throw new CompositionException($"Canntot find an appropriate constructor to initialize type {TargetType.FullName} " +
                                                    "because some of the constructor arguments are null. You can specify the constructor " +
                                                    "to use to avoid this problem when passing null values.");
 
 				var constructorArgTypes = constructorArguments.Select(arg => arg.GetType()).ToArray();
-				targetConstructor = _targetType.GetConstructor(constructorArgTypes.ToArray());
+				targetConstructor = TargetType.GetConstructor(constructorArgTypes.ToArray());
 			}
 
 			if (targetConstructor == null)
-				throw new CompositionException($"No constructor found for the component type '{_targetType.FullName}'");
+				throw new CompositionException($"No constructor found for the component type '{TargetType.FullName}'");
 
 			return targetConstructor;
 		}
@@ -533,14 +427,14 @@ namespace ComposerCore.Factories
 			{
 				if (initializationPoint.Query == null)
 					throw new CompositionException(
-					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{_targetType.FullName}'");
+					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{TargetType.FullName}'");
 
-				var initializationPointResult = initializationPoint.Query.Query(_composer);
+				var initializationPointResult = initializationPoint.Query.Query(Composer);
 
 				// Check if the required initialization points get a value.
 				if (initializationPoint.Required && initializationPointResult == null)
 					throw new CompositionException(
-					        $"Could not fill initialization point '{initializationPoint.Name}' of type '{_targetType.FullName}'.");
+					        $"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
 
 				initializationPointResults.Add(initializationPointResult);
 				ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,

@@ -8,10 +8,8 @@ using ComposerCore.Utility;
 
 namespace ComposerCore.Factories
 {
-    public class GenericLocalComponentFactory : ILocalComponentFactory
+    public class GenericLocalComponentFactory : LocalComponentFactoryBase
     {
-        private IComposer _composer;
-
         /// <summary>
         /// Generic type definition (obtained by calling ) 
         /// -> 
@@ -20,52 +18,40 @@ namespace ComposerCore.Factories
         private readonly IDictionary<Type, Type> _contractTypes;
 
         private readonly ConcurrentDictionary<Type, LocalComponentFactory> _subFactories;
-        private readonly Type _targetType;
         
-        private List<ConstructorArgSpecification> _constructorArgs;
-        private List<InitializationPointSpecification> _initializationPoints;
-        private List<Action<IComposer, object>> _compositionNotificationMethods;
-        private ICompositionalQuery _componentCacheQuery;
-
-        public GenericLocalComponentFactory(Type targetType)
+        public GenericLocalComponentFactory(Type targetType) : base(targetType)
         {
             if (!targetType.IsOpenGenericType())
                 throw new ArgumentException("TargetType in GenericLocalComponentFactory should be an open generic type.");
 
-            _targetType = targetType;
-            _composer = null;
-
             _contractTypes = new Dictionary<Type, Type>();
             _subFactories = new ConcurrentDictionary<Type, LocalComponentFactory>();
-            _constructorArgs = null;
-            _initializationPoints = null;
-            _compositionNotificationMethods = null;
 
             ExtractContractTypes();
         }
 
         #region Implementation of IComponentFactory
 
-        public bool ValidateContractType(Type contract)
+        public override bool ValidateContractType(Type contract)
         {
-            return _targetType.IsAssignableToGenericType(contract);
+            return TargetType.IsAssignableToGenericType(contract);
         }
 
-        public void Initialize(IComposer composer)
+        public override void Initialize(IComposer composer)
         {
-            if (_contractTypes.Count < 1)
-                throw new CompositionException($"No open contracts found nor added for the type {_targetType.Name}. " +
-                                               "Use [Contract] attribute or use Fluent syntax to introduce contracts");
+            base.Initialize(composer);
             
-            _composer = composer;
+            if (_contractTypes.Count < 1)
+                throw new CompositionException($"No open contracts found nor added for the type {TargetType.Name}. " +
+                                               "Use [Contract] attribute or use Fluent syntax to introduce contracts");
         }
 
-        public IEnumerable<Type> GetContractTypes()
+        public override IEnumerable<Type> GetContractTypes()
         {
             return _contractTypes.Keys;
         }
 
-        public object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+        public override object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
         {
             var requestedClosedContractType = contract.Type;
 
@@ -83,13 +69,13 @@ namespace ComposerCore.Factories
                                                " is not among the supported contracts for this factory.");
 
             var originalGenericContractType = _contractTypes[requestedGenericContractType];
-            var closedTargetType = CloseGenericType(_targetType, originalGenericContractType, requestedClosedContractType);
+            var closedTargetType = CloseGenericType(TargetType, originalGenericContractType, requestedClosedContractType);
 
             if (closedTargetType == null)
             {
                 throw new CompositionException("Failed to construct a closed generic type.\n" +
                                                "Please provide the following information when you register an issue:\n" +
-                                               $"Component's open generic type: {_targetType.FullName}\n" +
+                                               $"Component's open generic type: {TargetType.FullName}\n" +
                                                $"Requested closed contract type: {requestedClosedContractType.FullName}\n" +
                                                $"Requested open contract type: {requestedGenericContractType.FullName}\n" +
                                                $"Original generic contract type: {originalGenericContractType.FullName}");
@@ -110,7 +96,7 @@ namespace ComposerCore.Factories
                 if (_compositionNotificationMethods != null)
                     newSubFactory.CompositionNotificationMethods.AddRange(_compositionNotificationMethods);
                 
-                newSubFactory.Initialize(_composer);
+                newSubFactory.Initialize(Composer);
                 return newSubFactory;
             });
 
@@ -121,58 +107,6 @@ namespace ComposerCore.Factories
 
         #region Public methods and properties
         
-        public List<ConstructorArgSpecification> ConstructorArgs
-        {
-            get
-            {
-                if (_composer != null)
-                    throw new InvalidOperationException("Cannot access ConstructorArgs when the factory is initialized.");
-
-                return _constructorArgs ?? (_constructorArgs = new List<ConstructorArgSpecification>());
-            }
-        }
-
-        public List<InitializationPointSpecification> InitializationPoints
-        {
-            get
-            {
-                if (_composer != null)
-                    throw new InvalidOperationException("Cannot access InitializationPoints when the factory is initialized.");
-
-                return _initializationPoints ?? (_initializationPoints = new List<InitializationPointSpecification>());
-            }
-        }
-        
-        public List<Action<IComposer, object>> CompositionNotificationMethods
-        {
-            get
-            {
-                if (_composer != null)
-                    throw new InvalidOperationException("Cannot access CompositionNotificationMethods when the factory is initialized.");
-
-                return _compositionNotificationMethods ?? (_compositionNotificationMethods = new List<Action<IComposer, object>>());
-            }
-        }
-
-        public ICompositionalQuery ComponentCacheQuery
-        {
-            get
-            {
-                if (_composer != null)
-                    throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-                return _componentCacheQuery;
-            }
-            set
-            {
-                if (_composer != null)
-                    throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-                _componentCacheQuery = value;
-            }
-        }
-
-
         public void AddOpenGenericContract(Type openContractType)
         {
             if (!openContractType.IsOpenGenericType())
@@ -180,24 +114,24 @@ namespace ComposerCore.Factories
                 throw new ArgumentException($"The contract type {openContractType.FullName} is not an open generic type.");
             }
 
-            var boundGenericContract = _targetType
+            var boundGenericContract = TargetType
                 .GetBaseTypes(true)
-                .Concat(_targetType.GetInterfaces())
+                .Concat(TargetType.GetInterfaces())
                 .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == openContractType);
 
             if (boundGenericContract == null)
                 throw new CompositionException($"The open contract type {openContractType.FullName} could not be" +
-                                               $"found in the hierarchy of tar get type {_targetType.FullName}");
+                                               $"found in the hierarchy of tar get type {TargetType.FullName}");
 
             var unresolvableGenericArgs = 
-                _targetType.GetGenericArguments().Except(boundGenericContract.GetGenericArguments()).ToArray();
+                TargetType.GetGenericArguments().Except(boundGenericContract.GetGenericArguments()).ToArray();
             if (unresolvableGenericArgs.Any())
             {
                 var unresolvableGenericArgsString =
                     string.Join(";\n", unresolvableGenericArgs.Select(a => a.ToString()));
                 throw new CompositionException($"The contract type {openContractType.FullName} does not contain " +
                                                "enough type arguments to allow constructing a completely closed " +
-                                               $"component type out of {_targetType.FullName}. The missing type " +
+                                               $"component type out of {TargetType.FullName}. The missing type " +
                                                $"arguments are:\n{unresolvableGenericArgsString}");
             }
 
@@ -211,7 +145,7 @@ namespace ComposerCore.Factories
 
         private void ExtractContractTypes()
         {
-            var boundGenericContracts = ComponentContextUtils.FindContracts(_targetType)
+            var boundGenericContracts = ComponentContextUtils.FindContracts(TargetType)
                 .Where(t => t.IsOpenGenericType());
 
             foreach (var boundGenericContract in boundGenericContracts)

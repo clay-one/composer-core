@@ -1,4 +1,5 @@
-﻿using ComposerCore.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
+using ComposerCore.Attributes;
 using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -7,7 +8,6 @@ namespace ComposerCore.Tests.SimpleTests
 	[TestClass]
 	public class InitialContextStateTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -36,6 +36,7 @@ namespace ComposerCore.Tests.SimpleTests
 		#endregion
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public void IComposerIsRegistered()
 		{
 			var c = _context.GetComponent<IComposer>();
@@ -44,6 +45,7 @@ namespace ComposerCore.Tests.SimpleTests
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public void IComponentContextIsRegistered()
 		{
 			var c = _context.GetComponent<IComponentContext>();
