@@ -38,10 +38,7 @@ namespace ComposerCore.Implementation
 			_variables = new Dictionary<string, object>();
 			_compositionListeners = new Dictionary<string, ICompositionListener>();
 
-		    var componentContextFactory = new PreInitializedComponentFactory(this);
-            InternalRegister(typeof(IComposer), null, componentContextFactory, false);
-            InternalRegister(typeof(IComponentContext), null, componentContextFactory, false);
-            InternalRegister(typeof(ComponentContext), null, componentContextFactory, false);
+			RegisterObject(this);
 
 			if (registerBuiltInComponents)
 				RegisterBuiltInComponents();
@@ -57,10 +54,6 @@ namespace ComposerCore.Implementation
             RegisterObject(new ExplicitConstructorResolver());
             RegisterObject(new DefaultConstructorResolver());
             RegisterObject(new SingleOrDefaultConstructorResolver());
-            
-            Register(typeof(ExplicitConstructorResolver));
-            Register(typeof(DefaultConstructorResolver));
-            Register(typeof(SingleOrDefaultConstructorResolver));
             
             InternalRegister(typeof(StaticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(StaticComponentCache)), false);

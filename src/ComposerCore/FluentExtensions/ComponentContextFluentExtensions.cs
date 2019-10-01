@@ -28,6 +28,7 @@ namespace ComposerCore.FluentExtensions
             return new FluentGenericLocalComponentConfig(context, new GenericLocalComponentFactory(componentType));
         }
 
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
         public static FluentPreInitializedComponentConfig ForObject(this ComponentContext context, object componentInstance)
         {
             return new FluentPreInitializedComponentConfig(context, componentInstance);
