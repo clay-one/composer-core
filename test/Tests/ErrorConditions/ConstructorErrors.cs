@@ -36,31 +36,31 @@ namespace ComposerCore.Tests.ErrorConditions
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void MultipleCompConstructors()
 		{
 			_context.Register(typeof(MultipleCompositionConstructors));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent(typeof(MultipleCompositionConstructors)));
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void NoCompConstructors()
 		{
 			_context.Register(typeof(NoCompositionContructors));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent(typeof(NoCompositionContructors)));
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PrivateCompConstructor()
 		{
 			_context.Register(typeof(PrivateCompositionConstructor));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent(typeof(PrivateCompositionConstructor)));
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void NonContractParam()
 		{
 			_context.Register(typeof(NonContractConstructorArg));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent(typeof(NonContractConstructorArg)));
 		}
 	}
 }

@@ -16,6 +16,11 @@ namespace ComposerCore
 		void Register(Type contract, IComponentFactory factory);
 		void Register(Type contract, string name, IComponentFactory factory);
 
+		void RegisterObject(object componentInstance);
+		void RegisterObject(Type contract, object componentInstance);
+		void RegisterObject(string name, object componentInstance);
+		void RegisterObject(Type contract, string name, object componentInstance);
+
 		void Unregister(ContractIdentity identity);
 		void UnregisterFamily(Type type);
 

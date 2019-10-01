@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using ComposerCore.Cache;
+using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
@@ -8,10 +11,6 @@ namespace ComposerCore.Factories
     public abstract class LocalComponentFactoryBase : IComponentFactory
     {
         protected IComposer Composer { get; private set; }
-        protected List<ConstructorArgSpecification> _constructorArgs;
-        protected List<InitializationPointSpecification> _initializationPoints;
-        protected ICompositionalQuery _componentCacheQuery;
-        protected List<Action<IComposer, object>> _compositionNotificationMethods;
         
         public Type TargetType { get; }
         public bool Initialized => Composer != null;
@@ -53,28 +52,10 @@ namespace ComposerCore.Factories
         public abstract object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain);
 
         #endregion
-
-        public override string ToString()
-        {
-            return TargetType != null ? TargetType.AssemblyQualifiedName : base.ToString();
-        }
-
-        protected void EnsureNotInitialized(string operation)
-        {
-            if (Initialized)
-                throw new InvalidOperationException($"Cannot perform operation '{operation}' when the factory is not initialized.");
-        }
         
-        protected void InvokeCompositionNotifications(object componentInstance)
-        {
-            if (_compositionNotificationMethods == null)
-                return;
+        #region ConstructorPolicy
 
-            foreach (var method in _compositionNotificationMethods)
-            {
-                method(Composer, componentInstance);
-            }
-        }
+        protected List<ConstructorArgSpecification> _constructorArgs;
 
         public List<ConstructorArgSpecification> ConstructorArgs
         {
@@ -85,6 +66,33 @@ namespace ComposerCore.Factories
             }
         }
 
+        #endregion
+        
+        #region InitializationPoints
+        
+        protected List<InitializationPointSpecification> _initializationPoints;
+
+        protected void LoadInitializationPoints()
+        {
+            // Check two categories of members for being an initialization point:
+            //   1. Public fields
+            //   2. Public properties
+            // Check and add them to the list of initialization points if they
+            // are not already registered.
+
+            _initializationPoints = _initializationPoints ?? new List<InitializationPointSpecification>();
+			
+            foreach (var fieldInfo in TargetType.GetFields())
+            {
+                ComponentContextUtils.CheckAndAddInitializationPoint(Composer, _initializationPoints, fieldInfo);
+            }
+
+            foreach (var fieldInfo in TargetType.GetProperties())
+            {
+                ComponentContextUtils.CheckAndAddInitializationPoint(Composer, _initializationPoints, fieldInfo);
+            }
+        }
+        
         public List<InitializationPointSpecification> InitializationPoints
         {
             get
@@ -93,7 +101,34 @@ namespace ComposerCore.Factories
                 return _initializationPoints ?? (_initializationPoints = new List<InitializationPointSpecification>());
             }
         }
+
+        #endregion
         
+        #region ComponentCacheQuery
+        
+        protected ICompositionalQuery _componentCacheQuery;
+
+        protected void LoadComponentCacheQuery()
+        {
+            if (_componentCacheQuery != null)
+                return;
+
+            var attribute = ComponentContextUtils.GetComponentCacheAttribute(TargetType);
+            if (attribute == null)
+            {
+                _componentCacheQuery = new ComponentQuery(typeof(DefaultComponentCache), null);
+                return;
+            }
+
+            if (attribute.ComponentCacheType == null)
+            {
+                _componentCacheQuery = null;
+                return;
+            }
+
+            _componentCacheQuery = new ComponentQuery(attribute.ComponentCacheType, attribute.ComponentCacheName);
+        }
+
         public ICompositionalQuery ComponentCacheQuery
         {
             get
@@ -107,6 +142,18 @@ namespace ComposerCore.Factories
                 _componentCacheQuery = value;
             }
         }
+
+        #endregion
+        
+        #region CompositionNotification
+        
+        protected List<Action<IComposer, object>> _compositionNotificationMethods;
+
+        protected void LoadCompositionNotificationMethods()
+        {
+            var methodsFound = ComponentContextUtils.FindCompositionNotificationMethods(TargetType).ToList();
+            _compositionNotificationMethods = _compositionNotificationMethods?.Concat(methodsFound).ToList() ?? methodsFound;
+        }
         
         public List<Action<IComposer, object>> CompositionNotificationMethods
         {
@@ -117,6 +164,29 @@ namespace ComposerCore.Factories
             }
         }
 
+        protected void InvokeCompositionNotifications(object componentInstance)
+        {
+            if (_compositionNotificationMethods == null)
+                return;
 
+            foreach (var method in _compositionNotificationMethods)
+            {
+                method(Composer, componentInstance);
+            }
+        }
+
+        #endregion
+
+        public override string ToString()
+        {
+            return TargetType != null ? TargetType.AssemblyQualifiedName : base.ToString();
+        }
+
+        private void EnsureNotInitialized(string operation)
+        {
+            if (Initialized)
+                throw new InvalidOperationException($"Cannot perform operation '{operation}' when the factory is not initialized.");
+        }
+        
     }
 }

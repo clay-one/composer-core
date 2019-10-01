@@ -5,6 +5,7 @@ using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
+using ComposerCore.Implementation.ConstructorResolvers;
 using ComposerCore.Utility;
 
 
@@ -52,6 +53,15 @@ namespace ComposerCore.Implementation
 		        ComponentContextUtils.CreateLocalFactory(typeof (DefaultComponentCache)), false);
             InternalRegister(typeof(ContractAgnosticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(ContractAgnosticComponentCache)), false);
+            
+            RegisterObject(new ExplicitConstructorResolver());
+            RegisterObject(new DefaultConstructorResolver());
+            RegisterObject(new SingleOrDefaultConstructorResolver());
+            
+            Register(typeof(ExplicitConstructorResolver));
+            Register(typeof(DefaultConstructorResolver));
+            Register(typeof(SingleOrDefaultConstructorResolver));
+            
             InternalRegister(typeof(StaticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(StaticComponentCache)), false);
             InternalRegister(typeof(ThreadLocalComponentCache), null,
@@ -70,9 +80,11 @@ namespace ComposerCore.Implementation
         public virtual void Register(Type component)
 		{
 			if (component == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(component));
 
-			Register(ComponentContextUtils.GetComponentDefaultName(component), ComponentContextUtils.CreateLocalFactory(component));
+			Register(
+				ComponentContextUtils.GetComponentDefaultName(component), 
+				ComponentContextUtils.CreateLocalFactory(component));
 		}
 
         public virtual void Register(Type contract, string name, Type component)
@@ -95,11 +107,10 @@ namespace ComposerCore.Implementation
         public virtual void Register(string name, IComponentFactory componentFactory)
 		{
 			if (componentFactory == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(componentFactory));
 
-			var contracts = componentFactory.GetContractTypes();
+			var contracts = componentFactory.GetContractTypes().ToArray();
 
-			// TODO: Better description of the component causing the exception
 			if (!contracts.Any())
 				throw new CompositionException("No contracts found for the component factory " + componentFactory);
 
@@ -131,6 +142,50 @@ namespace ComposerCore.Implementation
 
 			InternalRegister(contract, name, factory, true);
 		}
+
+        public void RegisterObject(object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        var componentType = componentInstance.GetType();
+	        var name = ComponentContextUtils.GetComponentDefaultName(componentType);
+	        
+	        RegisterObject(name, componentInstance);
+        }
+
+        public void RegisterObject(Type contract, object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        var componentType = componentInstance.GetType();
+	        var name = ComponentContextUtils.GetComponentDefaultName(componentType);
+	        
+	        RegisterObject(contract, name, componentInstance);
+        }
+
+        public void RegisterObject(string name, object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+	        
+	        var factory = new PreInitializedComponentFactory(componentInstance);
+	        Register(name, factory);
+        }
+
+        public void RegisterObject(Type contract, string name, object componentInstance)
+        {
+	        if (contract == null)
+		        throw new ArgumentNullException(nameof(contract));
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        ComponentContextUtils.ThrowIfNotSubTypeOf(contract, componentInstance.GetType());
+
+	        var factory = new PreInitializedComponentFactory(componentInstance);
+	        Register(contract, name, factory);
+        }
 
         public virtual void Unregister(ContractIdentity identity)
 		{

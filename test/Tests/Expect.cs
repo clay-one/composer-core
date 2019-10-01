@@ -11,17 +11,19 @@ namespace ComposerCore.Tests
             try
             {
                 action();
-
-                Assert.Fail("Exception of type {0} expected; got none exception", typeof(TException).Name);
             }
             catch (TException)
             {
                 // Expectation is fulfilled.
+                return;
             }
             catch (Exception ex)
             {
-                Assert.Fail("Exception of type {0} expected; got exception of type {1}", typeof(TException).Name, ex.GetType().Name);               
+                Assert.Fail($"Exception of type {typeof(TException).Name} expected; " +
+                            $"got exception of type {ex.GetType().Name}.");               
             }
+
+            Assert.Fail($"Exception of type {typeof(TException).Name} expected; but no exceptions are thrown.");
         }
     }
 }

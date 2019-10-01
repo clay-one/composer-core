@@ -62,7 +62,11 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            Factory.TargetConstructor = Factory.TargetType.GetConstructor(argTypes);
+            foreach (var argType in argTypes)
+            {
+                AddConstructorComponent(argType);
+            }
+            
             return this;
         }
 
