@@ -2,14 +2,19 @@ using System;
 
 namespace ComposerCore.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class ConstructorResolutionPolicyAttribute : Attribute
     {
         public ConstructorResolutionPolicyAttribute(ConstructorResolutionPolicy policy)
         {
-            this.ConstructorResolutionPolicy = policy;
+            ConstructorResolutionPolicy = policy.ToString();
+        }
+        
+        public ConstructorResolutionPolicyAttribute(string policy)
+        {
+            ConstructorResolutionPolicy = policy;
         }
 
-        public ConstructorResolutionPolicy ConstructorResolutionPolicy { get; }
+        public string ConstructorResolutionPolicy { get; }
     }
 }

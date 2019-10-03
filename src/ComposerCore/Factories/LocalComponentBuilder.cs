@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using ComposerCore.Attributes;
-using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
@@ -45,9 +43,15 @@ namespace ComposerCore.Factories
         {
 	        if (_resolvedConstructor != null)
 		        return;
-	        
+
+            var policyAttribute = ComponentContextUtils.GetComponentConstructorResolutionAttribute(_targetType);
+            var policy = policyAttribute == null
+                ? _composer.Configuration.DefaultConstructorResolutionPolicy.ToString()
+                : policyAttribute.ConstructorResolutionPolicy;
+            
 	        var resolver = 
-		        _composer.GetComponent<IConstructorResolver>(nameof(ConstructorResolutionPolicy.SingleOrDefault)) ??
+		        _composer.GetComponent<IConstructorResolver>(policy) ??
+                _composer.GetComponent<IConstructorResolver>() ??
 		        throw new CompositionException("Could not find an appropriate IConstructorResolver in the context.");
 	        
 	        _resolvedConstructor = resolver.Resolve(_targetType) ?? 
@@ -58,30 +62,8 @@ namespace ComposerCore.Factories
         {
 	        if (_constructorArgSpecs != null)
 		        return;
-	     
-            _constructorArgSpecs = new List<ConstructorArgSpecification>();
-            string[] queryNames = null;
-            if (ComponentContextUtils.HasCompositionConstructorAttribute(_resolvedConstructor))
-                queryNames = ComponentContextUtils.GetCompositionConstructorAttribute(_resolvedConstructor).Names;
 
-            foreach (var parameterInfo in _resolvedConstructor.GetParameters())
-            {
-                if (!_composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasContractAttribute(parameterInfo.ParameterType))
-                    throw new CompositionException(
-                        $"Parameter '{parameterInfo.Name}' of the constructor of type '{_targetType.FullName}' is not of a Contract type. " +
-                        "All parameters of the composition constructor must be of Contract types, so that Composer can query for a component and pass it to them.");
-
-                var contractName = queryNames != null && queryNames.Length > parameterInfo.Position ? 
-                    queryNames[parameterInfo.Position] : null;
-                
-                _constructorArgSpecs.Add(
-                    new ConstructorArgSpecification(
-                        true, 
-                        new ComponentQuery(parameterInfo.ParameterType, contractName)));
-            }
-
-            if (queryNames != null && queryNames.Length > _constructorArgSpecs.Count)
-                throw new CompositionException($"Extra names are specified for the constructor of type '{_targetType.FullName}'");
+	        _constructorArgSpecs = ConstructorArgSpecification.BuildFrom(_resolvedConstructor);
         }
 
         private List<object> PrepareConstructorArguments()
@@ -95,7 +77,7 @@ namespace ComposerCore.Factories
 
                 object argumentValue = cas.Query.Query(_composer);
 
-                if ((argumentValue == null) && (cas.Required))
+                if (argumentValue == null && cas.Required.GetValueOrDefault(_composer.Configuration.ConstructorArgumentRequiredByDefault))
                     throw new CompositionException("Required constructor argument can not be queried for type '" +
                                                    _targetType.FullName + "'");
 

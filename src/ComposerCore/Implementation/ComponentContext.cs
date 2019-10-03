@@ -51,9 +51,13 @@ namespace ComposerCore.Implementation
             InternalRegister(typeof(ContractAgnosticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(ContractAgnosticComponentCache)), false);
             
-            RegisterObject(new ExplicitConstructorResolver());
-            RegisterObject(new DefaultConstructorResolver());
-            RegisterObject(new SingleOrDefaultConstructorResolver());
+            RegisterObject((string)null, new ExplicitConstructorResolver());
+            Register(typeof(ExplicitConstructorResolver));
+            Register(typeof(DefaultConstructorResolver));
+            Register(typeof(SingleOrDefaultConstructorResolver));
+            Register(typeof(MostParametersConstructorResolver));
+            Register(typeof(LeastParametersConstructorResolver));
+            Register(typeof(MostResolvableConstructorResolver));
             
             InternalRegister(typeof(StaticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(StaticComponentCache)), false);
@@ -332,6 +336,14 @@ namespace ComposerCore.Implementation
 			.CastToRuntimeType(contract);
 		}
 
+        public virtual bool HasVariable(string name)
+        {
+	        if (name == null)
+		        throw new ArgumentNullException(nameof(name));
+
+	        return _variables.ContainsKey(name);
+        }
+        
         public virtual object GetVariable(string name)
 		{
 			if (name == null)

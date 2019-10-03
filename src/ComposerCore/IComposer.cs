@@ -28,6 +28,7 @@ namespace ComposerCore
 
 		// Variable Lookup methods
 
+		bool HasVariable(string name);
 		object GetVariable(string name);
 
 		// Other methods

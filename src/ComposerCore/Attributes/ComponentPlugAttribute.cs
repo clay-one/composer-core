@@ -4,9 +4,9 @@ namespace ComposerCore.Attributes
 {
 	/// <summary>
 	/// Specifies a composition point, by declaring required functionality, so that the Composer
-	/// should fill the field or attribute with appropriate component instace to fulfill the request.
+	/// should fill the field or attribute with appropriate component instance to fulfill the request.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
 	public sealed class ComponentPlugAttribute : Attribute
 	{
 		public ComponentPlugAttribute()

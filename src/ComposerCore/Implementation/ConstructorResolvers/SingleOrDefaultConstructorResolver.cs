@@ -6,7 +6,8 @@ using ComposerCore.Extensibility;
 namespace ComposerCore.Implementation.ConstructorResolvers
 {
     [Component(nameof(ConstructorResolutionPolicy.SingleOrDefault)), Singleton]
-    public class SingleOrDefaultConstructorResolver : DefaultConstructorResolver, IConstructorResolver
+    [ConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)]
+    public class SingleOrDefaultConstructorResolver : DefaultConstructorResolver
     {
         protected override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors)
         {

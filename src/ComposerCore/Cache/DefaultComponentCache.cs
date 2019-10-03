@@ -4,11 +4,14 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-	[Contract]
-	[Component]
-	[ComponentCache(null)]
+	[Contract, Component, ComponentCache(null), ConstructorResolutionPolicy(null)]
 	public class DefaultComponentCache : IComponentCache
 	{
+		[CompositionConstructor]
+		public DefaultComponentCache()
+		{
+		}
+		
 		private readonly IDictionary<ContractIdentity, ComponentCacheEntry> _cacheContent =
 			new Dictionary<ContractIdentity, ComponentCacheEntry>();
 

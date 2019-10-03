@@ -1,4 +1,5 @@
 ﻿using ComposerCore.Aop.Diagnostics;
+using ComposerCore.Aop.Matching;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionListener.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -41,7 +42,10 @@ namespace ComposerCore.Tests.CompositionListener
 		{
 			_context.Register(typeof(SharedComponent));
 
-			var listener = new CountingCompositionListener();
+			var listener = new CountingCompositionListener
+			{
+				IncludedComponents = new FullNamePatternTypeFilter {Pattern = "^ComposerCore\\.Tests\\..*"}
+			};
 			_context.RegisterCompositionListener("counter", listener);
 
 			_context.GetComponent<ISampleContract>();
@@ -58,7 +62,10 @@ namespace ComposerCore.Tests.CompositionListener
 		{
 			_context.Register(typeof(NonSharedComponent));
 
-			var listener = new CountingCompositionListener();
+			var listener = new CountingCompositionListener
+			{
+				IncludedComponents = new FullNamePatternTypeFilter {Pattern = "^ComposerCore\\.Tests\\..*"}
+			};
 			_context.RegisterCompositionListener("counter", listener);
 
 			_context.GetComponent<ISampleContract>();
@@ -73,7 +80,10 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void CountEventsInitializePlugs()
 		{
-			var listener = new CountingCompositionListener();
+			var listener = new CountingCompositionListener
+			{
+				IncludedComponents = new FullNamePatternTypeFilter {Pattern = "^ComposerCore\\.Tests\\..*"}
+			};
 			_context.RegisterCompositionListener("counter", listener);
 
 			_context.InitializePlugs(new SharedComponent());

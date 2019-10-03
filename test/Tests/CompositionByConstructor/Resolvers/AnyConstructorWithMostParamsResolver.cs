@@ -7,6 +7,7 @@ using ComposerCore.Extensibility;
 namespace ComposerCore.Tests.CompositionByConstructor.Resolvers
 {
     [Component(nameof(ConstructorResolutionPolicy.Custom))]
+    [ConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)]
     public class AnyConstructorWithMostParamsResolver : IConstructorResolver
     {
         public ConstructorInfo Resolve(Type targetType)

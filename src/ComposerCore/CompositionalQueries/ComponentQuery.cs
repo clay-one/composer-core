@@ -5,7 +5,7 @@ namespace ComposerCore.CompositionalQueries
 {
 	public class ComponentQuery : ICompositionalQuery
 	{
-		public ComponentQuery(Type contractType, string contractName)
+		public ComponentQuery(Type contractType, string contractName = null)
 		{
 		    ContractType = contractType ?? throw new ArgumentNullException(nameof(contractType));
 			ContractName = contractName;
@@ -13,12 +13,24 @@ namespace ComposerCore.CompositionalQueries
 
 		#region Implementation of ICompositionalQuery
 
+		public bool IsResolvable(IComposer composer)
+		{
+			if (ContractType == null)
+				return false;
+
+			var composerToUse = ComposerOverride ?? composer;
+			if (composerToUse == null)
+				throw new ArgumentNullException(nameof(composer));
+
+			return composerToUse.IsResolvable(ContractType, ContractName);
+		}
+		
 		public object Query(IComposer composer)
 		{
 		    if (ContractType == null)
 		        return null;
 
-			IComposer composerToUse = ComposerOverride ?? composer;
+			var composerToUse = ComposerOverride ?? composer;
 			if (composerToUse == null)
 				throw new ArgumentNullException(nameof(composer));
 

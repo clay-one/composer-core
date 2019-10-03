@@ -6,9 +6,14 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation.ConstructorResolvers
 {
-    [Component(nameof(ConstructorResolutionPolicy.Explicit)), Singleton]
+    [Component(nameof(ConstructorResolutionPolicy.Explicit)), Singleton, ConstructorResolutionPolicy(null)]
     public class ExplicitConstructorResolver : IConstructorResolver
     {
+        [CompositionConstructor]
+        public ExplicitConstructorResolver()
+        {
+        }
+        
         public ConstructorInfo Resolve(Type targetType)
         {
             var candidateConstructors = targetType.GetConstructors();

@@ -2,7 +2,7 @@ using ComposerCore.Attributes;
 
 namespace ComposerCore.Tests.CompositionByConstructor.Components
 {
-    [Component, Transient, ConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)]
+    [Component, Contract, Transient, ConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)]
     public class ComponentWithDirectPolicyMetadata
     {
         public ComponentWithDirectPolicyMetadata(ISampleContractA a)

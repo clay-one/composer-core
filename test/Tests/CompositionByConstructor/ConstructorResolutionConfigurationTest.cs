@@ -270,10 +270,15 @@ namespace ComposerCore.Tests.CompositionByConstructor
         public void MostResolvablePolicyMultipleMatch()
         {
             _context.Register(typeof(MultipleLeastAndMostParams));
+            _context.Register(typeof(SampleComponentA));
+            _context.Register(typeof(SampleComponentB));
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
             _context.Configuration.ConstructorArgumentRequiredByDefault = false;
 
-            Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultipleLeastAndMostParams>());
+            var c = _context.GetComponent<MultipleLeastAndMostParams>();
+            Assert.IsNotNull(c);
+            Assert.IsNotNull(c.ContractA);
+            Assert.IsNotNull(c.ContractB);
         }
 
         [TestMethod]
@@ -285,6 +290,7 @@ namespace ComposerCore.Tests.CompositionByConstructor
             _context.Register(typeof(SampleComponentB));
 
             _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Custom;
+            _context.Configuration.ConstructorArgumentRequiredByDefault = false;
             var c = _context.GetComponent<MultipleLeastAndMostParams>();
             
             Assert.IsNotNull(c);
@@ -319,24 +325,9 @@ namespace ComposerCore.Tests.CompositionByConstructor
             Assert.IsNotNull(c.A);
             Assert.IsNull(c.B);
         }
-        
-        [TestMethod]
-        public void DefaultResolutionPolicyIsEnforcedAtResolutionTime()
-        {
-            _context.Register(typeof(SampleComponentA));
-            
-            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
-            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
-
-            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.SingleOrDefault;
-            Assert.IsNotNull(_context.GetComponent<ISampleContractA>());
-
-            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
-            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
-        }
 
         [TestMethod]
-        public void DefaultRequiredConfigIsEnforcedAtResolutionTime()
+        public void ConstructorResolutionIsCachedPerRegistration()
         {
             _context.Register(typeof(SampleComponentA));
             _context.Register(typeof(SampleComponentB));
@@ -358,21 +349,37 @@ namespace ComposerCore.Tests.CompositionByConstructor
             var c2 = _context.GetComponent<ManyConstructors>();
             
             Assert.IsNotNull(c2);
-            Assert.AreEqual(ManyConstructors.ContractAAndBAndIntegerAndStringConstructor, c2.InvokedConstructor);
+            Assert.AreEqual(ManyConstructors.ContractAAndBConstructor, c2.InvokedConstructor);
             Assert.IsNotNull(c2.ContractA);
             Assert.IsNotNull(c2.ContractB);
-            Assert.AreEqual(default, c2.Integer);
-            Assert.AreEqual(default, c2.String);
+            Assert.AreNotEqual(default, c2.Integer);
+            Assert.AreNotEqual(default, c2.String);
 
-            _context.Configuration.ConstructorArgumentRequiredByDefault = true;
+            _context.UnregisterFamily(typeof(ManyConstructors));
+            _context.Register(typeof(ManyConstructors));
             var c3 = _context.GetComponent<ManyConstructors>();
             
             Assert.IsNotNull(c3);
-            Assert.AreEqual(ManyConstructors.ContractAAndBConstructor, c3.InvokedConstructor);
+            Assert.AreEqual(ManyConstructors.ContractAAndBAndIntegerAndStringConstructor, c3.InvokedConstructor);
             Assert.IsNotNull(c3.ContractA);
             Assert.IsNotNull(c3.ContractB);
-            Assert.AreNotEqual(default, c3.Integer);
-            Assert.AreNotEqual(default, c3.String);
+            Assert.AreEqual(default, c3.Integer);
+            Assert.AreEqual(default, c3.String);
+        }
+        
+        [TestMethod]
+        public void ConstructorResolutionIsNotCachedWhenFailed()
+        {
+            _context.Register(typeof(SampleComponentA));
+            
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
+            Expect.ToThrow<CompositionException>(() => _context.GetComponent<ISampleContractA>());
+
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.SingleOrDefault;
+            Assert.IsNotNull(_context.GetComponent<ISampleContractA>());
+
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.Explicit;
+            Assert.IsNotNull(_context.GetComponent<ISampleContractA>());
         }
     }
 }

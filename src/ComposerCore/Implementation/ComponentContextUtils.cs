@@ -100,6 +100,16 @@ namespace ComposerCore.Implementation
 			return ((ComponentAttribute)attributes[0]).DefaultName;
 		}
 
+		internal static ConstructorResolutionPolicyAttribute GetComponentConstructorResolutionAttribute(Type component)
+		{
+			var attributes = component.GetCustomAttributes(typeof(ConstructorResolutionPolicyAttribute), true);
+
+			if (attributes.Length == 0 || !(attributes[0] is ConstructorResolutionPolicyAttribute))
+				return null;
+
+			return (ConstructorResolutionPolicyAttribute) attributes[0];
+		}
+
 		internal static void CheckAndAddInitializationPoint(IComposer composer,
 															List<InitializationPointSpecification> initializationPoints,
 															MemberInfo memberInfo)
@@ -308,7 +318,12 @@ namespace ComposerCore.Implementation
 
 		internal static ComponentPlugAttribute GetComponentPlugAttribute(MemberInfo memberInfo)
 		{
-			return memberInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false)[0] as ComponentPlugAttribute;
+			return memberInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false).FirstOrDefault() as ComponentPlugAttribute;
+		}
+
+		internal static ComponentPlugAttribute GetComponentPlugAttribute(ParameterInfo parameterInfo)
+		{
+			return parameterInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false).FirstOrDefault() as ComponentPlugAttribute;
 		}
 
 		internal static ResourceManagerPlugAttribute GetResourceManagerPlugAttribute(MemberInfo memberInfo)

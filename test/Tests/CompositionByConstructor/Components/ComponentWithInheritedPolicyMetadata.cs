@@ -2,7 +2,7 @@ using ComposerCore.Attributes;
 
 namespace ComposerCore.Tests.CompositionByConstructor.Components
 {
-    [Component, Transient]
+    [Component, Contract, Transient]
     public class ComponentWithInheritedPolicyMetadata : ComponentWithDirectPolicyMetadata
     {
         public ComponentWithInheritedPolicyMetadata(ISampleContractA a) : base(a)
