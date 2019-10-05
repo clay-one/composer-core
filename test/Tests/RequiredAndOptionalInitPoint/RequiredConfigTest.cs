@@ -49,10 +49,10 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqConfigNotProvided()
 		{
 			_context.Register(typeof(ComponentWithRequiredConfig));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithRequiredConfig>());
 		}
 
 		[TestMethod]

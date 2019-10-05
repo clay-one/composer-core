@@ -191,18 +191,26 @@ namespace ComposerCore.Factories
 					throw new CompositionException(
 					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{TargetType.FullName}'");
 
-				var initializationPointResult = initializationPoint.Query.Query(Composer);
+				if (initializationPoint.Query.IsResolvable(Composer))
+				{
+					var initializationPointResult = initializationPoint.Query.Query(Composer);
 
-				// Check if the required initialization points get a value.
-				if (initializationPoint.Required && initializationPointResult == null)
-					throw new CompositionException(
-					        $"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
-
-				initializationPointResults.Add(initializationPointResult);
-				ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
-				                                               initializationPoint.Name,
-				                                               initializationPoint.MemberType,
-				                                               initializationPointResult);
+					initializationPointResults.Add(initializationPointResult);
+					ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
+						initializationPoint.Name,
+						initializationPoint.MemberType,
+						initializationPointResult);
+				}
+				else
+				{
+					// Check if the required initialization points get a value.
+					if (initializationPoint.Required.GetValueOrDefault(Composer.Configuration.ComponentPlugRequiredByDefault))
+						throw new CompositionException(
+							$"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
+					
+					initializationPointResults.Add(null);
+				}
+				
 			}
 
 			return initializationPointResults;

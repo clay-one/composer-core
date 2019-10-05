@@ -165,7 +165,7 @@ public static class ComponentContextUtils
 				initializationPoints.Add(
 					new InitializationPointSpecification(memberInfo.Name,
 					                                     memberInfo.MemberType,
-					                                     GetComponentPlugAttribute(memberInfo).Required.GetValueOrDefault(true),
+					                                     GetComponentPlugAttribute(memberInfo).Required,
 					                                     new ComponentQuery(contractType,
 					                                                        GetComponentPlugAttribute(memberInfo).Name)));
 			}
@@ -215,30 +215,23 @@ public static class ComponentContextUtils
 
 				var configurationPointAttribute = GetConfigurationPointAttribute(memberInfo);
 
-				if (string.IsNullOrEmpty(configurationPointAttribute.ConfigurationVariableName))
+				// If the name of the variable is provided, add it
+				// to the initialization points list by creating a
+				// reference to the variable.
+
+				var variableNames = new[]
 				{
-					// If the variable name is not provided and the configuration point
-					// is required, throw.
-
-					if (configurationPointAttribute.Required.GetValueOrDefault(true))
-						throw new CompositionException(
-							"Configuration points marked as required should either have a variable name set, or be initialized in the component configuration by caller.");
-
-					// If it is not provided, ignore and don't add it to the
-					// list of initialization points.
-				}
-				else
-				{
-					// If the name of the variable is provided, add it
-					// to the initialization points list by creating a
-					// reference to the variable.
-
-					initializationPoints.Add(
-						new InitializationPointSpecification(memberInfo.Name,
-						                                     memberInfo.MemberType,
-						                                     configurationPointAttribute.Required.GetValueOrDefault(true),
-						                                     new VariableQuery(configurationPointAttribute.ConfigurationVariableName)));
-				}
+					configurationPointAttribute.ConfigurationVariableName,
+					(memberInfo.ReflectedType?.FullName ?? "") + "." + memberInfo.Name,
+					(memberInfo.ReflectedType?.Name ?? "") + "." + memberInfo.Name,
+					memberInfo.Name
+				};
+				
+				initializationPoints.Add(
+					new InitializationPointSpecification(memberInfo.Name,
+						memberInfo.MemberType,
+						configurationPointAttribute.Required,
+						new CascadeVariableQuery(variableNames)));
 			}
 		}
 

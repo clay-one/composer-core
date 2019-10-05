@@ -51,7 +51,7 @@ namespace ComposerCore.FluentExtensions
         }
 
         public FluentGenericLocalComponentConfig SetComponent(
-            string memberName, Type contractType, string contractName = null, bool required = true)
+            string memberName, Type contractType, string contractName = null, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
                 required, new ComponentQuery(contractType, contractName)));
@@ -98,7 +98,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentGenericLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentGenericLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -106,7 +106,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentGenericLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool required = true)
+        public FluentGenericLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new VariableQuery(variableName)));

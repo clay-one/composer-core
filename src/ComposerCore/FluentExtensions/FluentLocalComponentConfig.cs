@@ -46,13 +46,13 @@ namespace ComposerCore.FluentExtensions
         }
 
         public FluentLocalComponentConfig SetComponent<TPlugContract>(
-            string memberName, string contractName = null, bool required = true)
+            string memberName, string contractName = null, bool? required = null)
         {
             return SetComponent(memberName, typeof(TPlugContract), contractName, required);
         }
 
         public FluentLocalComponentConfig SetComponent(
-            string memberName, Type contractType, string contractName = null, bool required = true)
+            string memberName, Type contractType, string contractName = null, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
                 required, new ComponentQuery(contractType, contractName)));
@@ -70,12 +70,12 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
+        public FluentLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool? required = null)
         {
             return AddConstructorComponent(typeof(TPlugContract), contractName, required);
         }
 
-        public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
+        public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
             return this;
@@ -87,7 +87,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -95,7 +95,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
+        public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
             Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
             return this;
@@ -109,7 +109,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -117,7 +117,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool required = true)
+        public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new VariableQuery(variableName)));

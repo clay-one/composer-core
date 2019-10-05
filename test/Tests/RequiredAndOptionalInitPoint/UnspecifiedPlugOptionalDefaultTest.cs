@@ -144,7 +144,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 			
 			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedPlug>());
 			
-			_context.Configuration.ComponentPlugRequiredByDefault = true;
+			_context.Configuration.ComponentPlugRequiredByDefault = false;
 			
 			var c2 = _context.GetComponent<ComponentWithUnspecifiedPlug>();
 			Assert.IsNotNull(c2);

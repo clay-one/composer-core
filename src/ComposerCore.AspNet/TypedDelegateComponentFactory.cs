@@ -371,7 +371,7 @@ namespace ComposerCore.Factories
 				var initializationPointResult = initializationPoint.Query.Query(_composer);
 
 				// Check if the required initialization points get a value.
-				if (initializationPoint.Required && initializationPointResult == null)
+				if (initializationPoint.Required.GetValueOrDefault(_composer.Configuration.ComponentPlugRequiredByDefault) && initializationPointResult == null)
 					throw new CompositionException(
 					        $"Could not fill initialization point '{initializationPoint.Name}' of type '{originalComponentInstance.GetType().FullName}'.");
 
