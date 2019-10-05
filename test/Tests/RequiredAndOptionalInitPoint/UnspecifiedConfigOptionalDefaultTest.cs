@@ -26,7 +26,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.Configuration.ConfigurationPointRequiredByDefault = false;
+			_context.Configuration.InitializationPointsRequiredByDefault = false;
 		}
 
 		[TestCleanup]
@@ -106,11 +106,11 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 			Assert.IsNotNull(c1);
 			Assert.IsNull(c1.SomeConfig);
 
-			_context.Configuration.ConfigurationPointRequiredByDefault = true;
+			_context.Configuration.InitializationPointsRequiredByDefault = true;
 			
 			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedConfig>());
 			
-			_context.Configuration.ConfigurationPointRequiredByDefault = false;
+			_context.Configuration.InitializationPointsRequiredByDefault = false;
 
 			var c2 = _context.GetComponent<ComponentWithUnspecifiedConfig>();
 			Assert.IsNotNull(c2);

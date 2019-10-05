@@ -26,7 +26,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.Configuration.ConfigurationPointRequiredByDefault = true;
+			_context.Configuration.InitializationPointsRequiredByDefault = true;
 		}
 
 		[TestCleanup]

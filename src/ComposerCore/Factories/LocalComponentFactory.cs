@@ -204,7 +204,7 @@ namespace ComposerCore.Factories
 				else
 				{
 					// Check if the required initialization points get a value.
-					if (initializationPoint.Required.GetValueOrDefault(Composer.Configuration.ComponentPlugRequiredByDefault))
+					if (initializationPoint.Required.GetValueOrDefault(Composer.Configuration.InitializationPointsRequiredByDefault))
 						throw new CompositionException(
 							$"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
 					

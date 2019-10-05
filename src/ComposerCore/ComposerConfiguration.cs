@@ -14,8 +14,7 @@ namespace ComposerCore
             DisableAttributeChecking = false;
 
             ConstructorArgumentRequiredByDefault = true;
-            ComponentPlugRequiredByDefault = true;
-            ConfigurationPointRequiredByDefault = true;
+            InitializationPointsRequiredByDefault = true;
 
             DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.SingleOrDefault;
         }
@@ -23,8 +22,7 @@ namespace ComposerCore
         public bool DisableAttributeChecking { get; set; }
         
         public bool ConstructorArgumentRequiredByDefault { get; set; }
-        public bool ComponentPlugRequiredByDefault { get; set; }
-        public bool ConfigurationPointRequiredByDefault { get; set; }
+        public bool InitializationPointsRequiredByDefault { get; set; }
         
         public ConstructorResolutionPolicy DefaultConstructorResolutionPolicy { get; set; }
     }

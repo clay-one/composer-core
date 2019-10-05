@@ -82,8 +82,7 @@ namespace ComposerCore.Tests.SimpleTests
 		public void DefaultRequiredOrOptionalConfig()
 		{
 			Assert.IsTrue(_context.Configuration.ConstructorArgumentRequiredByDefault);
-			Assert.IsTrue(_context.Configuration.ComponentPlugRequiredByDefault);
-			Assert.IsTrue(_context.Configuration.ConfigurationPointRequiredByDefault);
+			Assert.IsTrue(_context.Configuration.InitializationPointsRequiredByDefault);
 		}
 
 		[TestMethod]

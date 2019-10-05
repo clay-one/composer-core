@@ -26,7 +26,7 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		public void TestInitialize()
 		{
 			_context = new ComponentContext();
-			_context.Configuration.ComponentPlugRequiredByDefault = false;
+			_context.Configuration.InitializationPointsRequiredByDefault = false;
 		}
 
 		[TestCleanup]
@@ -140,11 +140,11 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 			Assert.IsNotNull(c1);
 			Assert.IsNull(c1.PluggedContract);
 
-			_context.Configuration.ComponentPlugRequiredByDefault = true;
+			_context.Configuration.InitializationPointsRequiredByDefault = true;
 			
 			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithUnspecifiedPlug>());
 			
-			_context.Configuration.ComponentPlugRequiredByDefault = false;
+			_context.Configuration.InitializationPointsRequiredByDefault = false;
 			
 			var c2 = _context.GetComponent<ComponentWithUnspecifiedPlug>();
 			Assert.IsNotNull(c2);
