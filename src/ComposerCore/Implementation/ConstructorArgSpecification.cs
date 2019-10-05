@@ -44,7 +44,7 @@ namespace ComposerCore.Implementation
 				else
 				{
 					var contractName = queryNames.Length > parameterInfo.Position ? queryNames[parameterInfo.Position] : null;
-					result.Add(new ConstructorArgSpecification(true, new ComponentQuery(parameterInfo.ParameterType, contractName)));
+					result.Add(new ConstructorArgSpecification(null, new ComponentQuery(parameterInfo.ParameterType, contractName)));
 				}
 			}
 

@@ -7,7 +7,7 @@ namespace ComposerCore.Attributes
 	/// value should be set by the composer in order for the component to work
 	/// properly.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
 	public class ConfigurationPointAttribute : Attribute
 	{
 		public ConfigurationPointAttribute()
