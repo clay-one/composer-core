@@ -128,7 +128,7 @@ namespace ComposerCore.Factories
 	        _resolvedConstructor = resolver.Resolve(_targetType, candidateConstructors, _configuredConstructorArgSpecs?.ToArray()) ?? 
 	                               throw new CompositionException("Could not resolve a constructor for component " +
 	                                                              $"type {_targetType.FullName} using policy " +
-	                                                              $"'{policy} among the " +
+	                                                              $"'{policy}' among the " +
 	                                                              $"{candidateConstructors.Length} candidates.");
         }
 

@@ -58,6 +58,8 @@ namespace ComposerCore.Implementation
             Register(typeof(MostParametersConstructorResolver));
             Register(typeof(LeastParametersConstructorResolver));
             Register(typeof(MostResolvableConstructorResolver));
+            Register(typeof(PresetConstructorStore));
+            Register(typeof(PresetConstructorResolver));
             
             InternalRegister(typeof(StaticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(StaticComponentCache)), false);

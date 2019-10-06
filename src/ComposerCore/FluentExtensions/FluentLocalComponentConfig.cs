@@ -3,6 +3,7 @@ using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
@@ -62,10 +63,21 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            foreach (var argType in argTypes)
-            {
-                AddConstructorComponent(argType);
-            }
+            var constructor = Factory.TargetType.GetConstructor(argTypes);
+            if (constructor == null)
+                throw new ArgumentException("Could not find a public constructor with the specified parameter types " +
+                                            $"in the class '{Factory.TargetType.FullName}'");
+
+            return UseConstructor(constructor);
+        }
+
+        public FluentLocalComponentConfig UseConstructor(ConstructorInfo constructorInfo)
+        {
+            if (constructorInfo == null)
+                throw new ArgumentNullException(nameof(constructorInfo));
+            
+            Context.GetComponent<IPresetConstructorStore>().SetConstructor(Factory.TargetType, constructorInfo);
+            Factory.ConstructorResolutionPolicy = ConstructorResolutionPolicy.Preset;
             
             return this;
         }

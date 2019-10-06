@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
@@ -53,6 +54,12 @@ namespace ComposerCore.FluentExtensions
         public new FluentLocalComponentConfig<TComponent> UseConstructor(params Type[] argTypes)
         {
             base.UseConstructor(argTypes);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> UseConstructor(ConstructorInfo constructorInfo)
+        {
+            base.UseConstructor(constructorInfo);
             return this;
         }
 

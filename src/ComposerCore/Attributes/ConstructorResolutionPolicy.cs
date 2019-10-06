@@ -8,6 +8,7 @@ namespace ComposerCore.Attributes
         MostParameters = 3,
         LeastParameters = 4,
         MostResolvable = 5,
+        Preset = 199,
         Custom = 200
     }
 }
