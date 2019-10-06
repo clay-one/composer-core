@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation.ConstructorResolvers
 {
@@ -15,9 +14,9 @@ namespace ComposerCore.Implementation.ConstructorResolvers
         {
         }
         
-        protected override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors)
+        public override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors, ConstructorArgSpecification[] preConfiguredArgs)
         {
-            return base.Resolve(targetType, candidateConstructors) ??
+            return base.Resolve(targetType, candidateConstructors, preConfiguredArgs) ??
                    FindDefaultConstructor(candidateConstructors);
         }
         

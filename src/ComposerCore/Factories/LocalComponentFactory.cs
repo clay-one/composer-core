@@ -11,17 +11,12 @@ namespace ComposerCore.Factories
 	{
 		private IComponentCache _componentCache;
 
-		private readonly LocalComponentBuilder _builder;
-		private readonly LocalComponentInitializer _initializer;
-
 		#region Constructors
 
-		public LocalComponentFactory(Type targetType) : base(targetType)
+		public LocalComponentFactory(Type targetType, LocalComponentFactoryBase original = null)
+			: base(targetType, original)
 		{
 			_componentCache = null;
-			
-			_builder = new LocalComponentBuilder(targetType);
-			_initializer = new LocalComponentInitializer();
 		}
 
 		#endregion
@@ -37,8 +32,6 @@ namespace ComposerCore.Factories
 		{
 			base.Initialize(composer);
 
-			_builder.Initialize(composer);
-			
 			try
 			{
 				LoadInitializationPoints();
@@ -136,7 +129,7 @@ namespace ComposerCore.Factories
 			// composition listeners may change the reference to a
 			// wrapped one.
 
-			object originalComponentInstance = _builder.Build();
+			object originalComponentInstance = Builder.Build();
 
 			// After constructing the component object, first process
 			// all composition listeners so that if the reference should

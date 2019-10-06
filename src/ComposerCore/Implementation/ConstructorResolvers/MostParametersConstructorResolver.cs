@@ -10,9 +10,9 @@ namespace ComposerCore.Implementation.ConstructorResolvers
     [ConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)]
     public class MostParametersConstructorResolver : ExplicitConstructorResolver
     {
-        protected override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors)
+        public override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors, ConstructorArgSpecification[] preConfiguredArgs)
         {
-            return base.Resolve(targetType, candidateConstructors) ??
+            return base.Resolve(targetType, candidateConstructors, preConfiguredArgs) ??
                    FindMostParametersConstructor(candidateConstructors);
         }
         

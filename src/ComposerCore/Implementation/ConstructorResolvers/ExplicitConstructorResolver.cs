@@ -14,13 +14,7 @@ namespace ComposerCore.Implementation.ConstructorResolvers
         {
         }
         
-        public ConstructorInfo Resolve(Type targetType)
-        {
-            var candidateConstructors = targetType.GetConstructors();
-            return Resolve(targetType, candidateConstructors);
-        }
-        
-        protected virtual ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors)
+        public virtual ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors, ConstructorArgSpecification[] preConfiguredArgs)
         {
             return FindMarkedConstructor(targetType, candidateConstructors);
         }

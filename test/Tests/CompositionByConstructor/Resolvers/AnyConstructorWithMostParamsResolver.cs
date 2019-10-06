@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
+using ComposerCore.Implementation;
 
 namespace ComposerCore.Tests.CompositionByConstructor.Resolvers
 {
@@ -10,9 +11,9 @@ namespace ComposerCore.Tests.CompositionByConstructor.Resolvers
     [ConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)]
     public class AnyConstructorWithMostParamsResolver : IConstructorResolver
     {
-        public ConstructorInfo Resolve(Type targetType)
+        public ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors, ConstructorArgSpecification[] preConfiguredArgs)
         {
-            return targetType.GetConstructors().OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+            return candidateConstructors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
         }
     }
 }

@@ -66,19 +66,19 @@ namespace ComposerCore.FluentExtensions
 
         public FluentGenericLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
             return this;
         }
 
         public FluentGenericLocalComponentConfig AddConstructorValue(object value)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
             return this;
         }
 
         public FluentGenericLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, 
                 new FuncValueQuery(c => valueCalculator(c))));
 
             return this;
@@ -86,7 +86,7 @@ namespace ComposerCore.FluentExtensions
 
         public FluentGenericLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
             return this;
         }
 
@@ -147,10 +147,8 @@ namespace ComposerCore.FluentExtensions
 
         public FluentGenericLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
-//            Factory.ConstructorResolutionPolicy = policy;
-//            return this;
-
-            throw new NotImplementedException();
+            Factory.ConstructorResolutionPolicy = policy;
+            return this;
         }
 
         #endregion

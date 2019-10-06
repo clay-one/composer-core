@@ -30,6 +30,7 @@ namespace ComposerCore.Tests.FluentRegistration
         {
             _context = new ComponentContext();
             _context.Configuration.DisableAttributeChecking = true;
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
 
             _context.Register(typeof(ComponentOne));
             _context.Register(typeof(IComponentTwo), "name", typeof(ComponentTwo));
@@ -52,6 +53,7 @@ namespace ComposerCore.Tests.FluentRegistration
                 .AddConstructorComponent<IComponentTwo>("name")
                 .RegisterWith<INonAttributedContract>();
 
+            var x = _context.GetComponent<IComponentOne>();
             var i = _context.GetComponent<INonAttributedContract>();
             var c = i as NonAttributedComponent;
 

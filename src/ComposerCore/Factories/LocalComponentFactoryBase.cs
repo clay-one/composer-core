@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
@@ -11,20 +12,27 @@ namespace ComposerCore.Factories
     public abstract class LocalComponentFactoryBase : IComponentFactory
     {
         protected IComposer Composer { get; private set; }
+        protected LocalComponentBuilder Builder { get; }
         
         public Type TargetType { get; }
         public bool Initialized => Composer != null;
 
+        public ConstructorResolutionPolicy? ConstructorResolutionPolicy
+        {
+            get => Builder.ConstructorResolutionPolicy;
+            set => Builder.ConstructorResolutionPolicy = value;
+        }
 
-        protected LocalComponentFactoryBase(Type targetType)
+        protected LocalComponentFactoryBase(Type targetType, LocalComponentFactoryBase original = null)
         {
             TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
             
             Composer = null;
-            _constructorArgs = null;
-            _initializationPoints = null;
-            _componentCacheQuery = null;
-            _compositionNotificationMethods = null;
+            Builder = new LocalComponentBuilder(targetType, original?.Builder);
+            
+            _initializationPoints = original?._initializationPoints == null ? null : new List<InitializationPointSpecification>(original._initializationPoints);
+            _componentCacheQuery = original?._componentCacheQuery;
+            _compositionNotificationMethods = original?._compositionNotificationMethods == null ? null : new List<Action<IComposer, object>>(original._compositionNotificationMethods);
         }
 
         #region IComponentFactory
@@ -38,13 +46,14 @@ namespace ComposerCore.Factories
         {
             if (Initialized)
                 return;
-            
+
             if (TargetType == null)
                 throw new InvalidOperationException("TargetType is not specified.");
 
             if (!composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasComponentAttribute(TargetType))
                 throw new CompositionException("The type '" + TargetType +
                                                "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
+            Builder.Initialize(composer);
             Composer = composer;
         }
         
@@ -52,21 +61,11 @@ namespace ComposerCore.Factories
         public abstract object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain);
 
         #endregion
-        
-        #region ConstructorPolicy
 
-        protected List<ConstructorArgSpecification> _constructorArgs;
-
-        public List<ConstructorArgSpecification> ConstructorArgs
+        public void AddConfiguredConstructorArg(ConstructorArgSpecification cas)
         {
-            get
-            {
-                EnsureNotInitialized("access ConstructorArgs");
-                return _constructorArgs ?? (_constructorArgs = new List<ConstructorArgSpecification>());
-            }
+            Builder.AddConfiguredConstructorArg(cas);
         }
-
-        #endregion
         
         #region InitializationPoints
         
@@ -179,7 +178,7 @@ namespace ComposerCore.Factories
 
         public override string ToString()
         {
-            return TargetType != null ? TargetType.AssemblyQualifiedName : base.ToString();
+            return TargetType?.AssemblyQualifiedName ?? base.ToString();
         }
 
         private void EnsureNotInitialized(string operation)

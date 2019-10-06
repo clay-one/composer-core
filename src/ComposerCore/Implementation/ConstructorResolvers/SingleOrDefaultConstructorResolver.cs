@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation.ConstructorResolvers
 {
@@ -9,7 +8,7 @@ namespace ComposerCore.Implementation.ConstructorResolvers
     [ConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)]
     public class SingleOrDefaultConstructorResolver : DefaultConstructorResolver
     {
-        protected override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors)
+        public override ConstructorInfo Resolve(Type targetType, ConstructorInfo[] candidateConstructors, ConstructorArgSpecification[] preConfiguredArgs)
         {
             return FindMarkedConstructor(targetType, candidateConstructors) ??
                    FindSingleConstructor(candidateConstructors) ??

@@ -83,19 +83,7 @@ namespace ComposerCore.Factories
 
             var subFactory = _subFactories.GetOrAdd(closedTargetType, type =>
             {
-                var newSubFactory = new LocalComponentFactory(type);
-                
-                if (_constructorArgs != null)
-                    newSubFactory.ConstructorArgs.AddRange(_constructorArgs);
-                
-                if (_initializationPoints != null)
-                    newSubFactory.InitializationPoints.AddRange(_initializationPoints);
-                
-                newSubFactory.ComponentCacheQuery = _componentCacheQuery;
-                
-                if (_compositionNotificationMethods != null)
-                    newSubFactory.CompositionNotificationMethods.AddRange(_compositionNotificationMethods);
-                
+                var newSubFactory = new LocalComponentFactory(type, this);
                 newSubFactory.Initialize(Composer);
                 return newSubFactory;
             });
