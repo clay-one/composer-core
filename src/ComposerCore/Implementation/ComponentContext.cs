@@ -264,6 +264,13 @@ namespace ComposerCore.Implementation
 			    throw new CompositionException("Requested contract type " + contract.Name +
 			                                   " contains open generic parameters. Can not construct a concrete type.");
 
+		    if (contract.IsInterface && contract.IsGenericType)
+		    {
+			    var enumerableElementType = contract.GetEnumerableElementType();
+			    if (enumerableElementType != null)
+				    return true;
+		    }
+
 		    var identity = new ContractIdentity(contract, name);
 		    return _repository.FindFactories(identity)?.Any() ?? false;
 	    }

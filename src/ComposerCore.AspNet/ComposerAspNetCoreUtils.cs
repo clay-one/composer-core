@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
@@ -16,6 +17,7 @@ namespace ComposerCore.AspNet
         {
             var composer = new ComponentContext();
             composer.Configuration.DisableAttributeChecking = true;
+            composer.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
             composer.Populate(serviceCollection);
 
             return composer;
@@ -25,13 +27,18 @@ namespace ComposerCore.AspNet
         {
             composer
                 .ForComponent<ComposerServiceProvider>()
-                .UseComponentCache(typeof(DefaultComponentCache))
+                .AsSingleton()
                 .RegisterWith<IServiceProvider>();
             
             composer
                 .ForComponent<HttpContextAccessor>()
-                .UseComponentCache(typeof(DefaultComponentCache))
+                .AsSingleton()
                 .RegisterWith<IHttpContextAccessor>();
+            
+            composer
+                .ForComponent<ComposerServiceScopeFactory>()
+                .AsSingleton()
+                .RegisterWith<IServiceScopeFactory>();
 
             composer.ForComponent<AspNetCoreRequestComponentCache>().Register();
             
@@ -42,62 +49,17 @@ namespace ComposerCore.AspNet
                 {
                     if (service.ImplementationType.IsOpenGenericType())
                     {
-                        var constructors = service.ImplementationType.GetConstructors();
-                        Type[] constructorParamTypes = null;
-                    
-                        foreach (var constructor in constructors)
-                        {
-                            if (constructorParamTypes == null || 
-                                constructor.GetParameters().Length < constructorParamTypes.Length)
-                            {
-                                constructorParamTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
-                            }
-                        }
-                    
-                        var config = composer
+                        composer
                             .ForGenericComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime));
-
-                        foreach (var constructorParamType in constructorParamTypes ?? Enumerable.Empty<Type>())
-                        {
-//                            var enumerableTypeArg = constructorParamType.GetEnumerableTypeArgument();
-//                            if (enumerableTypeArg != null)
-//                                config.AddConstructorValue(c => c.GetAllComponents(enumerableTypeArg), false);
-//                            else
-                                config.AddConstructorComponent(constructorParamType, required: false);
-                        }
-                        
-                        config.RegisterWith(service.ServiceType);
+                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                            .RegisterWith(service.ServiceType);
                     }
                     else
                     {
-                        var constructors = service.ImplementationType.GetConstructors();
-                        Type[] constructorParamTypes = null;
-                    
-                        foreach (var constructor in constructors)
-                        {
-                            if (constructorParamTypes == null || 
-                                constructor.GetParameters().Length < constructorParamTypes.Length)
-                            {
-                                constructorParamTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
-                            }
-                        }
-                    
-                        var config = composer
+                        composer
                             .ForComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime));
-                            
-                        foreach (var constructorParamType in constructorParamTypes ?? Enumerable.Empty<Type>())
-                        {
-//                            var enumerableTypeArg = constructorParamType.GetEnumerableTypeArgument();
-//                            if (enumerableTypeArg != null)
-//                                config.AddConstructorValue(c => c.GetAllComponents(enumerableTypeArg), false);
-//                            else
-                                config.AddConstructorComponent(constructorParamType, required: false);
-                        }
-
-                        config.UseConstructor(constructorParamTypes);
-                        config.RegisterWith(service.ServiceType);
+                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                            .RegisterWith(service.ServiceType);
                     }
                 }
                 else if (service.ImplementationFactory != null)
@@ -109,9 +71,7 @@ namespace ComposerCore.AspNet
                 }
                 else
                 {
-                    composer
-                        .ForObject(service.ImplementationInstance)
-                        .RegisterWith(service.ServiceType);
+                    composer.RegisterObject(service.ServiceType, service.ImplementationInstance);
                 }
             }
         }

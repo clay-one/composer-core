@@ -75,9 +75,14 @@ namespace ComposerCore.Implementation
 		    if (contract == component)
 		        return;
 
-			if (!component.IsSubclassOf(contract) && component.GetInterface(contract.Name) == null)
-				throw new CompositionException(
-				        $"Component type '{component.FullName}' is not a sub-type of contract '{contract.FullName}");
+		    if (component.IsSubclassOf(contract))
+			    return;
+		    
+		    if (contract.IsInterface && component.GetInterfaces().Any(i => i == contract))
+			    return;
+		    
+			throw new CompositionException(
+			        $"Component type '{component.FullName}' is not a sub-type of contract '{contract.FullName}");
 		}
 
 		internal static ComponentCacheAttribute GetComponentCacheAttribute(Type component)

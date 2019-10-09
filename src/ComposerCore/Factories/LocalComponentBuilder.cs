@@ -125,11 +125,14 @@ namespace ComposerCore.Factories
 		                                       "policy in the context, while attempting to build the component " +
 		                                       $"type {_targetType.FullName}.");
 	        
-	        _resolvedConstructor = resolver.Resolve(_targetType, candidateConstructors, _configuredConstructorArgSpecs?.ToArray()) ?? 
-	                               throw new CompositionException("Could not resolve a constructor for component " +
-	                                                              $"type {_targetType.FullName} using policy " +
-	                                                              $"'{policy}' among the " +
-	                                                              $"{candidateConstructors.Length} candidates.");
+	        _resolvedConstructor = resolver.Resolve(_targetType, candidateConstructors, _configuredConstructorArgSpecs?.ToArray());
+	        if (_resolvedConstructor is null)
+	        {
+		        throw new CompositionException("Could not resolve a constructor for component " +
+		                                                              $"type {_targetType.FullName} using policy " +
+		                                                              $"'{policy}' among the " +
+		                                                              $"{candidateConstructors.Length} candidates.");
+	        }
         }
 
         private void PrepareConstructorSpecs()
