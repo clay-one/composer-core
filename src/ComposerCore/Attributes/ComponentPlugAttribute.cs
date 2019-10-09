@@ -1,4 +1,5 @@
 using System;
+using ComposerCore.CompositionXml.Info;
 
 namespace ComposerCore.Attributes
 {
@@ -7,7 +8,7 @@ namespace ComposerCore.Attributes
 	/// should fill the field or attribute with appropriate component instance to fulfill the request.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
-	public sealed class ComponentPlugAttribute : Attribute
+	public class ComponentPlugAttribute : Attribute
 	{
 		public ComponentPlugAttribute()
 			: this(null)
@@ -34,5 +35,28 @@ namespace ComposerCore.Attributes
 		public string Name { get; }
 
 		public bool? Required { get; }
+	}
+
+	/// <summary>
+	/// Syntactic sugar for ComponentPlugAttribute to improve readability
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false, AllowMultiple = false)]
+	public class PlugAttribute : ComponentPlugAttribute
+	{
+		public PlugAttribute()
+		{
+		}
+
+		public PlugAttribute(bool required) : base(required)
+		{
+		}
+
+		public PlugAttribute(string name) : base(name)
+		{
+		}
+
+		public PlugAttribute(string name, bool required) : base(name, required)
+		{
+		}
 	}
 }

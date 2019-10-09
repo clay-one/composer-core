@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -48,6 +49,17 @@ namespace ComposerCore.FluentExtensions
         {
             return UseComponentCache(typeof(TCacheContract), cacheContractName);
         }
+
+        public FluentUntypedFactoryMethodComponentConfig AsSingleton()
+        {
+            return UseComponentCache(typeof(ContractAgnosticComponentCache));
+        }
+
+        public FluentUntypedFactoryMethodComponentConfig AsTransient()
+        {
+            return UseComponentCache(null);
+        }
+
 
         #endregion
     }

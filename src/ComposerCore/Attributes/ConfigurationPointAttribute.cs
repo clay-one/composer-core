@@ -36,4 +36,28 @@ namespace ComposerCore.Attributes
 
 		public bool? Required { get; }
 	}
+
+	/// <summary>
+	/// Syntactic sugar for ConfigurationPointAttribute to improve readability
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, Inherited = false,
+		AllowMultiple = false)]
+	public class ConfigAttribute : ConfigurationPointAttribute
+	{
+		public ConfigAttribute()
+		{
+		}
+
+		public ConfigAttribute(bool required) : base(required)
+		{
+		}
+
+		public ConfigAttribute(string configurationVariableName) : base(configurationVariableName)
+		{
+		}
+
+		public ConfigAttribute(string configurationVariableName, bool required) : base(configurationVariableName, required)
+		{
+		}
+	}
 }

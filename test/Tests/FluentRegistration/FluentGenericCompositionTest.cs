@@ -8,9 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ComposerCore.Tests.FluentRegistration
 {
     [TestClass]
-    public class FluentGenericComposition
+    public class FluentGenericCompositionTest
     {
-        public TestContext TestContext { get; set; }
         private ComponentContext _context;
 
         #region Additional test attributes

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -23,6 +24,11 @@ namespace ComposerCore.FluentExtensions
         
         #region Fluent configuration methods
 
+        public void Register(string contractName = null)
+        {
+            Context.Register(contractName, Factory);
+        }
+        
         public void RegisterWith<TContract>(string contractName = null)
         {
             RegisterWith(typeof(TContract), contractName);
@@ -30,7 +36,6 @@ namespace ComposerCore.FluentExtensions
 
         public void RegisterWith(Type contractType, string contractName = null)
         {
-//            Factory.ContractTypes = new List<Type> { contractType };
             Context.Register(contractType, contractName, Factory);
         }
 
@@ -48,7 +53,17 @@ namespace ComposerCore.FluentExtensions
         {
             return UseComponentCache(typeof(TCacheContract), cacheContractName);
         }
+        
+        public FluentFactoryMethodComponentConfig<TComponent> AsSingleton()
+        {
+            return UseComponentCache(typeof(ContractAgnosticComponentCache));
+        }
 
+        public FluentFactoryMethodComponentConfig<TComponent> AsTransient()
+        {
+            return UseComponentCache(null);
+        }
+        
         #endregion
 
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
@@ -18,14 +19,14 @@ namespace ComposerCore.Factories
 
 		#region Constructors
 
-		public UntypedFactoryMethodComponentFactory(Func<IComposer, object> factoryMethod)
+		public UntypedFactoryMethodComponentFactory(Func<IComposer, object> factoryMethod, IEnumerable<Type> contractTypes = null)
 		{
             _factoryMethod = factoryMethod ?? throw new ArgumentNullException(nameof(factoryMethod));
 
 			_composer = null;
 			_componentCache = null;
             _componentCacheQuery = null;
-            _contractTypes = null;
+            _contractTypes = contractTypes?.ToList();
 		}
 
 		#endregion
@@ -51,6 +52,13 @@ namespace ComposerCore.Factories
 
 		public IEnumerable<Type> GetContractTypes()
 		{
+			if (_contractTypes == null || _contractTypes.Count == 0)
+				throw new CompositionException("Contracts are not specified. For an UntypedFactoryMethod, there is " +
+				                               "no way of discovering contracts before actual invocation of the " +
+				                               "method and instantiation of the component. Contract types should " +
+				                               "be provided to the factory using ContractTypes property before " +
+				                               "registering it in the ComponentContext.");
+			
 			return _contractTypes;
 		}
 
