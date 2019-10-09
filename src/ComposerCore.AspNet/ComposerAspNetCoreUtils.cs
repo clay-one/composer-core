@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
@@ -65,7 +64,7 @@ namespace ComposerCore.AspNet
                 else if (service.ImplementationFactory != null)
                 {
                     composer
-                        .ForUntypedDelegate((c) => service.ImplementationFactory(c.GetComponent<IServiceProvider>()))
+                        .ForUntypedFactoryMethod((c) => service.ImplementationFactory(c.GetComponent<IServiceProvider>()))
                         .UseComponentCache(MapComponentCacheType(service.Lifetime))
                         .RegisterWith(service.ServiceType);
                 }

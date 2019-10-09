@@ -1,25 +1,26 @@
 using System;
 using System.Collections.Generic;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
-namespace ComposerCore.Factories
+namespace ComposerCore.FluentExtensions
 {
-    public class FluentUntypedDelegateComponentConfig
+    public class FluentFactoryMethodComponentConfig<TComponent> where TComponent : class
     {
         protected readonly ComponentContext Context;
-        protected readonly UntypedDelegateComponentFactory Factory;
+        protected readonly FactoryMethodComponentFactory<TComponent> Factory;
 
         #region Constructors
 
-        public FluentUntypedDelegateComponentConfig(ComponentContext context, Func<IComposer, object> factoryMethod)
+        public FluentFactoryMethodComponentConfig(ComponentContext context, Func<IComposer, TComponent> factoryMethod)
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
-            Factory = new UntypedDelegateComponentFactory(factoryMethod);
+            Factory = new FactoryMethodComponentFactory<TComponent>(factoryMethod);
         }
 
         #endregion
-
+        
         #region Fluent configuration methods
 
         public void RegisterWith<TContract>(string contractName = null)
@@ -29,11 +30,11 @@ namespace ComposerCore.Factories
 
         public void RegisterWith(Type contractType, string contractName = null)
         {
-            Factory.ContractTypes = new List<Type> { contractType };
+//            Factory.ContractTypes = new List<Type> { contractType };
             Context.Register(contractType, contractName, Factory);
         }
 
-        public FluentUntypedDelegateComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
+        public FluentFactoryMethodComponentConfig<TComponent> UseComponentCache(Type cacheContractType, string cacheContractName = null)
         {
             if (cacheContractType == null)
                 Factory.ComponentCacheQuery = new NullQuery();
@@ -43,11 +44,12 @@ namespace ComposerCore.Factories
             return this;
         }
 
-        public FluentUntypedDelegateComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
+        public FluentFactoryMethodComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)
         {
             return UseComponentCache(typeof(TCacheContract), cacheContractName);
         }
 
         #endregion
+
     }
 }

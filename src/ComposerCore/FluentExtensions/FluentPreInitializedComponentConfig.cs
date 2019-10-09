@@ -4,6 +4,7 @@ using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {
+    [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
     public class FluentPreInitializedComponentConfig
     {
         private readonly ComponentContext _context;
@@ -21,16 +22,19 @@ namespace ComposerCore.FluentExtensions
 
         #region Fluent configuration methods
 
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
         public void Register(string contractName = null)
         {
             _context.Register(contractName, _factory);
         }
 
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
         public void RegisterWith<TContract>(string contractName = null)
         {
             RegisterWith(typeof(TContract), contractName);
         }
 
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
         public void RegisterWith(Type contractType, string contractName = null)
         {
             _context.Register(contractType, contractName, _factory);
