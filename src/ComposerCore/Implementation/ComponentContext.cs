@@ -18,7 +18,6 @@ namespace ComposerCore.Implementation
 	{
         #region Private Data
 
-        private readonly Dictionary<string, ICompositionListener> _compositionListeners;
 		private readonly Repository _repository;
 		private readonly Dictionary<string, object> _variables;
 
@@ -36,7 +35,6 @@ namespace ComposerCore.Implementation
 
 			_repository = new Repository();
 			_variables = new Dictionary<string, object>();
-			_compositionListeners = new Dictionary<string, ICompositionListener>();
 
 			RegisterObject(this);
 
@@ -46,11 +44,13 @@ namespace ComposerCore.Implementation
 
 		private void RegisterBuiltInComponents()
 		{
+			RegisterObject(new CompositionListenerChain());
+			
 		    InternalRegister(typeof (DefaultComponentCache), null,
 		        ComponentContextUtils.CreateLocalFactory(typeof (DefaultComponentCache)), false);
             InternalRegister(typeof(ContractAgnosticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(ContractAgnosticComponentCache)), false);
-            
+
             RegisterObject((string)null, new ExplicitConstructorResolver());
             Register(typeof(ExplicitConstructorResolver));
             Register(typeof(DefaultConstructorResolver));
@@ -230,21 +230,12 @@ namespace ComposerCore.Implementation
 
         public virtual void RegisterCompositionListener(string name, ICompositionListener listener)
 		{
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-
-			if ((_compositionListeners.ContainsKey(name)) && (listener != null))
-				throw new ArgumentException($"Another composition listener with the name '{name}' is already registered.");
-
-			if (listener == null)
-				_compositionListeners.Remove(name);
-			else
-				_compositionListeners[name] = listener;
+			GetComponent<CompositionListenerChain>().RegisterCompositionListener(name, listener);
 		}
 
         public virtual void UnregisterCompositionListener(string name)
 		{
-			RegisterCompositionListener(name, null);
+			GetComponent<CompositionListenerChain>().UnregisterCompositionListener(name);
 		}
 
 		#endregion
@@ -304,7 +295,7 @@ namespace ComposerCore.Implementation
 
 		        while (enumerator.MoveNext())
 		        {
-                    var result = enumerator.Current?.GetComponentInstance(identity, _compositionListeners.Values);
+                    var result = enumerator.Current?.GetComponentInstance(identity);
 		            if (result != null)
 		                return result;
 		        }
@@ -325,7 +316,7 @@ namespace ComposerCore.Implementation
 			var factories = _repository.FindFactories(identity);
 
 			return factories
-				.Select(f => f.GetComponentInstance(identity, _compositionListeners.Values))
+				.Select(f => f.GetComponentInstance(identity))
 				.Where(result => result != null)
 				.CastToRuntimeType(contract);
 		}
@@ -341,7 +332,7 @@ namespace ComposerCore.Implementation
 
 			return identities.SelectMany(identity => _repository.FindFactories(identity),
 				(identity, factory) =>
-					factory.GetComponentInstance(identity, _compositionListeners.Values))
+					factory.GetComponentInstance(identity))
 			.CastToRuntimeType(contract);
 		}
 
@@ -392,11 +383,9 @@ namespace ComposerCore.Implementation
 				                                               initializationPointResult);
 			}
 
-			foreach (var compositionListener in _compositionListeners.Values)
-			{
-				compositionListener.OnComponentComposed(null, initializationPoints, initializationPointResults, componentType,
-				                                        componentInstance, componentInstance);
-			}
+			GetComponent<ICompositionListenerChain>().NotifyComposed(
+				componentInstance, componentInstance, initializationPointResults, 
+				null, initializationPoints, componentType);
 
 			var compositionNotificationMethods = ComponentContextUtils.FindCompositionNotificationMethods(componentType);
 			if (compositionNotificationMethods != null)

@@ -62,7 +62,7 @@ namespace ComposerCore.Factories
 			return _contractTypes;
 		}
 
-		public object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+		public object GetComponentInstance(ContractIdentity contract)
 		{
 			// Check if the factory is initialized
 
@@ -70,6 +70,8 @@ namespace ComposerCore.Factories
 				throw new InvalidOperationException(
 					"DelegateComponentFactory should be initialized before calling GetComponentInstance method.");
 
+			var listenerChain = _composer.GetComponent<ICompositionListenerChain>();
+			
 			if (_componentCache == null)
 			{
 				// If the component is not cached at all, then unique instances should
@@ -77,9 +79,8 @@ namespace ComposerCore.Factories
 				// degrades performance. So, create without locking.
 
 				var newComponent = CreateComponent(contract, listenerChain);
-				return NotifyRetrieved(newComponent.ComponentInstance,
-				                       newComponent.OriginalComponentInstance,
-				                       contract, listenerChain);
+				return listenerChain.NotifyRetrieved(newComponent.ComponentInstance, newComponent.OriginalComponentInstance,
+					contract, this, newComponent.OriginalComponentInstance.GetType());
 			}
 
 			// Check if the component is cached, and ready to deliver
@@ -87,9 +88,9 @@ namespace ComposerCore.Factories
 			var componentCacheEntry = _componentCache.GetFromCache(contract);
 			if (componentCacheEntry != null)
 			{
-				return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-				                       componentCacheEntry.OriginalComponentInstance,
-				                       contract, listenerChain);
+				return listenerChain.NotifyRetrieved(componentCacheEntry.ComponentInstance,
+					componentCacheEntry.OriginalComponentInstance, contract, this,
+					componentCacheEntry.OriginalComponentInstance.GetType());
 			}
 
 			// If the component is cached, then lock the component instance
@@ -100,18 +101,10 @@ namespace ComposerCore.Factories
 			{
 				// Double-check the initialization to avoid rendezvouz
 
-				componentCacheEntry = _componentCache.GetFromCache(contract);
-				if (componentCacheEntry != null)
-				{
-					return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-					                       componentCacheEntry.OriginalComponentInstance,
-					                       contract, listenerChain);
-				}
-
-				componentCacheEntry = CreateComponent(contract, listenerChain);
-				return NotifyRetrieved(componentCacheEntry.ComponentInstance,
-				                       componentCacheEntry.OriginalComponentInstance,
-				                       contract, listenerChain);
+				componentCacheEntry = _componentCache.GetFromCache(contract) ?? CreateComponent(contract, listenerChain);
+				return listenerChain.NotifyRetrieved(componentCacheEntry.ComponentInstance,
+					componentCacheEntry.OriginalComponentInstance, contract, this,
+					componentCacheEntry.OriginalComponentInstance.GetType());
 			}
 		}
 
@@ -195,22 +188,21 @@ namespace ComposerCore.Factories
 				throw new CompositionException($"Can not register delegate component factory because " +
 				                               $"the specified ComponentCache contract ({_componentCache}) could not be queried from Composer.");
 
-			if (!(result is IComponentCache))
-				throw new CompositionException($"Component cache type {result.GetType().FullName} that is specified " +
-				                               $"as component cache handler on component does not implement " +
-				                               "IComponentCache interface.");
-
-			_componentCache = (IComponentCache) result;
+			_componentCache = result as IComponentCache ??
+			                  throw new CompositionException(
+				                  $"Component cache type {result.GetType().FullName} that is specified " +
+				                  $"as component cache handler on component does not implement " +
+				                  "IComponentCache interface.");
 		}
         
-        private ComponentCacheEntry CreateComponent(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+        private ComponentCacheEntry CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
 			// composition listeners may change the reference to a
 			// wrapped one.
 
-			object originalComponentInstance = _factoryMethod(_composer);
+			var originalComponentInstance = _factoryMethod(_composer);
 
 			// After constructing the component object, first process
 			// all composition listeners so that if the reference should
@@ -219,7 +211,7 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			object componentInstance = NotifyCreated(originalComponentInstance, contract, listenerChain);
+			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, originalComponentInstance.GetType());
 
 			// Store the cache, so that if there is a circular dependency,
 			// applying initialization points is not blocked and chained
@@ -245,37 +237,8 @@ namespace ComposerCore.Factories
 
 			return result;
 		}
-		
-		private object NotifyCreated(object originalComponentInstance, ContractIdentity contract,
-		                             IEnumerable<ICompositionListener> listenerChain)
-		{
-			var componentInstance = originalComponentInstance;
-
-			foreach (var compositionListener in listenerChain)
-			{
-				compositionListener.OnComponentCreated(contract, this, originalComponentInstance.GetType(), ref componentInstance, originalComponentInstance);
-			}
-
-			return componentInstance;
-		}
-		
-		private object NotifyRetrieved(object componentInstance, object originalComponentInstance, ContractIdentity contract,
-		                               IEnumerable<ICompositionListener> listenerChain)
-		{
-			// The component is ready to be delivered.
-			// Inform composition listeners about the retrieval.
-
-			var result = componentInstance;
-
-			foreach (var compositionListener in listenerChain)
-			{
-				compositionListener.OnComponentRetrieved(contract, this, originalComponentInstance.GetType(), ref result, originalComponentInstance);
-			}
-
-			return result;
-		}
-
-		#endregion
+        
+        #endregion
         
     }
 }

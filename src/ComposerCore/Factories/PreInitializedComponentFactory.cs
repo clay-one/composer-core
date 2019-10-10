@@ -46,8 +46,7 @@ namespace ComposerCore.Factories
 
 		public bool SharedAmongContracts => true;
 
-	    public object GetComponentInstance(ContractIdentity contract,
-		                                   IEnumerable<ICompositionListener> listenerChain)
+	    public object GetComponentInstance(ContractIdentity contract)
 		{
 			return _componentInstance;
 		}

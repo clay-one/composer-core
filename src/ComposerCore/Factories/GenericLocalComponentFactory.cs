@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
@@ -51,7 +50,7 @@ namespace ComposerCore.Factories
             return _contractTypes.Keys;
         }
 
-        public override object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+        public override object GetComponentInstance(ContractIdentity contract)
         {
             var requestedClosedContractType = contract.Type;
 
@@ -88,7 +87,7 @@ namespace ComposerCore.Factories
                 return newSubFactory;
             });
 
-            return subFactory.GetComponentInstance(contract, listenerChain);
+            return subFactory.GetComponentInstance(contract);
         }
 
         #endregion

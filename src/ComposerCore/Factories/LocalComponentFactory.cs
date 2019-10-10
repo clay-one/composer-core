@@ -51,11 +51,13 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
-		public override object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+		public override object GetComponentInstance(ContractIdentity contract)
 		{
 			if (!Initialized)
 				throw new InvalidOperationException(
 					"LocalComponentFactory should be initialized before calling GetComponentInstance method.");
+
+			var listenerChain = Composer.GetComponent<ICompositionListenerChain>();
 
 			if (_componentCache == null)
 			{
@@ -65,7 +67,7 @@ namespace ComposerCore.Factories
 
 				var newComponent = CreateComponent(contract, listenerChain);
 				return listenerChain.NotifyRetrieved(
-					newComponent.ComponentInstance, newComponent.OriginalComponentInstance, contract, this);
+					newComponent.ComponentInstance, newComponent.OriginalComponentInstance, contract, this, TargetType);
 			}
 
 			// Check if the component is cached, and ready to deliver
@@ -74,7 +76,7 @@ namespace ComposerCore.Factories
 			if (componentCacheEntry != null)
 			{
 				return listenerChain.NotifyRetrieved(
-					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
+					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this, TargetType);
 			}
 
 			// If the component is cached, then lock the component instance
@@ -83,18 +85,11 @@ namespace ComposerCore.Factories
 
 			lock (_componentCache.SynchronizationObject)
 			{
-				// Double-check the initialization to avoid rendezvouz
+				// Double-check the initialization to avoid rendezvous
 
-				componentCacheEntry = _componentCache.GetFromCache(contract);
-				if (componentCacheEntry != null)
-				{
-					return listenerChain.NotifyRetrieved(
-						componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
-				}
-
-				componentCacheEntry = CreateComponent(contract, listenerChain);
+				componentCacheEntry = _componentCache.GetFromCache(contract) ?? CreateComponent(contract, listenerChain);
 				return listenerChain.NotifyRetrieved(
-					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this);
+					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this, TargetType);
 			}
 		}
 
@@ -122,14 +117,14 @@ namespace ComposerCore.Factories
 				                  "IComponentCache interface.");
 		}
 
-		private ComponentCacheEntry CreateComponent(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain)
+		private ComponentCacheEntry CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
 			// composition listeners may change the reference to a
 			// wrapped one.
 
-			object originalComponentInstance = Builder.Build();
+			var originalComponentInstance = Builder.Build();
 
 			// After constructing the component object, first process
 			// all composition listeners so that if the reference should
@@ -138,7 +133,7 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			object componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this);
+			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
 
 			// Store the cache, so that if there is a circular dependency,
 			// applying initialization points is not blocked and chained
@@ -163,7 +158,7 @@ namespace ComposerCore.Factories
 			// component instance by calling OnComponentComposed method.
 
 			listenerChain.NotifyComposed(
-				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, this);
+				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
 
 			// The composition is now finished for the component instance.
 			// See if an [OnCompositionComplete] method is specified, call it.

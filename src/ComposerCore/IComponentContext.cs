@@ -28,7 +28,9 @@ namespace ComposerCore
 		void SetVariable(string name, Lazy<object> value);
 		void RemoveVariable(string name);
 
+		[Obsolete("Resolve ICompositionListenerChain from the context and use its methods instead.")]
 		void RegisterCompositionListener(string name, ICompositionListener listener);
+		[Obsolete("Resolve ICompositionListenerChain from the context and use its methods instead.")]
 		void UnregisterCompositionListener(string name);
 	}
 }

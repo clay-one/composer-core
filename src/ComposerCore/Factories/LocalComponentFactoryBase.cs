@@ -58,7 +58,7 @@ namespace ComposerCore.Factories
         }
         
         public abstract IEnumerable<Type> GetContractTypes();
-        public abstract object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain);
+        public abstract object GetComponentInstance(ContractIdentity contract);
 
         #endregion
 
