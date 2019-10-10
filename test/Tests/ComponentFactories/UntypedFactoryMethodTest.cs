@@ -178,7 +178,7 @@ namespace ComposerCore.Tests.ComponentFactories
             _context.Register(typeof(ISampleContractTwo), factory);
             
             // But a type cast exception will be thrown when querying
-            _context.GetComponent<ISampleContractTwo>();
+            Expect.ToThrow<InvalidCastException>(() => _context.GetComponent<ISampleContractTwo>());
         }
     }
 }

@@ -89,33 +89,7 @@ namespace ComposerCore.Tests.CollectionOfComponents
 			Assert.AreEqual(3, cs.Count(o => o is SampleComponentOne));
 			Assert.AreEqual(2, cs.Count(o => o is SampleComponentTwo));
 		}
-
-		[TestMethod]
-		public void EnumerableIsResolvable()
-		{
-			Assert.IsFalse(_context.IsResolvable<ISampleContract>());
-			Assert.IsFalse(_context.IsResolvable<IEnumerable<ISampleContract>>());
-			
-			_context.Register(typeof(SampleComponentOne));
-
-			Assert.IsTrue(_context.IsResolvable<ISampleContract>());
-			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
-		}
-
-		[TestMethod]
-		public void EnumerableIsNotResolvableAfterUnregister()
-		{
-			_context.Register(typeof(SampleComponentOne));
-
-			Assert.IsTrue(_context.IsResolvable<ISampleContract>());
-			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
-			
-			_context.Unregister(typeof(ISampleContract));
-
-			Assert.IsFalse(_context.IsResolvable<ISampleContract>());
-			Assert.IsFalse(_context.IsResolvable<IEnumerable<ISampleContract>>());
-		}
-
+		
 		[TestMethod]
 		public void RegisterEnumerableDirectly()
 		{
@@ -150,6 +124,28 @@ namespace ComposerCore.Tests.CollectionOfComponents
 			Assert.IsNotNull(cAll);
 			Assert.IsTrue(cAll.Count() == 1);
 			Assert.IsTrue(cAll.First() is SampleComponentTwo);
+		}
+
+		[TestMethod]
+		public void EnumerableOfContractsAreAlwaysResolvable()
+		{
+			// Call without registering any components
+			
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
+		}
+
+		[TestMethod]
+		public void EnumerableElementTypeIsCheckedToBeContract()
+		{
+			_context.Configuration.DisableAttributeChecking = false;
+			
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
+			Assert.IsFalse(_context.IsResolvable<IEnumerable<string>>());
+			
+			_context.Configuration.DisableAttributeChecking = true;
+			
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<string>>());
 		}
     }
 }

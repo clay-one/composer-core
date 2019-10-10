@@ -255,13 +255,15 @@ namespace ComposerCore.Implementation
 			    throw new CompositionException("Requested contract type " + contract.Name +
 			                                   " contains open generic parameters. Can not construct a concrete type.");
 
-		    if (contract.IsInterface && contract.IsGenericType)
-		    {
-			    var enumerableElementType = contract.GetEnumerableElementType();
-			    if (enumerableElementType != null)
-				    return true;
-		    }
+		    // IEnumerable<T> is always resolvable, since it is equal to calling GetAllComponents
+		    var enumerableElementType = contract.GetEnumerableElementType();
+		    if (enumerableElementType != null)
+			    return Configuration.DisableAttributeChecking ||
+			           ComponentContextUtils.HasContractAttribute(enumerableElementType);
 
+		    if (!Configuration.DisableAttributeChecking && !ComponentContextUtils.HasContractAttribute(contract))
+			    return false;
+		    
 		    var identity = new ContractIdentity(contract, name);
 		    return _repository.FindFactories(identity)?.Any() ?? false;
 	    }
@@ -269,7 +271,7 @@ namespace ComposerCore.Implementation
 	    public virtual TContract GetComponent<TContract>(string name = null)
 			where TContract : class
 		{
-			return GetComponent(typeof (TContract), name) as TContract;
+			return (TContract) GetComponent(typeof (TContract), name);
 		}
 
         public virtual object GetComponent(Type contract, string name = null)
@@ -278,13 +280,6 @@ namespace ComposerCore.Implementation
 				throw new CompositionException("Requested contract type " + contract.Name +
 				                               " contains open generic parameters. Can not construct a concrete type.");
 
-			if (contract.IsInterface && contract.IsGenericType)
-			{
-				var enumerableElementType = contract.GetEnumerableElementType();
-				if (enumerableElementType != null)
-					return GetAllComponents(enumerableElementType, name);
-			}
-			
 			var identity = new ContractIdentity(contract, name);
 			var factories = _repository.FindFactories(identity);
 
@@ -300,6 +295,10 @@ namespace ComposerCore.Implementation
 		                return result;
 		        }
             }
+
+		    var enumerableElementType = contract.GetEnumerableElementType();
+		    if (enumerableElementType != null)
+			    return GetAllComponents(enumerableElementType, name);
 
 		    return null;
 		}
