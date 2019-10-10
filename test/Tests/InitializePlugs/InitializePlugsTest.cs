@@ -69,5 +69,23 @@ namespace ComposerCore.Tests.InitializePlugs
 			Assert.IsNotNull(c.SampleContract);
 			Assert.AreEqual(c.InitPoint, 999);
 		}
+
+		[TestMethod]
+		public void UnresolvedRequiredPlugsWillThrow()
+		{
+			var c = new ClassWithRequiredComponentPlug();
+			_context = new ComponentContext();
+			
+			Expect.ToThrow<CompositionException>(() => _context.InitializePlugs(c));
+		}
+
+		[TestMethod]
+		public void UnresolvedRequiredConfigWillThrow()
+		{
+			var c = new ClassWithRequiredConfigurationPoint();
+			_context = new ComponentContext();
+			
+			Expect.ToThrow<CompositionException>(() => _context.InitializePlugs(c));
+		}
 	}
 }

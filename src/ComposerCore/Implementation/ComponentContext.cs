@@ -374,6 +374,12 @@ namespace ComposerCore.Implementation
 					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{componentType.FullName}'");
 
 				var initializationPointResult = initializationPoint.Query.Query(this);
+				if (initializationPointResult == null &&
+				    initializationPoint.Required.GetValueOrDefault(Configuration.InitializationPointsRequiredByDefault))
+				{
+					throw new CompositionException($"Could not resolve required initialization point '{initializationPoint.Name}' on type '{componentType.FullName}'");
+				}
+				
 				initializationPointResults.Add(initializationPointResult);
 
 				ComponentContextUtils.ApplyInitializationPoint(componentInstance,
