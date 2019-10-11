@@ -40,6 +40,10 @@ namespace ComposerCore.Tests.Generics
 		{
 			_context.Register(typeof(OpenComponentOne<>));
 
+			Assert.IsTrue(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
 			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
@@ -54,6 +58,10 @@ namespace ComposerCore.Tests.Generics
 		{
 			_context.Register(typeof(OpenComponentTwo<,>));
 
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
 			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
@@ -67,6 +75,10 @@ namespace ComposerCore.Tests.Generics
 		public void ComponentWithTwoReverseOpenGenericParams()
 		{
 			_context.Register(typeof(ReverseOpenComponentTwo<,>));
+
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<int, string>>());
 
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
@@ -82,6 +94,10 @@ namespace ComposerCore.Tests.Generics
 		{
 			_context.Register(typeof(ReverseOpenComponentTwoWithDifferentNames<,>));
 
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<int, string>>());
+
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
 			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
@@ -95,6 +111,12 @@ namespace ComposerCore.Tests.Generics
 		public void ComponentWithHalfOpenGenericParams()
 		{
 			_context.Register(typeof(HalfOpenComponent<>));
+
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, string>>());
 
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
@@ -117,6 +139,12 @@ namespace ComposerCore.Tests.Generics
 		{
 			_context.Register(typeof(RepeatingParamOpenComponent<>));
 
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<string, int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, string>>());
+
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
 			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
@@ -136,6 +164,12 @@ namespace ComposerCore.Tests.Generics
 		public void ComponentWithReverseGenericParams()
 		{
 			_context.Register(typeof(ReverseParamOpenComponent<,>));
+
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, string>>());
 
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
@@ -158,6 +192,14 @@ namespace ComposerCore.Tests.Generics
 		public void ComponentAndContractWithOpenGenericParams()
 		{
 			_context.Register(typeof(OpenGenericComponentAndContract<>));
+
+			Assert.IsTrue(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<string, int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<string, string>>());
+			Assert.IsTrue(_context.IsResolvable<OpenGenericComponentAndContract<string>>());
+			Assert.IsTrue(_context.IsResolvable<OpenGenericComponentAndContract<int>>());
 
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
@@ -186,6 +228,14 @@ namespace ComposerCore.Tests.Generics
 		{
 			_context.Register(typeof(HalfOpenComponentAndContract<>));
 
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<string>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractOne<int>>());
+			Assert.IsFalse(_context.IsResolvable<IGenericContractTwo<int, string>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, int>>());
+			Assert.IsTrue(_context.IsResolvable<IGenericContractTwo<string, string>>());
+			Assert.IsTrue(_context.IsResolvable<HalfOpenComponentAndContract<string>>());
+			Assert.IsTrue(_context.IsResolvable<HalfOpenComponentAndContract<int>>());
+			
 			var c1 = _context.GetComponent<IGenericContractOne<string>>();
 			var c2 = _context.GetComponent<IGenericContractOne<int>>();
 			var c3 = _context.GetComponent<IGenericContractTwo<int, string>>();
@@ -207,6 +257,5 @@ namespace ComposerCore.Tests.Generics
 			Assert.IsInstanceOfType(c6, typeof(HalfOpenComponentAndContract<string>));
 			Assert.IsInstanceOfType(c7, typeof(HalfOpenComponentAndContract<int>));
 		}
-
 	}
 }

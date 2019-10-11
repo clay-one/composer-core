@@ -58,6 +58,7 @@ namespace ComposerCore.Factories
         }
         
         public abstract IEnumerable<Type> GetContractTypes();
+        public abstract bool IsResolvable(Type contractType);
         public abstract object GetComponentInstance(ContractIdentity contract);
 
         #endregion
@@ -181,7 +182,7 @@ namespace ComposerCore.Factories
             return TargetType?.AssemblyQualifiedName ?? base.ToString();
         }
 
-        private void EnsureNotInitialized(string operation)
+        protected void EnsureNotInitialized(string operation)
         {
             if (Initialized)
                 throw new InvalidOperationException($"Cannot perform operation '{operation}' when the factory is not initialized.");

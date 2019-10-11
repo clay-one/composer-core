@@ -39,10 +39,13 @@ namespace ComposerCore.Utility
             }
         }
         
-        public static Type GetEnumerableElementType(this Type type)
+        public static Type GetEnumerableElementType(this Type type, bool searchParents = false)
         {
             if (type.IsInterface && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 return type.GetGenericArguments()[0];
+
+            if (!searchParents)
+                return null;
             
             foreach (Type interfaceType in type.GetInterfaces()) 
             {
@@ -51,6 +54,7 @@ namespace ComposerCore.Utility
                     return interfaceType.GetGenericArguments()[0];
                 }
             }
+            
             return null;
         }
     }

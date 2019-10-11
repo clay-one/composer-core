@@ -265,7 +265,22 @@ namespace ComposerCore.Implementation
 			    return false;
 		    
 		    var identity = new ContractIdentity(contract, name);
-		    return _repository.FindFactories(identity)?.Any() ?? false;
+		    var factories = _repository.FindFactories(identity);
+		    
+		    using (var enumerator = factories?.GetEnumerator())
+		    {
+			    if (enumerator == null)
+				    return false;
+
+			    while (enumerator.MoveNext())
+			    {
+				    var current = enumerator.Current;
+				    if (current != null && current.IsResolvable(identity.Type))
+					    return true;
+			    }
+		    }
+
+		    return false;
 	    }
 
 	    public virtual TContract GetComponent<TContract>(string name = null)

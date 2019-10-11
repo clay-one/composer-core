@@ -51,6 +51,11 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
+		public override bool IsResolvable(Type contractType)
+		{
+			return contractType.IsAssignableFrom(TargetType);
+		}
+
 		public override object GetComponentInstance(ContractIdentity contract)
 		{
 			if (!Initialized)

@@ -147,5 +147,16 @@ namespace ComposerCore.Tests.CollectionOfComponents
 			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
 			Assert.IsTrue(_context.IsResolvable<IEnumerable<string>>());
 		}
+
+		[TestMethod]
+		public void SubclassOfEnumerableShouldNotBeResolvable()
+		{
+			// Call without registering any components
+			
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<ISampleContract>>());
+			Assert.IsTrue(_context.IsResolvable<IEnumerable<string>>());
+			Assert.IsFalse(_context.IsResolvable<List<string>>());
+			Assert.IsFalse(_context.IsResolvable<string>()); // String is IEnumerable<char>
+		}
     }
 }

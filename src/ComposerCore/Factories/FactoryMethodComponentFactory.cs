@@ -62,6 +62,11 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(typeof(TComponent));
 		}
 
+		public bool IsResolvable(Type contractType)
+		{
+			return contractType.IsAssignableFrom(typeof(TComponent));
+		}
+
 		public object GetComponentInstance(ContractIdentity contract)
 		{
 			// Check if the factory is initialized

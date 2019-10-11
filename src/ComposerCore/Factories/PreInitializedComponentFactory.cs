@@ -39,6 +39,11 @@ namespace ComposerCore.Factories
 			return new PreInitializedComponentFactory(_componentInstance);
 		}
 
+		public bool IsResolvable(Type contractType)
+		{
+			return contractType.IsInstanceOfType(_componentInstance);
+		}
+
 		public IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(_componentInstance.GetType());

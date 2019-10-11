@@ -62,6 +62,14 @@ namespace ComposerCore.Factories
 			return _contractTypes;
 		}
 
+		public bool IsResolvable(Type contractType)
+		{
+			if (_contractTypes == null || _contractTypes.Count == 0)
+				return false;
+
+			return _contractTypes.Any(contractType.IsAssignableFrom);
+		}
+
 		public object GetComponentInstance(ContractIdentity contract)
 		{
 			// Check if the factory is initialized
