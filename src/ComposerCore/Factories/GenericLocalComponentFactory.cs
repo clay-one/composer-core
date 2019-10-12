@@ -59,18 +59,6 @@ namespace ComposerCore.Factories
                 return false;
 
             return MapToClosedComponentType(contractType) != null;
-            
-            var requestedGenericContractType = contractType.GetGenericTypeDefinition();
-            if (!_contractTypes.ContainsKey(requestedGenericContractType))
-                return false;
-
-            var originalGenericContractType = _contractTypes[requestedGenericContractType];
-            var closedTargetType = CloseGenericType(TargetType, originalGenericContractType, requestedClosedContractType);
-
-            if (closedTargetType == null || !requestedClosedContractType.IsAssignableFrom(closedTargetType))
-                return false;
-
-            return true;
         }
         
         public override object GetComponentInstance(ContractIdentity contract)

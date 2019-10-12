@@ -83,7 +83,8 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsTransient()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            factory.ComponentCacheQuery = null;
+            Assert.Fail();
+            // factory.ComponentCacheQuery = null;
             _context.Register(factory);
 
             var originalInstanceCount = SampleComponentOne.TimesInstantiated;
@@ -107,7 +108,8 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsSingleton()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            factory.ComponentCacheQuery = new ComponentQuery(typeof(ContractAgnosticComponentCache));
+            Assert.Fail();
+            //factory.ComponentCacheQuery = new ComponentQuery(typeof(ContractAgnosticComponentCache));
             _context.Register(factory);
 
             var originalInstanceCount = SampleComponentOne.TimesInstantiated;

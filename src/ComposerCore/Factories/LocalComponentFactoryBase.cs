@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComposerCore.Attributes;
-using ComposerCore.Cache;
-using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
@@ -31,7 +29,6 @@ namespace ComposerCore.Factories
             Builder = new LocalComponentBuilder(targetType, original?.Builder);
             
             _initializationPoints = original?._initializationPoints == null ? null : new List<InitializationPointSpecification>(original._initializationPoints);
-            _componentCacheQuery = original?._componentCacheQuery;
             _compositionNotificationMethods = original?._compositionNotificationMethods == null ? null : new List<Action<IComposer, object>>(original._compositionNotificationMethods);
         }
 
@@ -99,47 +96,6 @@ namespace ComposerCore.Factories
             {
                 EnsureNotInitialized("access InitializationPoints");
                 return _initializationPoints ?? (_initializationPoints = new List<InitializationPointSpecification>());
-            }
-        }
-
-        #endregion
-        
-        #region ComponentCacheQuery
-        
-        protected ICompositionalQuery _componentCacheQuery;
-
-        protected void LoadComponentCacheQuery()
-        {
-            if (_componentCacheQuery != null)
-                return;
-
-            var attribute = ComponentContextUtils.GetComponentCacheAttribute(TargetType);
-            if (attribute == null)
-            {
-                _componentCacheQuery = new ComponentQuery(typeof(DefaultComponentCache), null);
-                return;
-            }
-
-            if (attribute.ComponentCacheType == null)
-            {
-                _componentCacheQuery = null;
-                return;
-            }
-
-            _componentCacheQuery = new ComponentQuery(attribute.ComponentCacheType, attribute.ComponentCacheName);
-        }
-
-        public ICompositionalQuery ComponentCacheQuery
-        {
-            get
-            {
-                EnsureNotInitialized("access ComponentCacheQuery");
-                return _componentCacheQuery;
-            }
-            set
-            {
-                EnsureNotInitialized("access ComponentCacheQuery");
-                _componentCacheQuery = value;
             }
         }
 

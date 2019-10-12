@@ -41,12 +41,13 @@ namespace ComposerCore.FluentExtensions
 
         public FluentFactoryMethodComponentConfig<TComponent> UseComponentCache(Type cacheContractType, string cacheContractName = null)
         {
-            if (cacheContractType == null)
-                Factory.ComponentCacheQuery = new NullQuery();
-            else
-                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
+            throw new NotImplementedException();
+//            if (cacheContractType == null)
+//                Factory.ComponentCacheQuery = new NullQuery();
+//            else
+//                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
 
-            return this;
+//            return this;
         }
 
         public FluentFactoryMethodComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)

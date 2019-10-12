@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ComposerCore.Cache;
-using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
@@ -13,11 +11,9 @@ namespace ComposerCore.Factories
 		private IComposer _composer;
 
 		private readonly Func<IComposer, TComponent> _factoryMethod;
-		private IComponentCache _componentCache;
 
 		private readonly List<InitializationPointSpecification> _initializationPoints;
 		private List<Action<IComposer, object>> _compositionNotificationMethods;
-	    private ICompositionalQuery _componentCacheQuery;
 
 		#region Constructors
 
@@ -26,8 +22,6 @@ namespace ComposerCore.Factories
             _factoryMethod = factoryMethod ?? throw new ArgumentNullException(nameof(factoryMethod));
 
 			_composer = null;
-			_componentCache = null;
-            _componentCacheQuery = null;
 			_initializationPoints = new List<InitializationPointSpecification>();
 			_compositionNotificationMethods = null;
 		}
@@ -76,40 +70,7 @@ namespace ComposerCore.Factories
 					"DelegateComponentFactory should be initialized before calling GetComponentInstance method.");
 
 			var listenerChain = _composer.GetComponent<ICompositionListenerChain>();
-			
-			if (_componentCache == null)
-			{
-				// If the component is not cached at all, then unique instances should
-				// be created for each call, then locking does not help and just
-				// degrades performance. So, create without locking.
-
-				var newComponent = CreateComponent(contract, listenerChain);
-				return listenerChain.NotifyRetrieved(newComponent.ComponentInstance, newComponent.OriginalComponentInstance,
-					contract, this, typeof(TComponent));
-			}
-
-			// Check if the component is cached, and ready to deliver
-
-			var componentCacheEntry = _componentCache.GetFromCache(contract);
-			if (componentCacheEntry != null)
-			{
-				return listenerChain.NotifyRetrieved(componentCacheEntry.ComponentInstance, 
-					componentCacheEntry.OriginalComponentInstance, contract, this, typeof(TComponent));
-			}
-
-			// If the component is cached, then lock the component instance
-			// to avoid creation of more than one cached components per config 
-			// when called in concurrent manner
-
-			lock (_componentCache.SynchronizationObject)
-			{
-				// Double-check the initialization to avoid rendezvous
-
-				componentCacheEntry = _componentCache.GetFromCache(contract) ?? CreateComponent(contract, listenerChain);
-				return listenerChain.NotifyRetrieved(componentCacheEntry.ComponentInstance,
-				                       componentCacheEntry.OriginalComponentInstance,
-				                       contract, this, typeof(TComponent));
-			}
+			return CreateComponent(contract, listenerChain).ComponentInstance;
 		}
 
 		#endregion
@@ -149,24 +110,6 @@ namespace ComposerCore.Factories
 	        }
         }
 
-	    public ICompositionalQuery ComponentCacheQuery
-	    {
-	        get
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-	            return _componentCacheQuery;
-	        }
-	        set
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access ComponentCacheQuery when the factory is initialized.");
-
-	            _componentCacheQuery = value;
-	        }
-	    }
-
 	    #endregion
 
 		#region Private helper methods
@@ -176,8 +119,6 @@ namespace ComposerCore.Factories
 		    try
 		    {
 		        LoadInitializationPoints();
-		        LoadComponentCacheQuery();
-		        LoadComponentCache();
 		        LoadCompositionNotificationMethods();
 		    }
 		    catch(Exception e)
@@ -203,48 +144,6 @@ namespace ComposerCore.Factories
 			{
 				ComponentContextUtils.CheckAndAddInitializationPoint(_composer, _initializationPoints, fieldInfo);
 			}
-		}
-
-	    private void LoadComponentCacheQuery()
-	    {
-	        if (_componentCacheQuery != null)
-                return;
-
-            var attribute = ComponentContextUtils.GetComponentCacheAttribute(typeof(TComponent));
-	        if (attribute == null)
-	        {
-	            _componentCacheQuery = new ComponentQuery(typeof(DefaultComponentCache), null);
-                return;
-	        }
-
-	        if (attribute.ComponentCacheType == null)
-	        {
-	            _componentCacheQuery = null;
-                return;
-	        }
-
-            _componentCacheQuery = new ComponentQuery(attribute.ComponentCacheType, attribute.ComponentCacheName);
-        }
-
-        private void LoadComponentCache()
-		{
-			if (_componentCacheQuery == null || _componentCacheQuery is NullQuery)
-			{
-				_componentCache = null;
-				return;
-			}
-
-			var result = _componentCacheQuery.Query(_composer);
-			if (result == null)
-				throw new CompositionException($"Can not register delegate component factory because " +
-				                               $"the specified ComponentCache contract ({_componentCache}) could not be queried from Composer.");
-
-			if (!(result is IComponentCache))
-				throw new CompositionException($"Component cache type {result.GetType().FullName} that is specified " +
-				                               $"as component cache handler on component does not implement " +
-				                               "IComponentCache interface.");
-
-			_componentCache = (IComponentCache) result;
 		}
 
 		private void LoadCompositionNotificationMethods()
@@ -291,9 +190,7 @@ namespace ComposerCore.Factories
 			             		ComponentInstance = componentInstance,
 			             		OriginalComponentInstance = originalComponentInstance
 			             	};
-
-		    _componentCache?.PutInCache(contract, result);
-
+			
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
 			// as the reference may have been changed by composition listeners to
