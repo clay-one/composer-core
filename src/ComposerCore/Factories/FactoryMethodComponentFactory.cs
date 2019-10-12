@@ -70,7 +70,7 @@ namespace ComposerCore.Factories
 					"DelegateComponentFactory should be initialized before calling GetComponentInstance method.");
 
 			var listenerChain = _composer.GetComponent<ICompositionListenerChain>();
-			return CreateComponent(contract, listenerChain).ComponentInstance;
+			return CreateComponent(contract, listenerChain);
 		}
 
 		#endregion
@@ -163,7 +163,7 @@ namespace ComposerCore.Factories
 			}
 		}
 
-		private ComponentCacheEntry CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
+		private object CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
@@ -181,16 +181,6 @@ namespace ComposerCore.Factories
 
 			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, typeof(TComponent));
 
-			// Store the cache, so that if there is a circular dependency,
-			// applying initialization points is not blocked and chained
-			// recursively.
-
-			var result = new ComponentCacheEntry
-			             	{
-			             		ComponentInstance = componentInstance,
-			             		OriginalComponentInstance = originalComponentInstance
-			             	};
-			
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
 			// as the reference may have been changed by composition listeners to
@@ -209,7 +199,7 @@ namespace ComposerCore.Factories
 			// for the same reason stated above.
 
 			InvokeCompositionNotifications(componentInstance);
-			return result;
+			return componentInstance;
 		}
 		
 		private List<object> ApplyInitializationPoints(object originalComponentInstance)

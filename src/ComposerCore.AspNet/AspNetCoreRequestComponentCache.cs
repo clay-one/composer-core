@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
 using Microsoft.AspNetCore.Http;
 
 namespace ComposerCore.AspNet
@@ -9,7 +8,7 @@ namespace ComposerCore.AspNet
     [Contract]
     [Component]
     [ComponentCache(null)]
-    public class AspNetCoreRequestComponentCache : IComponentCache
+    public class AspNetCoreRequestComponentCache
     {
         private static readonly string ContextKey = typeof(AspNetCoreRequestComponentCache).FullName;
         
@@ -20,30 +19,30 @@ namespace ComposerCore.AspNet
             _contextAccessor = contextAccessor;
         }
 
-        public ComponentCacheEntry GetFromCache(ContractIdentity contract)
+        public object GetFromCache(ContractIdentity contract)
         {
             var context = _contextAccessor.HttpContext;
 
-            var cacheStore = context?.Items[ContextKey] as Dictionary<ContractIdentity, ComponentCacheEntry>;
+            var cacheStore = context?.Items[ContextKey] as Dictionary<ContractIdentity, object>;
             if (cacheStore == null)
                 return null;
 
             return cacheStore.TryGetValue(contract, out var entry) ? entry : null;
         }
 
-        public void PutInCache(ContractIdentity contract, ComponentCacheEntry entry)
+        public void PutInCache(ContractIdentity contract, object entry)
         {
             var context = _contextAccessor.HttpContext;
             if (context == null)
                 throw new InvalidOperationException("A scoped component should not be requested / initialized outside scope");
 
-            Dictionary<ContractIdentity, ComponentCacheEntry> cacheStore = null;
+            Dictionary<ContractIdentity, object> cacheStore = null;
             if (context.Items.ContainsKey(ContextKey))
-                cacheStore = context.Items[ContextKey] as Dictionary<ContractIdentity, ComponentCacheEntry>;
+                cacheStore = context.Items[ContextKey] as Dictionary<ContractIdentity, object>;
             
             if (cacheStore == null)
             {
-                cacheStore = new Dictionary<ContractIdentity, ComponentCacheEntry>();
+                cacheStore = new Dictionary<ContractIdentity, object>();
                 context.Items[ContextKey] = cacheStore;
             }
 

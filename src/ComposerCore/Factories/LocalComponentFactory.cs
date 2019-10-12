@@ -57,14 +57,14 @@ namespace ComposerCore.Factories
 					"LocalComponentFactory should be initialized before calling GetComponentInstance method.");
 
 			var listenerChain = Composer.GetComponent<ICompositionListenerChain>();
-			return CreateComponent(contract, listenerChain).ComponentInstance;
+			return CreateComponent(contract, listenerChain);
 		}
 
 		#endregion
 		
 		#region Private helper methods
 		
-		private ComponentCacheEntry CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
+		private object CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
@@ -81,16 +81,6 @@ namespace ComposerCore.Factories
 			// is wrapped by composition listeners.
 
 			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
-
-			// Store the cache, so that if there is a circular dependency,
-			// applying initialization points is not blocked and chained
-			// recursively.
-
-			var result = new ComponentCacheEntry
-			             	{
-			             		ComponentInstance = componentInstance,
-			             		OriginalComponentInstance = originalComponentInstance
-			             	};
 
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
@@ -111,7 +101,7 @@ namespace ComposerCore.Factories
 			// for the same reason stated above.
 
 			InvokeCompositionNotifications(componentInstance);
-			return result;
+			return componentInstance;
 		}
 		
 		private List<object> ApplyInitializationPoints(object originalComponentInstance)
