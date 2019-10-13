@@ -15,15 +15,9 @@ namespace ComposerCore
 
 		// Component Lookup methods
 
-		bool IsResolvable<TContract>(string name = null) where TContract : class;
 		bool IsResolvable(Type contract, string name = null);
-		TContract GetComponent<TContract>(string name = null) where TContract : class;
 		object GetComponent(Type contract, string name = null);
-
-		IEnumerable<TContract> GetAllComponents<TContract>(string name = null) where TContract : class;
 		IEnumerable<object> GetAllComponents(Type contract, string name = null);
-
-		IEnumerable<TContract> GetComponentFamily<TContract>();
 		IEnumerable<object> GetComponentFamily(Type contract);
 
 		// Variable Lookup methods
@@ -33,7 +27,6 @@ namespace ComposerCore
 
 		// Other methods
 
-		void InitializePlugs<T>(T componentInstance);
 		void InitializePlugs(object componentInstance, Type componentType);
 	}
 }

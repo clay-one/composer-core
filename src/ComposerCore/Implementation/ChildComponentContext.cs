@@ -6,7 +6,7 @@ namespace ComposerCore.Implementation
     {
         private ComponentContext _parentContext;
 
-        public ChildComponentContext(ComponentContext parentContext) : base(false)
+        public ChildComponentContext(ComponentContext parentContext)
         {
             _parentContext = parentContext ?? throw new ArgumentNullException(nameof(parentContext));
         }
