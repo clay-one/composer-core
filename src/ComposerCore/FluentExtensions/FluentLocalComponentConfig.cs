@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using ComposerCore.Attributes;
-using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
@@ -9,42 +8,36 @@ using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {
-    public class FluentLocalComponentConfig
+    public class FluentLocalComponentConfig : FluentComponentConfigBase<FluentLocalComponentConfig>
     {
-        protected readonly ComponentContext Context;
         protected readonly LocalComponentFactory Factory;
 
         #region Constructors
 
         public FluentLocalComponentConfig(ComponentContext context, LocalComponentFactory factory)
+            : base(context)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            Registration = new ComponentRegistration(Factory);
+        }
+
+        #endregion
+        
+        #region Terminating methods
+        
+        public void RegisterAsItself()
+        {
+            RegisterWith(Factory.TargetType);
+        }
+
+        public void RegisterAsItself(string contractName)
+        {
+            RegisterWith(Factory.TargetType, contractName);
         }
 
         #endregion
 
         #region Fluent configuration methods
-
-        public void Register(string contractName = null)
-        {
-            Context.Register(contractName, Factory);
-        }
-
-        public void RegisterWith<TContract>(string contractName = null)
-        {
-            RegisterWith(typeof(TContract), contractName);
-        }
-
-        public void RegisterWith(Type contractType, string contractName = null)
-        {
-            Context.Register(contractType, contractName, Factory);
-        }
-
-        public void RegisterAsItself(string contractName = null)
-        {
-            RegisterWith(Factory.TargetType, contractName);
-        }
 
         public FluentLocalComponentConfig SetComponent<TPlugContract>(
             string memberName, string contractName = null, bool? required = null)
@@ -141,32 +134,6 @@ namespace ComposerCore.FluentExtensions
         {
             Factory.CompositionNotificationMethods.Add(initAction);
             return this;
-        }
-
-        public FluentLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
-        {
-            throw new NotImplementedException();
-//            if (cacheContractType == null)
-//                Factory.ComponentCacheQuery = new NullQuery();
-//            else
-//                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
-//
-//            return this;
-        }
-
-        public FluentLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
-        {
-            return UseComponentCache(typeof(TCacheContract), cacheContractName);
-        }
-
-        public FluentLocalComponentConfig AsSingleton()
-        {
-            return UseComponentCache(typeof(ContractAgnosticComponentCache));
-        }
-
-        public FluentLocalComponentConfig AsTransient()
-        {
-            return UseComponentCache(null);
         }
 
         public FluentLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)

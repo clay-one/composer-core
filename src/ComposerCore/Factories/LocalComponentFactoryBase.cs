@@ -12,7 +12,6 @@ namespace ComposerCore.Factories
         protected IComposer Composer { get; private set; }
         protected LocalComponentBuilder Builder { get; }
         
-        public Type TargetType { get; }
         public bool Initialized => Composer != null;
 
         public ConstructorResolutionPolicy? ConstructorResolutionPolicy
@@ -34,6 +33,8 @@ namespace ComposerCore.Factories
 
         #region IComponentFactory
 
+        public Type TargetType { get; }
+        
         public virtual bool ValidateContractType(Type contract)
         {
             return true;

@@ -1,13 +1,14 @@
 ﻿using System;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
+using ComposerCore.Implementation;
 
 namespace ComposerCore
 {
 	[Contract]
 	public interface IComponentContext : IComposer
 	{
-		void Register(Type contract, string name, IComponentFactory factory);
+		void Register(ComponentRegistration componentRegistration);
 
 		void Unregister(ContractIdentity identity);
 		void UnregisterFamily(Type type);

@@ -8,6 +8,8 @@ namespace ComposerCore.Extensibility
 	/// </summary>
 	public interface IComponentFactory
 	{
+		Type TargetType { get; }
+		
 		bool ValidateContractType(Type contract);
 		void Initialize(IComposer composer);
 		IEnumerable<Type> GetContractTypes();

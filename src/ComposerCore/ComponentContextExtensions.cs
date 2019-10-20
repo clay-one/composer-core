@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Cache;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -11,7 +12,10 @@ namespace ComposerCore
     {
         public static void Register(this IComponentContext context, Type contract, Type component)
         {
-            context.Register(contract, ComponentContextUtils.GetComponentDefaultName(component), component);
+            if (component == null)
+                throw new ArgumentNullException(nameof(component));
+
+            context.Register(contract, ComponentContextUtils.CreateLocalFactory(component));
         }
 
         public static void Register(this IComponentContext context, Type component)
@@ -19,9 +23,7 @@ namespace ComposerCore
             if (component == null)
                 throw new ArgumentNullException(nameof(component));
 
-            context.Register(
-                ComponentContextUtils.GetComponentDefaultName(component), 
-                ComponentContextUtils.CreateLocalFactory(component));
+            context.Register(ComponentContextUtils.CreateLocalFactory(component));
         }
 
         public static void Register<TContract, TComponent>(this IComponentContext context, string name = null)
@@ -31,35 +33,29 @@ namespace ComposerCore
         
         public static void Register(this IComponentContext context, Type contract, string name, Type component)
         {
-            if (contract == null)
-                throw new ArgumentNullException(nameof(contract));
             if (component == null)
                 throw new ArgumentNullException(nameof(component));
 
-            ComponentContextUtils.ThrowIfNotSubTypeOf(contract, component);
-
             context.Register(contract, name, ComponentContextUtils.CreateLocalFactory(component));
         }
-
-        public static void Register(this IComponentContext context, IComponentFactory componentFactory)
+        
+        public static void Register(this IComponentContext context, IComponentFactory factory)
         {
-            context.Register((string) null, componentFactory);
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+            
+            context.Register(new ComponentRegistration(factory));
         }
 
-        public static void Register(this IComponentContext context, string name, IComponentFactory componentFactory)
+        public static void Register(this IComponentContext context, string name, IComponentFactory factory)
         {
-            if (componentFactory == null)
-                throw new ArgumentNullException(nameof(componentFactory));
-
-            var contracts = componentFactory.GetContractTypes().ToArray();
-
-            if (!contracts.Any())
-                throw new CompositionException("No contracts found for the component factory " + componentFactory);
-
-            foreach (var contract in contracts)
-            {
-                context.Register(contract, name, componentFactory);
-            }
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+            
+            var registration = new ComponentRegistration(factory);
+            registration.SetDefaultContractName(name);
+            
+            context.Register(registration);
         }
 
         public static void Register<TComponent>(this IComponentContext context, string name = null)
@@ -82,7 +78,28 @@ namespace ComposerCore
         
         public static void Register(this IComponentContext context, Type contract, IComponentFactory factory)
         {
-            context.Register(contract, null, factory);
+            if (contract == null)
+                throw new ArgumentNullException(nameof(contract));
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+            
+            var registration = new ComponentRegistration(factory);
+            registration.AddContractType(contract);
+            
+            context.Register(registration);
+        }
+
+        public static void Register(this IComponentContext context, Type contract, string name, IComponentFactory factory)
+        {
+            if (contract == null)
+                throw new ArgumentNullException(nameof(contract));
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+            
+            var registration = new ComponentRegistration(factory);
+            registration.AddContract(new ContractIdentity(contract, name));
+            
+            context.Register(registration);
         }
 
         public static void RegisterObject(this IComponentContext context, object componentInstance)
@@ -90,10 +107,9 @@ namespace ComposerCore
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 
-            var componentType = componentInstance.GetType();
-            var name = ComponentContextUtils.GetComponentDefaultName(componentType);
-	        
-            context.RegisterObject(name, componentInstance);
+            context.Register(new ComponentRegistration(
+                new PreInitializedComponentFactory(componentInstance), 
+                NoComponentCache.Instance));
         }
 
         public static void RegisterObject<TContract>(this IComponentContext context, object componentInstance)
@@ -103,13 +119,18 @@ namespace ComposerCore
         
         public static void RegisterObject(this IComponentContext context, Type contract, object componentInstance)
         {
+            if (contract == null)
+                throw new ArgumentNullException(nameof(contract));
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 
-            var componentType = componentInstance.GetType();
-            var name = ComponentContextUtils.GetComponentDefaultName(componentType);
-	        
-            context.RegisterObject(contract, name, componentInstance);
+            
+            var registration = new ComponentRegistration(
+                new PreInitializedComponentFactory(componentInstance),
+                NoComponentCache.Instance);
+
+            registration.AddContractType(contract);
+            context.Register(registration);
         }
 
         public static void RegisterObject(this IComponentContext context, string name, object componentInstance)
@@ -117,8 +138,13 @@ namespace ComposerCore
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 	        
-            var factory = new PreInitializedComponentFactory(componentInstance);
-            context.Register(name, factory);
+            
+            var registration = new ComponentRegistration(
+                new PreInitializedComponentFactory(componentInstance), 
+                NoComponentCache.Instance);
+            
+            registration.SetDefaultContractName(name);
+            context.Register(registration);
         }
 
         public static void RegisterObject<TContract>(this IComponentContext context, string name, object componentInstance)
@@ -133,10 +159,12 @@ namespace ComposerCore
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 
-            ComponentContextUtils.ThrowIfNotSubTypeOf(contract, componentInstance.GetType());
+            var registration = new ComponentRegistration(
+                new PreInitializedComponentFactory(componentInstance),
+                NoComponentCache.Instance);
 
-            var factory = new PreInitializedComponentFactory(componentInstance);
-            context.Register(contract, name, factory);
+            registration.AddContract(new ContractIdentity(contract, name));
+            context.Register(registration);
         }
 
         public static void SetVariableValue(this IComponentContext context, string name, object value)

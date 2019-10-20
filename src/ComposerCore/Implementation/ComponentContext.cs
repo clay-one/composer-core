@@ -4,20 +4,19 @@ using System.Linq;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
+using ComposerCore.Factories;
 using ComposerCore.Implementation.ConstructorResolvers;
 using ComposerCore.Utility;
 
 
 namespace ComposerCore.Implementation
 {
-	[Contract]
-	[Component]
-	[ComponentCache(null)]
+	[Contract, Component, ComponentCache(typeof(NoComponentCache))]
 	public class ComponentContext : IComponentContext
 	{
         #region Private Data
 
-		private readonly Repository _repository;
+		private readonly ComponentRepository _repository;
 		private readonly Dictionary<string, object> _variables;
 
 		#endregion
@@ -28,18 +27,29 @@ namespace ComposerCore.Implementation
 		{
 			Configuration = new ComposerConfiguration();
 
-			_repository = new Repository();
+			_repository = new ComponentRepository();
 			_variables = new Dictionary<string, object>();
 
 			this.RegisterObject(this);
 			RegisterBuiltInComponents();
 		}
+
+		private void RegisterRequiredComponents()
+		{
+			
+		}
 		
 		private void RegisterBuiltInComponents()
 		{
+			Register(new ComponentRegistration(
+				new LocalComponentFactory(typeof(PerRegistrationComponentCache)),
+				NoComponentCache.Instance));
+			
+			this.RegisterObject(NoComponentCache.Instance);
 			this.RegisterObject(new CompositionListenerChain());
 			
-		    this.Register(typeof(DefaultComponentCache));
+			this.Register(typeof(PerContractComponentCache));
+			this.Register(typeof(DefaultComponentCache));
             this.Register(typeof(ContractAgnosticComponentCache));
             this.Register(typeof(StaticComponentCache));
             this.Register(typeof(ThreadLocalComponentCache));
@@ -58,26 +68,12 @@ namespace ComposerCore.Implementation
 		#endregion
 
 		#region IComponentContext implementation
-
-
-        public virtual void Register(Type contract, string name, IComponentFactory factory)
-		{
-			if (contract == null)
-				throw new ArgumentNullException(nameof(contract));
-			if (factory == null)
-				throw new ArgumentNullException(nameof(factory));
-
-			if (!Configuration.DisableAttributeChecking)
-				ComponentContextUtils.ThrowIfNotContract(contract);
-
-			if (!factory.ValidateContractType(contract))
-				throw new CompositionException("This component type / factory cannot be registered with the contract " +
-				                               $"{contract.FullName}. The component type is not assignable to the " +
-				                               "contract or the factory logic prevents such registration.");
-			
-			factory.Initialize(this);
-			_repository.Add(new ContractIdentity(contract, name), factory);
-		}
+		
+        public void Register(ComponentRegistration registration)
+        {
+	        registration.SetAsRegistered(this);
+	        _repository.Add(registration);
+        }
 
         public virtual void Unregister(ContractIdentity identity)
 		{
@@ -145,7 +141,7 @@ namespace ComposerCore.Implementation
 			    while (enumerator.MoveNext())
 			    {
 				    var current = enumerator.Current;
-				    if (current != null && current.IsResolvable(identity.Type))
+				    if (current != null && current.Factory.IsResolvable(identity.Type))
 					    return true;
 			    }
 		    }
@@ -169,7 +165,7 @@ namespace ComposerCore.Implementation
 
 		        while (enumerator.MoveNext())
 		        {
-                    var result = enumerator.Current?.GetComponentInstance(identity);
+                    var result = enumerator.Current?.GetComponent(identity, this);
 		            if (result != null)
 		                return result;
 		        }
@@ -188,7 +184,7 @@ namespace ComposerCore.Implementation
 			var factories = _repository.FindFactories(identity);
 
 			return factories
-				.Select(f => f.GetComponentInstance(identity))
+				.Select(f => f.GetComponent(identity, this))
 				.Where(result => result != null)
 				.CastToRuntimeType(contract);
 		}
@@ -198,9 +194,8 @@ namespace ComposerCore.Implementation
 			var identities = _repository.GetContractIdentityFamily(contract);
 
 			return identities.SelectMany(identity => _repository.FindFactories(identity),
-				(identity, factory) =>
-					factory.GetComponentInstance(identity))
-			.CastToRuntimeType(contract);
+					(identity, factory) => factory.GetComponent(identity, this))
+				.CastToRuntimeType(contract);
 		}
 
         public virtual bool HasVariable(string name)

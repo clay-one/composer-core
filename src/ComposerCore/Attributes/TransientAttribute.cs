@@ -1,4 +1,5 @@
 using System;
+using ComposerCore.Cache;
 
 namespace ComposerCore.Attributes
 {
@@ -9,7 +10,7 @@ namespace ComposerCore.Attributes
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class TransientAttribute : ComponentCacheAttribute
     {
-        public TransientAttribute() : base(null)
+        public TransientAttribute() : base(typeof(NoComponentCache))
         {
         }
     }

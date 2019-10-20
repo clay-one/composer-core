@@ -28,6 +28,8 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
+		public Type TargetType => typeof(object);
+
 		public bool ValidateContractType(Type contract)
 		{
 			return true;

@@ -1,48 +1,28 @@
 using System;
 using System.Reflection;
 using ComposerCore.Attributes;
-using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
-using ComposerCore.Utility;
 
 namespace ComposerCore.FluentExtensions
 {
-    public class FluentGenericLocalComponentConfig
+    public class FluentGenericLocalComponentConfig : FluentComponentConfigBase<FluentGenericLocalComponentConfig>
     {
-        protected readonly ComponentContext Context;
         protected readonly GenericLocalComponentFactory Factory;
 
         #region Constructors
 
         public FluentGenericLocalComponentConfig(ComponentContext context, GenericLocalComponentFactory factory)
+            : base(context)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            Registration = new ComponentRegistration(Factory);
         }
 
         #endregion
-
+        
         #region Fluent configuration methods
-
-        public void Register(string contractName = null)
-        {
-            Context.Register(contractName, Factory);
-        }
-
-        public void RegisterWith<TContract>(string contractName = null)
-        {
-            RegisterWith(typeof(TContract), contractName);
-        }
-
-        public void RegisterWith(Type contractType, string contractName = null)
-        {
-            if (contractType.IsOpenGenericType())
-                Factory.AddOpenGenericContract(contractType);
-            
-            Context.Register(contractType, contractName, Factory);
-        }
 
         public FluentGenericLocalComponentConfig SetComponent<TPlugContract>(
             string memberName, string contractName = null, bool required = true)
@@ -119,33 +99,7 @@ namespace ComposerCore.FluentExtensions
             Factory.CompositionNotificationMethods.Add(initAction);
             return this;
         }
-
-        public FluentGenericLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
-        {
-            throw new NotImplementedException();
-//            if (cacheContractType == null)
-//                Factory.ComponentCacheQuery = new NullQuery();
-//            else
-//                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
-//
-//            return this;
-        }
-
-        public FluentGenericLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
-        {
-            return UseComponentCache(typeof(TCacheContract), cacheContractName);
-        }
-
-        public FluentGenericLocalComponentConfig AsSingleton()
-        {
-            return UseComponentCache(typeof(ContractAgnosticComponentCache));
-        }
-
-        public FluentGenericLocalComponentConfig AsTransient()
-        {
-            return UseComponentCache(null);
-        }
-
+        
         public FluentGenericLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
             Factory.ConstructorResolutionPolicy = policy;

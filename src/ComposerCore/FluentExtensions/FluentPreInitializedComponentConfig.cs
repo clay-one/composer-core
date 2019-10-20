@@ -8,14 +8,14 @@ namespace ComposerCore.FluentExtensions
     public class FluentPreInitializedComponentConfig
     {
         private readonly ComponentContext _context;
-        private readonly PreInitializedComponentFactory _factory;
+        private readonly object _componentInstance;
 
         #region Constructors
 
         public FluentPreInitializedComponentConfig(ComponentContext context, object componentInstance)
         {
             _context = context;
-            _factory = new PreInitializedComponentFactory(componentInstance);
+            _componentInstance = componentInstance;
         }
 
         #endregion
@@ -23,21 +23,39 @@ namespace ComposerCore.FluentExtensions
         #region Fluent configuration methods
 
         [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
-        public void Register(string contractName = null)
+        public void Register()
         {
-            _context.Register(contractName, _factory);
+            _context.RegisterObject(_componentInstance);
         }
 
         [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
-        public void RegisterWith<TContract>(string contractName = null)
+        public void Register(string contractName)
+        {
+            _context.RegisterObject(contractName, _componentInstance);
+        }
+
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
+        public void RegisterWith<TContract>()
+        {
+            RegisterWith(typeof(TContract));
+        }
+        
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
+        public void RegisterWith<TContract>(string contractName)
         {
             RegisterWith(typeof(TContract), contractName);
         }
 
         [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
-        public void RegisterWith(Type contractType, string contractName = null)
+        public void RegisterWith(Type contractType)
         {
-            _context.Register(contractType, contractName, _factory);
+            _context.RegisterObject(contractType, _componentInstance);
+        }
+        
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
+        public void RegisterWith(Type contractType, string contractName)
+        {
+            _context.RegisterObject(contractType, contractName, _componentInstance);
         }
 
         #endregion

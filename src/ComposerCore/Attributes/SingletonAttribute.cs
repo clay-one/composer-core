@@ -10,7 +10,7 @@ namespace ComposerCore.Attributes
 	[AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class SingletonAttribute : ComponentCacheAttribute
     {
-        public SingletonAttribute() : base(typeof(ContractAgnosticComponentCache))
+        public SingletonAttribute() : base(typeof(PerRegistrationComponentCache))
         {
         }
     }

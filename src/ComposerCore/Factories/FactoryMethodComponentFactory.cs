@@ -30,6 +30,8 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
+		public Type TargetType => typeof(TComponent);
+
 		public bool ValidateContractType(Type contract)
 		{
 			return contract.IsAssignableFrom(typeof(TComponent));

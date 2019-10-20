@@ -11,14 +11,11 @@ namespace ComposerCore.Attributes
 		{
 		}
 
-		public ComponentCacheAttribute(Type componentCacheType, string componentCacheName = null)
+		public ComponentCacheAttribute(Type componentCacheType)
 		{
-			ComponentCacheType = componentCacheType;
-			ComponentCacheName = componentCacheName;
+			ComponentCacheName = componentCacheType?.Name ?? nameof(NoComponentCache);
 		}
 
-		public Type ComponentCacheType { get; }
-
-		public string ComponentCacheName { get; }
+		public string ComponentCacheName { get; set;  }
 	}
 }

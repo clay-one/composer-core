@@ -20,6 +20,8 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
+		public Type TargetType => _componentInstance.GetType();
+
 		public bool ValidateContractType(Type contract)
 		{
 			return contract.IsInstanceOfType(_componentInstance);

@@ -4,8 +4,8 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-	[Contract, Component, ComponentCache(null), ConstructorResolutionPolicy(null)]
-	public class DefaultComponentCache
+	[Component(nameof(DefaultComponentCache)), Transient, ConstructorResolutionPolicy(null)]
+	public class DefaultComponentCache : PerContractComponentCache
 	{
 		[CompositionConstructor]
 		public DefaultComponentCache()

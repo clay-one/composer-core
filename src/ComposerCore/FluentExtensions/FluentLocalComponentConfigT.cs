@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using ComposerCore.Attributes;
+using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -170,22 +171,31 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> UseComponentCache(Type cacheContractType, string cacheContractName = null)
-        {
-            base.UseComponentCache(cacheContractType, cacheContractName);
-            return this;
-        }
-
-        public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)
-        {
-            base.UseComponentCache<TCacheContract>(cacheContractName);
-            return this;
-        }
-
         public new FluentLocalComponentConfig<TComponent> SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
             base.SetConstructorResolutionPolicy(policy);
             return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> UseComponentCache(Type cacheContractType)
+        {
+            Registration.SetCache(cacheContractType == null ? nameof(NoComponentCache) : cacheContractType.Name);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>()
+        {
+            return UseComponentCache(typeof(TCacheContract));
+        }
+
+        public new FluentLocalComponentConfig<TComponent> AsSingleton()
+        {
+            return UseComponentCache(typeof(ContractAgnosticComponentCache));
+        }
+
+        public new FluentLocalComponentConfig<TComponent> AsTransient()
+        {
+            return UseComponentCache(null);
         }
 
         #endregion
