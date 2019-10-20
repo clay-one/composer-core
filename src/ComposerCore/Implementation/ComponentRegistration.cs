@@ -19,10 +19,11 @@ namespace ComposerCore.Implementation
         
         public IEnumerable<ContractIdentity> Contracts => _contracts;
 
-        public ComponentRegistration(IComponentFactory factory, string cacheComponentName = null)
+        public ComponentRegistration(IComponentFactory factory)
         {
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            SetCache(cacheComponentName);
+            CacheQuery = null;
+            Cache = null;
             DefaultContractName = ComponentContextUtils.GetComponentDefaultName(factory.TargetType);
             
             _contracts = new List<ContractIdentity>();
