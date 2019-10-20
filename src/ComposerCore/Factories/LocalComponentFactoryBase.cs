@@ -34,11 +34,6 @@ namespace ComposerCore.Factories
         #region IComponentFactory
 
         public Type TargetType { get; }
-        
-        public virtual bool ValidateContractType(Type contract)
-        {
-            return true;
-        }
 
         public virtual void Initialize(IComposer composer)
         {
@@ -56,7 +51,6 @@ namespace ComposerCore.Factories
         }
         
         public abstract IEnumerable<Type> GetContractTypes();
-        public abstract bool IsResolvable(Type contractType);
         public abstract object GetComponentInstance(ContractIdentity contract);
 
         #endregion

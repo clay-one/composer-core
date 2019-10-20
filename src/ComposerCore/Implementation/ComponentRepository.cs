@@ -36,7 +36,7 @@ namespace ComposerCore.Implementation
 			Array.ForEach(identitiesToRemove, i => _registrationMap.Remove(i));
 		}
 
-		public IEnumerable<ComponentRegistration> FindFactories(ContractIdentity identity)
+		public IEnumerable<ComponentRegistration> Find(ContractIdentity identity)
 		{
 		    _registrationMap.TryGetValue(identity, out var closedResults);
 		    if (!identity.Type.IsGenericType)

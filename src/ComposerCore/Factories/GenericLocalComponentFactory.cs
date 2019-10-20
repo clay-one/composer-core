@@ -33,11 +33,6 @@ namespace ComposerCore.Factories
 
         #region Implementation of IComponentFactory
 
-        public override bool ValidateContractType(Type contract)
-        {
-            return TargetType.IsAssignableToGenericType(contract);
-        }
-
         public override void Initialize(IComposer composer)
         {
             base.Initialize(composer);
@@ -52,15 +47,6 @@ namespace ComposerCore.Factories
             return _contractTypes.Keys;
         }
 
-        public override bool IsResolvable(Type contractType)
-        {
-            var requestedClosedContractType = contractType;
-            if (!requestedClosedContractType.IsGenericType || requestedClosedContractType.ContainsGenericParameters)
-                return false;
-
-            return MapToClosedComponentType(contractType) != null;
-        }
-        
         public override object GetComponentInstance(ContractIdentity contract)
         {
             if (!contract.Type.IsGenericType)

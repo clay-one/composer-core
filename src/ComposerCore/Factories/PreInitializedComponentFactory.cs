@@ -22,11 +22,6 @@ namespace ComposerCore.Factories
 
 		public Type TargetType => _componentInstance.GetType();
 
-		public bool ValidateContractType(Type contract)
-		{
-			return contract.IsInstanceOfType(_componentInstance);
-		}
-
 		public void Initialize(IComposer composer)
 		{
 		}
@@ -39,11 +34,6 @@ namespace ComposerCore.Factories
 		public IComponentFactory CloneComponentFactory()
 		{
 			return new PreInitializedComponentFactory(_componentInstance);
-		}
-
-		public bool IsResolvable(Type contractType)
-		{
-			return contractType.IsInstanceOfType(_componentInstance);
 		}
 
 		public IEnumerable<Type> GetContractTypes()

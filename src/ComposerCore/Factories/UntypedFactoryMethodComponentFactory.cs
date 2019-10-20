@@ -28,12 +28,7 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
-		public Type TargetType => typeof(object);
-
-		public bool ValidateContractType(Type contract)
-		{
-			return true;
-		}
+		public Type TargetType => null;
 
 		public void Initialize(IComposer composer)
 		{
@@ -57,15 +52,7 @@ namespace ComposerCore.Factories
 			
 			return _contractTypes;
 		}
-
-		public bool IsResolvable(Type contractType)
-		{
-			if (_contractTypes == null || _contractTypes.Count == 0)
-				return false;
-
-			return _contractTypes.Any(contractType.IsAssignableFrom);
-		}
-
+		
 		public object GetComponentInstance(ContractIdentity contract)
 		{
 			// Check if the factory is initialized

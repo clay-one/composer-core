@@ -32,11 +32,6 @@ namespace ComposerCore.Factories
 
 		public Type TargetType => typeof(TComponent);
 
-		public bool ValidateContractType(Type contract)
-		{
-			return contract.IsAssignableFrom(typeof(TComponent));
-		}
-
 		public void Initialize(IComposer composer)
 		{
 			if (_composer != null)
@@ -56,11 +51,6 @@ namespace ComposerCore.Factories
 		public IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(typeof(TComponent));
-		}
-
-		public bool IsResolvable(Type contractType)
-		{
-			return contractType.IsAssignableFrom(typeof(TComponent));
 		}
 
 		public object GetComponentInstance(ContractIdentity contract)

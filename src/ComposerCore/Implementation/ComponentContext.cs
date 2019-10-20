@@ -128,9 +128,9 @@ namespace ComposerCore.Implementation
 			    return false;
 		    
 		    var identity = new ContractIdentity(contract, name);
-		    var factories = _repository.FindFactories(identity);
+		    var registrations = _repository.Find(identity);
 		    
-		    using (var enumerator = factories?.GetEnumerator())
+		    using (var enumerator = registrations?.GetEnumerator())
 		    {
 			    if (enumerator == null)
 				    return false;
@@ -138,7 +138,7 @@ namespace ComposerCore.Implementation
 			    while (enumerator.MoveNext())
 			    {
 				    var current = enumerator.Current;
-				    if (current != null && current.Factory.IsResolvable(identity.Type))
+				    if (current != null && current.IsResolvable(identity.Type))
 					    return true;
 			    }
 		    }
@@ -153,9 +153,9 @@ namespace ComposerCore.Implementation
 				                               " contains open generic parameters. Can not construct a concrete type.");
 
 			var identity = new ContractIdentity(contract, name);
-			var factories = _repository.FindFactories(identity);
+			var registrations = _repository.Find(identity);
 
-		    using (var enumerator = factories?.GetEnumerator())
+		    using (var enumerator = registrations?.GetEnumerator())
 		    {
 		        if (enumerator == null)
 		            return null;
@@ -178,9 +178,9 @@ namespace ComposerCore.Implementation
         public virtual IEnumerable<object> GetAllComponents(Type contract, string name = null)
 		{
 			var identity = new ContractIdentity(contract, name);
-			var factories = _repository.FindFactories(identity);
+			var registrations = _repository.Find(identity);
 
-			return factories
+			return registrations
 				.Select(f => f.GetComponent(identity, this))
 				.Where(result => result != null)
 				.CastToRuntimeType(contract);
@@ -190,8 +190,8 @@ namespace ComposerCore.Implementation
 		{
 			var identities = _repository.GetContractIdentityFamily(contract);
 
-			return identities.SelectMany(identity => _repository.FindFactories(identity),
-					(identity, factory) => factory.GetComponent(identity, this))
+			return identities.SelectMany(identity => _repository.Find(identity),
+					(identity, registration) => registration.GetComponent(identity, this))
 				.CastToRuntimeType(contract);
 		}
 

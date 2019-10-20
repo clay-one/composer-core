@@ -4,6 +4,7 @@ using System.Linq;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
+using ComposerCore.Utility;
 
 namespace ComposerCore.Implementation
 {
@@ -22,10 +23,16 @@ namespace ComposerCore.Implementation
         public ComponentRegistration(IComponentFactory factory)
         {
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            var targetType = factory.TargetType;
+
+            if (targetType.IsOpenGenericType())
+                throw new InvalidOperationException("This class is not designed for open generic types. Use " +
+                                                    "GenericComponentRegistration instead.");
+            
             CacheQuery = null;
             Cache = null;
-            DefaultContractName = ComponentContextUtils.GetComponentDefaultName(factory.TargetType);
-            
+            DefaultContractName = ComponentContextUtils.GetComponentDefaultName(targetType);
+
             _contracts = new List<ContractIdentity>();
         }
 
@@ -78,13 +85,22 @@ namespace ComposerCore.Implementation
         {
             EnsureNotInitialized();
 
-            if (!Factory.ValidateContractType(contract.Type))
+            if (Factory.TargetType != null && !contract.Type.IsAssignableFrom(Factory.TargetType))
                 throw new CompositionException("This component type / factory cannot be registered with the contract " +
                                                $"{contract.Type.FullName}. The component type is not assignable to " +
                                                $"the contract or the factory logic prevents such registration.");
             
             _contracts.Add(contract);
         }
+
+        public virtual bool IsResolvable(Type contractType)
+        {
+            if (_contracts == null || _contracts.Count == 0)
+                return false;
+
+            return _contracts.Any(c => contractType.IsAssignableFrom(c.Type));
+        }
+
         
         public object GetComponent(ContractIdentity identity, IComposer dependencyResolver)
         {

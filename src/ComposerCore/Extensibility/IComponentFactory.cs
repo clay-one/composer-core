@@ -10,11 +10,9 @@ namespace ComposerCore.Extensibility
 	{
 		Type TargetType { get; }
 		
-		bool ValidateContractType(Type contract);
 		void Initialize(IComposer composer);
 		IEnumerable<Type> GetContractTypes();
 
-		bool IsResolvable(Type contractType);
 		object GetComponentInstance(ContractIdentity contract);
 	}
 }

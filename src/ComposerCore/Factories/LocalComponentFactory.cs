@@ -19,11 +19,6 @@ namespace ComposerCore.Factories
 
 		#region IComponentFactory Members
 
-		public override bool ValidateContractType(Type contract)
-		{
-			return contract.IsAssignableFrom(TargetType);
-		}
-
 		public override void Initialize(IComposer composer)
 		{
 			base.Initialize(composer);
@@ -43,11 +38,6 @@ namespace ComposerCore.Factories
 		public override IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(TargetType);
-		}
-
-		public override bool IsResolvable(Type contractType)
-		{
-			return contractType.IsAssignableFrom(TargetType);
 		}
 
 		public override object GetComponentInstance(ContractIdentity contract)
