@@ -28,6 +28,12 @@ namespace ComposerCore.Implementation
             
             _contracts = new List<ContractIdentity>();
         }
+
+        public ComponentRegistration(IComponentFactory factory, string componentCacheName)
+            : this(factory)
+        {
+            SetCache(componentCacheName);
+        }
         
         public ComponentRegistration(IComponentFactory factory, IComponentCache cache)
             : this(factory)

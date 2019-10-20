@@ -45,7 +45,7 @@ namespace ComposerCore.Tests.Generics.Components
 
 		public T Get()
 		{
-			return default(T);
+			return default;
 		}
 
 		public void Set(T t)
@@ -57,18 +57,70 @@ namespace ComposerCore.Tests.Generics.Components
 	}
 
 	[Component]
+	public class MultiContractOpenComponent<T> : IGenericContractOne<T>, IGenericContractTwo<T, T>
+	{
+		public T Get()
+		{
+			return default;
+		}
+
+		public void Set(T t)
+		{
+			// Do nothing
+		}
+
+		public T Something(T t2)
+		{
+			return t2;
+		}
+
+		public T AnotherThing(T t1)
+		{
+			return t1;
+		}
+	}
+	
+	[Component, Transient]
+	public class OpenTransientComponent<T> : IGenericContractOne<T>
+	{
+		public T Get()
+		{
+			return default;
+		}
+
+		public void Set(T t)
+		{
+			// Do nothing
+		}
+	}
+
+	[Component, Singleton]
+	public class OpenSingletonComponent<T> : IGenericContractOne<T>
+	{
+		public T Get()
+		{
+			return default;
+		}
+
+		public void Set(T t)
+		{
+			// Do nothing
+		}
+	}
+	
+	[Component]
 	public class OpenComponentTwo<T1, T2> : IGenericContractTwo<T1, T2>
 	{
 		#region Implementation of IGenericContractTwo<T1,T2>
 
 		public T1 Something(T2 t2)
 		{
-			return default(T1);
+			return default;
 		}
 
 		public T2 AnotherThing(T1 t1)
 		{
-			return default(T2);
+			return default;
 		}
 
 		#endregion
@@ -114,7 +166,7 @@ namespace ComposerCore.Tests.Generics.Components
 
 		public T AnotherThing(string t1)
 		{
-			return default(T);
+			return default;
 		}
 
 		#endregion
@@ -145,12 +197,12 @@ namespace ComposerCore.Tests.Generics.Components
 
 		public T2 Something(T1 t2)
 		{
-			return default(T2);
+			return default;
 		}
 
 		public T1 AnotherThing(T2 t1)
 		{
-			return default(T1);
+			return default;
 		}
 
 		#endregion

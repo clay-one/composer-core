@@ -33,11 +33,6 @@ namespace ComposerCore.Implementation
 			this.RegisterObject(this);
 			RegisterBuiltInComponents();
 		}
-
-		private void RegisterRequiredComponents()
-		{
-			
-		}
 		
 		private void RegisterBuiltInComponents()
 		{
@@ -51,6 +46,8 @@ namespace ComposerCore.Implementation
 			this.Register(typeof(PerContractComponentCache));
 			this.Register(typeof(DefaultComponentCache));
             this.Register(typeof(ContractAgnosticComponentCache));
+            this.Register(typeof(SingletonComponentCache));
+            this.Register(typeof(TransientComponentCache));
             this.Register(typeof(StaticComponentCache));
             this.Register(typeof(ThreadLocalComponentCache));
 
