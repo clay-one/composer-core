@@ -8,7 +8,7 @@ using ComposerCore.Utility;
 
 namespace ComposerCore.Implementation
 {
-    public class ComponentRegistration
+    public class ComponentRegistration : IComponentRegistration
     {
         private readonly List<ContractIdentity> _contracts;
 
@@ -93,7 +93,7 @@ namespace ComposerCore.Implementation
             _contracts.Add(contract);
         }
 
-        public virtual bool IsResolvable(Type contractType)
+        public bool IsResolvable(Type contractType)
         {
             if (_contracts == null || _contracts.Count == 0)
                 return false;

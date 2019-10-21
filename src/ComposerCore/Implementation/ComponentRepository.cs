@@ -1,16 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation
 {
 	internal class ComponentRepository
 	{
-		private readonly IDictionary<ContractIdentity, List<ComponentRegistration>> _registrationMap;
+		private readonly IDictionary<ContractIdentity, List<IComponentRegistration>> _registrationMap;
 
 		public ComponentRepository()
 		{
-			_registrationMap = new Dictionary<ContractIdentity, List<ComponentRegistration>>();
+			_registrationMap = new Dictionary<ContractIdentity, List<IComponentRegistration>>();
 		}
 
 		public void Add(ComponentRegistration registration)
@@ -18,7 +19,7 @@ namespace ComposerCore.Implementation
 			foreach (var contract in registration.Contracts)
 			{
 				if (!_registrationMap.ContainsKey(contract))
-					_registrationMap.Add(contract, new List<ComponentRegistration>());
+					_registrationMap.Add(contract, new List<IComponentRegistration>());
 
 				_registrationMap[contract].Add(registration);
 			}
@@ -36,11 +37,11 @@ namespace ComposerCore.Implementation
 			Array.ForEach(identitiesToRemove, i => _registrationMap.Remove(i));
 		}
 
-		public IEnumerable<ComponentRegistration> Find(ContractIdentity identity)
+		public IEnumerable<IComponentRegistration> Find(ContractIdentity identity)
 		{
 		    _registrationMap.TryGetValue(identity, out var closedResults);
 		    if (!identity.Type.IsGenericType)
-                return closedResults ?? Enumerable.Empty<ComponentRegistration>();
+                return closedResults ?? Enumerable.Empty<IComponentRegistration>();
 
 		    var genericContractType = identity.Type.GetGenericTypeDefinition();
 		    var genericIdentity = new ContractIdentity(genericContractType, identity.Name);
@@ -50,7 +51,7 @@ namespace ComposerCore.Implementation
 		        return closedResults?.Concat(genericResults) ?? genericResults;
 		    }
 
-		    return closedResults ?? Enumerable.Empty<ComponentRegistration>();
+		    return closedResults ?? Enumerable.Empty<IComponentRegistration>();
 		}
 
 		public IEnumerable<ContractIdentity> GetContractIdentityFamily(Type type)
