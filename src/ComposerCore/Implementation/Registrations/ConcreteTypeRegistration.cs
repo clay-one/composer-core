@@ -73,7 +73,6 @@ namespace ComposerCore.Implementation
 
 //			InvokeCompositionNotifications(componentInstance);
             return componentInstance;
-
         }
 
         private void FillCacheQuery()

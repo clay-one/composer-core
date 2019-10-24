@@ -12,7 +12,6 @@ namespace ComposerCore.Factories
 		public Type TargetType { get; }
 		protected IComposer Composer { get; private set; }
 		protected LocalComponentBuilder Builder { get; }
-		protected LocalComponentInitializer Initializer { get; }
         
 		public bool Initialized => Composer != null;
 
@@ -28,7 +27,6 @@ namespace ComposerCore.Factories
             
 			Composer = null;
 			Builder = new LocalComponentBuilder(targetType, original?.Builder);
-			Initializer = new LocalComponentInitializer(targetType, original?.Initializer);
 		}
 
 		#region IComponentFactory Members
@@ -45,8 +43,6 @@ namespace ComposerCore.Factories
 				throw new CompositionException("The type '" + TargetType +
 				                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
 			Builder.Initialize(composer);
-			Initializer.Initialize(composer);
-            
 			Composer = composer;
 		}
 
@@ -61,15 +57,14 @@ namespace ComposerCore.Factories
 				throw new InvalidOperationException(
 					"LocalComponentFactory should be initialized before calling GetComponentInstance method.");
 
-			var listenerChain = Composer.GetComponent<ICompositionListenerChain>();
-			return CreateComponent(contract, listenerChain);
+			return CreateComponent(contract);
 		}
 
 		#endregion
 		
 		#region Private helper methods
 		
-		private object CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
+		private object CreateComponent(ContractIdentity contract)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
@@ -85,7 +80,7 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
+//			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
 
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
@@ -93,7 +88,7 @@ namespace ComposerCore.Factories
 			// an instance that does not have the original configuration points.
 
 //			var initializationPointResults = Initializer.Apply(originalComponentInstance, Composer);
-			Initializer.Apply(originalComponentInstance, Composer);
+//			Initializer.Apply(originalComponentInstance, Composer);
 
 			// Inform all composition listeners of the newly composed
 			// component instance by calling OnComponentComposed method.
@@ -107,7 +102,7 @@ namespace ComposerCore.Factories
 			// for the same reason stated above.
 
 //			InvokeCompositionNotifications(componentInstance);
-			return componentInstance;
+			return originalComponentInstance;
 		}
 		
 		public void AddConfiguredConstructorArg(ConstructorArgSpecification cas)

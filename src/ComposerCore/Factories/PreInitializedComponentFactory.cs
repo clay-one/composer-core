@@ -10,16 +10,10 @@ namespace ComposerCore.Factories
 	{
 		private readonly object _componentInstance;
 
-		#region Constructors
-
 		public PreInitializedComponentFactory(object componentInstance)
 		{
 		    _componentInstance = componentInstance ?? throw new ArgumentNullException(nameof(componentInstance));
 		}
-
-		#endregion
-
-		#region IComponentFactory Members
 
 		public Type TargetType => _componentInstance.GetType();
 
@@ -27,28 +21,14 @@ namespace ComposerCore.Factories
 		{
 		}
 
-		public object Clone()
-		{
-			return CloneComponentFactory();
-		}
-
-		public IComponentFactory CloneComponentFactory()
-		{
-			return new PreInitializedComponentFactory(_componentInstance);
-		}
-
 		public IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(_componentInstance.GetType());
 		}
 
-		public bool SharedAmongContracts => true;
-
 	    public object GetComponentInstance(ContractIdentity contract)
 		{
 			return _componentInstance;
 		}
-
-		#endregion
 	}
 }

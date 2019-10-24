@@ -12,18 +12,12 @@ namespace ComposerCore.Factories
 
 		private readonly Func<IComposer, TComponent> _factoryMethod;
 
-		private readonly List<InitializationPointSpecification> _initializationPoints;
-		private List<Action<IComposer, object>> _compositionNotificationMethods;
-
 		#region Constructors
 
 		public FactoryMethodComponentFactory(Func<IComposer, TComponent> factoryMethod)
 		{
             _factoryMethod = factoryMethod ?? throw new ArgumentNullException(nameof(factoryMethod));
-
 			_composer = null;
-			_initializationPoints = new List<InitializationPointSpecification>();
-			_compositionNotificationMethods = null;
 		}
 
 		#endregion
@@ -45,7 +39,6 @@ namespace ComposerCore.Factories
 				                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
 
 			_composer = composer;
-			CompleteConfiguration();
 		}
 
 		public IEnumerable<Type> GetContractTypes()
@@ -61,8 +54,7 @@ namespace ComposerCore.Factories
 				throw new InvalidOperationException(
 					"DelegateComponentFactory should be initialized before calling GetComponentInstance method.");
 
-			var listenerChain = _composer.GetComponent<ICompositionListenerChain>();
-			return CreateComponent(contract, listenerChain);
+			return CreateComponent(contract);
 		}
 
 		#endregion
@@ -76,86 +68,9 @@ namespace ComposerCore.Factories
 
 		#endregion
 
-		#region Public properties
-
-		public Func<IComposer, TComponent> FactoryMethod => _factoryMethod;
-
-		public List<InitializationPointSpecification> InitializationPoints
-		{
-			get
-			{
-				if (_composer != null)
-					throw new InvalidOperationException("Cannot access InitializationPoints when the factory is initialized.");
-
-				return _initializationPoints;
-			}
-		}
-
-	    public List<Action<IComposer, object>> CompositionNotificationMethods
-	    {
-	        get
-	        {
-	            if (_composer != null)
-	                throw new InvalidOperationException("Cannot access CompositionNotificationMethods when the factory is initialized.");
-
-	            return _compositionNotificationMethods ?? (_compositionNotificationMethods = new List<Action<IComposer, object>>());
-	        }
-        }
-
-	    #endregion
-
 		#region Private helper methods
-
-		private void CompleteConfiguration()
-		{
-		    try
-		    {
-		        LoadInitializationPoints();
-		        LoadCompositionNotificationMethods();
-		    }
-		    catch(Exception e)
-		    {
-		        throw new CompositionException("Could not initialize DelegateComponentFactory", e);
-		    }
-		}
-
-		private void LoadInitializationPoints()
-		{
-			// Check two categories of members for being an initialization point:
-			//   1. Public fields
-			//   2. Public properties
-			// Check and add them to the list of initialization points if they
-			// are not already registered.
-
-			foreach (var fieldInfo in typeof(TComponent).GetFields())
-			{
-				ComponentContextUtils.CheckAndAddInitializationPoint(_composer, _initializationPoints, fieldInfo);
-			}
-
-			foreach (var fieldInfo in typeof(TComponent).GetProperties())
-			{
-				ComponentContextUtils.CheckAndAddInitializationPoint(_composer, _initializationPoints, fieldInfo);
-			}
-		}
-
-		private void LoadCompositionNotificationMethods()
-		{
-		    var methodsFound = ComponentContextUtils.FindCompositionNotificationMethods(typeof(TComponent)).ToList();
-		    _compositionNotificationMethods = _compositionNotificationMethods?.Concat(methodsFound).ToList() ?? methodsFound;
-		}
-
-		private void InvokeCompositionNotifications(object componentInstance)
-		{
-			if (_compositionNotificationMethods == null)
-				return;
-
-			foreach (var method in _compositionNotificationMethods)
-			{
-			    method(_composer, componentInstance);
-			}
-		}
-
-		private object CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
+		
+		private object CreateComponent(ContractIdentity contract)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
@@ -171,56 +86,28 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, typeof(TComponent));
+//			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, typeof(TComponent));
 
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
 			// as the reference may have been changed by composition listeners to
 			// an instance that does not have the original configuration points.
 
-			var initializationPointResults = ApplyInitializationPoints(originalComponentInstance);
+//			var initializationPointResults = ApplyInitializationPoints(originalComponentInstance);
 
 			// Inform all composition listeners of the newly composed
 			// component instance by calling OnComponentComposed method.
 
-			listenerChain.NotifyComposed(componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, typeof(TComponent));
+//			listenerChain.NotifyComposed(componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, typeof(TComponent));
 
 			// The composition is now finished for the component instance.
 			// See if an [OnCompositionComplete] method is specified, call it.
 			// This should be called on the original component instance
 			// for the same reason stated above.
 
-			InvokeCompositionNotifications(componentInstance);
-			return componentInstance;
+//			InvokeCompositionNotifications(componentInstance);
+			return originalComponentInstance;
 		}
-		
-		private List<object> ApplyInitializationPoints(object originalComponentInstance)
-		{
-			var initializationPointResults = new List<object>();
-
-			foreach (var initializationPoint in _initializationPoints)
-			{
-				if (initializationPoint.Query == null)
-					throw new CompositionException(
-					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{originalComponentInstance.GetType().FullName}'");
-
-				var initializationPointResult = initializationPoint.Query.Query(_composer);
-
-				// Check if the required initialization points get a value.
-				if (initializationPoint.Required.GetValueOrDefault(_composer.Configuration.InitializationPointsRequiredByDefault) && initializationPointResult == null)
-					throw new CompositionException(
-					        $"Could not fill initialization point '{initializationPoint.Name}' of type '{originalComponentInstance.GetType().FullName}'.");
-
-				initializationPointResults.Add(initializationPointResult);
-				ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
-				                                               initializationPoint.Name,
-				                                               initializationPoint.MemberType,
-				                                               initializationPointResult);
-			}
-
-			return initializationPointResults;
-		}
-
 
 		#endregion
 	}

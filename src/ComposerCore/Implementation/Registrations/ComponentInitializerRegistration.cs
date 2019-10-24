@@ -12,7 +12,7 @@ namespace ComposerCore.Implementation
         
         protected ComponentInitializerRegistration(Type targetType) : base(targetType)
         {
-            Initializer = new LocalComponentInitializer(targetType);
+            Initializer = new LocalComponentInitializer(targetType ?? typeof(object));
         }
 
         public override void SetAsRegistered(IComponentContext registrationContext)

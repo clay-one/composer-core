@@ -23,7 +23,7 @@ namespace ComposerCore.Implementation
         
         protected ComponentRegistrationBase(Type targetType)
         {
-            TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
+            TargetType = targetType;
             RegistrationContext = null;
             CacheQuery = null;
             Cache = null;
@@ -91,6 +91,9 @@ namespace ComposerCore.Implementation
 
         protected virtual void ReadContractsFromTarget()
         {
+            if (TargetType == null)
+                return;
+            
             foreach (var contractType in ComponentContextUtils.FindContracts(TargetType) ?? Enumerable.Empty<Type>())
             {
                 AddContractType(contractType);

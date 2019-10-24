@@ -146,7 +146,7 @@ namespace ComposerCore.Tests.ComponentFactories
         }
 
         [TestMethod]
-        public void UnresolvableReuiredPlugs()
+        public void UnresolvableRequiredPlugs()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentTwo>(composer => new SampleComponentTwo());
             _context.Register(factory);

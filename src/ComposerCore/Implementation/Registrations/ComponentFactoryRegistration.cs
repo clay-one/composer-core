@@ -6,11 +6,12 @@ using ComposerCore.Utility;
 
 namespace ComposerCore.Implementation
 {
-    public class ComponentFactoryRegistration : ComponentBuilderRegistration
+    public class ComponentFactoryRegistration : ComponentInitializerRegistration
     {
         public IComponentFactory Factory { get; }
         
-        public ComponentFactoryRegistration(IComponentFactory factory) : base(factory?.TargetType)
+        public ComponentFactoryRegistration(IComponentFactory factory) 
+            : base((factory ?? throw new ArgumentNullException(nameof(factory))).TargetType)
         {
             Factory = factory;
             if (TargetType.IsOpenGenericType())
@@ -44,9 +45,60 @@ namespace ComposerCore.Implementation
 
         public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
         {
-            return Factory.GetComponentInstance(contract);
+            // Save the original component instance reference, so that
+            // we can apply initialization points to it later, as the
+            // composition listeners may change the reference to a
+            // wrapped one.
+            
+            var originalComponentInstance = Factory.GetComponentInstance(contract);
+
+            // After constructing the component object, first process
+            // all composition listeners so that if the reference should
+            // change, it changes before setting it to the cache.
+            // Otherwise, in circular dependency scenarios, dependent
+            // components may get unwrapped component where the component
+            // is wrapped by composition listeners.
+
+            var listenerChain = RegistrationContext.GetComponent<ICompositionListenerChain>();
+            var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, null, TargetType);
+
+            // Complete the object initialization by applying the initialization
+            // points. They should be applied to the original component instance,
+            // as the reference may have been changed by composition listeners to
+            // an instance that does not have the original configuration points.
+
+//			var initializationPointResults = Initializer.Apply(originalComponentInstance, Composer);
+            Initializer.Apply(originalComponentInstance, dependencyResolver);
+
+            // Inform all composition listeners of the newly composed
+            // component instance by calling OnComponentComposed method.
+
+//			listenerChain.NotifyComposed(
+//				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
+
+            // The composition is now finished for the component instance.
+            // See if an [OnCompositionComplete] method is specified, call it.
+            // This should be called on the original component instance
+            // for the same reason stated above.
+
+//			InvokeCompositionNotifications(componentInstance);
+            return componentInstance;
         }
-        
+
+        protected override void ReadContractsFromTarget()
+        {
+            base.ReadContractsFromTarget();
+            foreach (var contractType in Factory.GetContractTypes() ?? Enumerable.Empty<Type>())
+            {
+                AddContractType(contractType);
+            }
+        }
+
+        public override void AddContract(ContractIdentity contract)
+        {
+            base.AddContract(contract);
+        }
+
         private void FillCacheQuery()
         {
             if (CacheQuery != null)
