@@ -83,7 +83,7 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsTransient()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            var registration = new ComponentRegistration(factory);
+            var registration = new ConcreteComponentRegistration(factory);
             
             registration.SetCache(NoComponentCache.Instance);
             _context.Register(registration);
@@ -109,7 +109,7 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsSingleton()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            var registration = new ComponentRegistration(factory);
+            var registration = new ConcreteComponentRegistration(factory);
             
             registration.SetCache(nameof(ContractAgnosticComponentCache));
             _context.Register(registration);

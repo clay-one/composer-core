@@ -36,7 +36,7 @@ namespace ComposerCore.Implementation
 		
 		private void RegisterBuiltInComponents()
 		{
-			Register(new ComponentRegistration(
+			Register(new ConcreteComponentRegistration(
 				new LocalComponentFactory(typeof(PerRegistrationComponentCache)),
 				NoComponentCache.Instance));
 			
@@ -66,7 +66,7 @@ namespace ComposerCore.Implementation
 
 		#region IComponentContext implementation
 		
-        public void Register(ComponentRegistration registration)
+        public void Register(IComponentRegistration registration)
         {
 	        registration.SetAsRegistered(this);
 	        _repository.Add(registration);

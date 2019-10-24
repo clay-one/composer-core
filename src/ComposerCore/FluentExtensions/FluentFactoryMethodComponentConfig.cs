@@ -1,4 +1,5 @@
 using System;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
@@ -8,6 +9,9 @@ namespace ComposerCore.FluentExtensions
         : FluentComponentConfigBase<FluentFactoryMethodComponentConfig<TComponent>> where TComponent : class
     {
         protected readonly FactoryMethodComponentFactory<TComponent> Factory;
+        private readonly FactoryMethodRegistration _factoryMethodRegistration;
+
+        protected override IComponentRegistration Registration => _factoryMethodRegistration;
 
         #region Constructors
 
@@ -17,7 +21,7 @@ namespace ComposerCore.FluentExtensions
             Factory = new FactoryMethodComponentFactory<TComponent>(
                 factoryMethod ?? throw new ArgumentNullException(nameof(factoryMethod)));
 
-            Registration = new ComponentRegistration(Factory);
+            _factoryMethodRegistration = new FactoryMethodRegistration(typeof(TComponent));
         }
 
         #endregion

@@ -1,46 +1,61 @@
 using System;
 using System.Collections.Generic;
+using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
 
 namespace ComposerCore.Factories
 {
-	public class LocalComponentFactory : LocalComponentFactoryBase
+	public class LocalComponentFactory : IComponentFactory
 	{
-		#region Constructors
+		public Type TargetType { get; }
+		protected IComposer Composer { get; private set; }
+		protected LocalComponentBuilder Builder { get; }
+		protected LocalComponentInitializer Initializer { get; }
+        
+		public bool Initialized => Composer != null;
 
-		public LocalComponentFactory(Type targetType, LocalComponentFactoryBase original = null)
-			: base(targetType, original)
+		public ConstructorResolutionPolicy? ConstructorResolutionPolicy
 		{
+			get => Builder.ConstructorResolutionPolicy;
+			set => Builder.ConstructorResolutionPolicy = value;
 		}
-
-		#endregion
+		
+		public LocalComponentFactory(Type targetType, LocalComponentFactory original = null)
+		{
+			TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
+            
+			Composer = null;
+			Builder = new LocalComponentBuilder(targetType, original?.Builder);
+			Initializer = new LocalComponentInitializer(targetType, original?.Initializer);
+		}
 
 		#region IComponentFactory Members
 
-		public override void Initialize(IComposer composer)
+		public void Initialize(IComposer composer)
 		{
-			base.Initialize(composer);
+			if (Initialized)
+				return;
 
-			try
-			{
-				LoadInitializationPoints();
-				LoadCompositionNotificationMethods();
-			}
-			catch(Exception e)
-			{
-				throw new CompositionException(
-					$"Could not initialize LocalComponentFactory for type '{TargetType.FullName}'", e);
-			}
+			if (TargetType == null)
+				throw new InvalidOperationException("TargetType is not specified.");
+
+			if (!composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasComponentAttribute(TargetType))
+				throw new CompositionException("The type '" + TargetType +
+				                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
+			Builder.Initialize(composer);
+			Initializer.Initialize(composer);
+            
+			Composer = composer;
 		}
 
-		public override IEnumerable<Type> GetContractTypes()
+		public IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
-		public override object GetComponentInstance(ContractIdentity contract)
+		public object GetComponentInstance(ContractIdentity contract)
 		{
 			if (!Initialized)
 				throw new InvalidOperationException(
@@ -77,56 +92,39 @@ namespace ComposerCore.Factories
 			// as the reference may have been changed by composition listeners to
 			// an instance that does not have the original configuration points.
 
-			var initializationPointResults = ApplyInitializationPoints(originalComponentInstance);
+//			var initializationPointResults = Initializer.Apply(originalComponentInstance, Composer);
+			Initializer.Apply(originalComponentInstance, Composer);
 
 			// Inform all composition listeners of the newly composed
 			// component instance by calling OnComponentComposed method.
 
-			listenerChain.NotifyComposed(
-				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
+//			listenerChain.NotifyComposed(
+//				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
 
 			// The composition is now finished for the component instance.
 			// See if an [OnCompositionComplete] method is specified, call it.
 			// This should be called on the original component instance
 			// for the same reason stated above.
 
-			InvokeCompositionNotifications(componentInstance);
+//			InvokeCompositionNotifications(componentInstance);
 			return componentInstance;
 		}
 		
-		private List<object> ApplyInitializationPoints(object originalComponentInstance)
+		public void AddConfiguredConstructorArg(ConstructorArgSpecification cas)
 		{
-			var initializationPointResults = new List<object>();
+			Builder.AddConfiguredConstructorArg(cas);
+		}
 
-			foreach (var initializationPoint in _initializationPoints)
-			{
-				if (initializationPoint.Query == null)
-					throw new CompositionException(
-					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{TargetType.FullName}'");
 
-				if (initializationPoint.Query.IsResolvable(Composer))
-				{
-					var initializationPointResult = initializationPoint.Query.Query(Composer);
+		public override string ToString()
+		{
+			return TargetType?.AssemblyQualifiedName ?? base.ToString();
+		}
 
-					initializationPointResults.Add(initializationPointResult);
-					ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
-						initializationPoint.Name,
-						initializationPoint.MemberType,
-						initializationPointResult);
-				}
-				else
-				{
-					// Check if the required initialization points get a value.
-					if (initializationPoint.Required.GetValueOrDefault(Composer.Configuration.InitializationPointsRequiredByDefault))
-						throw new CompositionException(
-							$"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
-					
-					initializationPointResults.Add(null);
-				}
-				
-			}
-
-			return initializationPointResults;
+		protected void EnsureNotInitialized()
+		{
+			if (Initialized)
+				throw new InvalidOperationException($"Cannot perform operation when the factory is not initialized.");
 		}
 
 		#endregion

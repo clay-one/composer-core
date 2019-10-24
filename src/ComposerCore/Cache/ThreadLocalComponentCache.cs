@@ -9,16 +9,16 @@ namespace ComposerCore.Cache
     [Component(nameof(ThreadLocalComponentCache)), ComponentCache(typeof(StaticComponentCache)), ConstructorResolutionPolicy(null)]
     public class ThreadLocalComponentCache : IComponentCache
     {
-        private readonly ThreadLocal<ConcurrentDictionary<ComponentRegistration, object>> _cacheContent =
-            new ThreadLocal<ConcurrentDictionary<ComponentRegistration, object>>(() =>
-                new ConcurrentDictionary<ComponentRegistration, object>());
+        private readonly ThreadLocal<ConcurrentDictionary<ConcreteComponentRegistration, object>> _cacheContent =
+            new ThreadLocal<ConcurrentDictionary<ConcreteComponentRegistration, object>>(() =>
+                new ConcurrentDictionary<ConcreteComponentRegistration, object>());
 
         [CompositionConstructor]
         public ThreadLocalComponentCache()
         {
         }
 
-        public object GetComponent(ContractIdentity contract, ComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, ConcreteComponentRegistration registration, IComposer dependencyResolver)
         {
             return _cacheContent.Value.GetOrAdd(registration, r => r.Factory.GetComponentInstance(contract));
         }

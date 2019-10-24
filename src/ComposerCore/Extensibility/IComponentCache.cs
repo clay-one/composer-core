@@ -6,6 +6,6 @@ namespace ComposerCore.Extensibility
     [Contract]
     public interface IComponentCache
     {
-        object GetComponent(ContractIdentity contract, ComponentRegistration registration, IComposer dependencyResolver);
+        object GetComponent(ContractIdentity contract, ConcreteComponentRegistration registration, IComposer dependencyResolver);
     }
 }

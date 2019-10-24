@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
@@ -9,6 +10,10 @@ namespace ComposerCore.FluentExtensions
 {
     public class FluentUntypedFactoryMethodComponentConfig : FluentComponentConfigBase<FluentUntypedFactoryMethodComponentConfig>
     {
+        private readonly FactoryMethodRegistration _factoryMethodRegistration;
+
+        protected override IComponentRegistration Registration => _factoryMethodRegistration;
+
         protected readonly UntypedFactoryMethodComponentFactory Factory;
 
         #region Constructors
@@ -17,7 +22,7 @@ namespace ComposerCore.FluentExtensions
             : base(context)
         {
             Factory = new UntypedFactoryMethodComponentFactory(factoryMethod);
-            Registration = new ComponentRegistration(Factory);
+            _factoryMethodRegistration = new FactoryMethodRegistration(typeof(object));
         }
 
         #endregion

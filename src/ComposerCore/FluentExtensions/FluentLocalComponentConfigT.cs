@@ -45,10 +45,11 @@ namespace ComposerCore.FluentExtensions
                 throw new ArgumentException("Member pointer should point to an immediate member. " +
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
-
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name, memberExpression.Member.MemberType,
-                required, new ComponentQuery(typeof(TPlugContract), contractName)));
-
+            
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(
+                new ComponentQuery(typeof(TPlugContract), contractName), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
+            
             return this;
         }
 
@@ -110,9 +111,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                false, new SimpleValueQuery(value)));
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, false);
 
             return this;
         }
@@ -128,9 +128,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                required, new FuncValueQuery(c => valueCalculator(c))));
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;
         }
@@ -158,9 +157,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                required, new VariableQuery(variableName)));
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;
         }

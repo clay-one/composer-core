@@ -1,5 +1,4 @@
 using ComposerCore.Cache;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.Generics.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -181,9 +180,9 @@ namespace ComposerCore.Tests.Generics
         [TestMethod]
         public void SingletonDifferentContracts()
         {
-            _context.Register(new ComponentRegistration(
-                new GenericLocalComponentFactory(typeof(MultiContractOpenComponent<>)), 
-                nameof(SingletonComponentCache)));
+            var registration = new GenericComponentRegistration(typeof(MultiContractOpenComponent<>));
+            registration.SetCache(nameof(SingletonComponentCache));
+            _context.Register(registration);
 
             var c1 = _context.GetComponent<IGenericContractOne<string>>();
             var c2 = _context.GetComponent<IGenericContractTwo<string, string>>();

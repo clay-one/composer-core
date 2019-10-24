@@ -11,6 +11,9 @@ namespace ComposerCore.FluentExtensions
     public class FluentLocalComponentConfig : FluentComponentConfigBase<FluentLocalComponentConfig>
     {
         protected readonly LocalComponentFactory Factory;
+        protected readonly ConcreteComponentRegistration _concreteComponentRegistration;
+
+        protected override IComponentRegistration Registration => _concreteComponentRegistration;
 
         #region Constructors
 
@@ -18,7 +21,7 @@ namespace ComposerCore.FluentExtensions
             : base(context)
         {
             Factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            Registration = new ComponentRegistration(Factory);
+            _concreteComponentRegistration = new ConcreteComponentRegistration(Factory);
         }
 
         #endregion
@@ -48,15 +51,15 @@ namespace ComposerCore.FluentExtensions
         public FluentLocalComponentConfig SetComponent(
             string memberName, Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
-                required, new ComponentQuery(contractType, contractName)));
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(
+                new ComponentQuery(contractType, contractName), memberName, null, required);
 
             return this;
         }
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            var constructor = Factory.TargetType.GetConstructor(argTypes);
+            var constructor = _concreteComponentRegistration.TargetType.GetConstructor(argTypes);
             if (constructor == null)
                 throw new ArgumentException("Could not find a public constructor with the specified parameter types " +
                                             $"in the class '{Factory.TargetType.FullName}'");
@@ -70,7 +73,7 @@ namespace ComposerCore.FluentExtensions
                 throw new ArgumentNullException(nameof(constructorInfo));
             
             Context.GetComponent<IPresetConstructorStore>().SetConstructor(Factory.TargetType, constructorInfo);
-            Factory.ConstructorResolutionPolicy = ConstructorResolutionPolicy.Preset;
+            _concreteComponentRegistration.SetConstructorResolutionPolicy(ConstructorResolutionPolicy.Preset);
             
             return this;
         }
@@ -82,63 +85,56 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            _concreteComponentRegistration.AddConfiguredConstructorArg(new ComponentQuery(contractType, contractName), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue(object value)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            _concreteComponentRegistration.AddConfiguredConstructorArg(new SimpleValueQuery(value), false);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, 
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _concreteComponentRegistration.AddConfiguredConstructorArg(new FuncValueQuery(c => valueCalculator(c)), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            _concreteComponentRegistration.AddConfiguredConstructorArg(new VariableQuery(variableName), required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValue(string memberName, object value)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, false, 
-                new SimpleValueQuery(value)));
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), memberName);
 
             return this;
         }
 
         public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new VariableQuery(variableName)));
-
+            _concreteComponentRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
         {
-            Factory.CompositionNotificationMethods.Add(initAction);
+            _concreteComponentRegistration.AddCompositionNotification(initAction);
             return this;
         }
 
         public FluentLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
-            Factory.ConstructorResolutionPolicy = policy;
+            _concreteComponentRegistration.SetConstructorResolutionPolicy(policy);
             return this;
         }
         

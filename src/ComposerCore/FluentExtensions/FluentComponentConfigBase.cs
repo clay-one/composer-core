@@ -1,5 +1,6 @@
 using System;
 using ComposerCore.Cache;
+using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
@@ -7,7 +8,7 @@ namespace ComposerCore.FluentExtensions
     public abstract class FluentComponentConfigBase<TSubType> where TSubType : class
     {
         protected readonly ComponentContext Context;
-        protected ComponentRegistration Registration;
+        protected abstract IComponentRegistration Registration { get; }
 
         protected FluentComponentConfigBase(ComponentContext context)
         {

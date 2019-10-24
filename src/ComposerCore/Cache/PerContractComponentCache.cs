@@ -16,7 +16,7 @@ namespace ComposerCore.Cache
         {
         }
         
-        public object GetComponent(ContractIdentity contract, ComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, ConcreteComponentRegistration registration, IComposer dependencyResolver)
         {
             return _cacheContent.GetOrAdd(contract, (c) => registration.Factory.GetComponentInstance(c));
         }

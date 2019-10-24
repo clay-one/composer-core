@@ -1,23 +1,23 @@
 using System;
-using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Factories;
+using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {
     public class FluentGenericLocalComponentConfig : FluentComponentConfigBase<FluentGenericLocalComponentConfig>
     {
-        protected readonly GenericLocalComponentFactory Factory;
+        private readonly GenericComponentRegistration _genericComponentRegistration;
+
+        protected override IComponentRegistration Registration => _genericComponentRegistration;
 
         #region Constructors
 
-        public FluentGenericLocalComponentConfig(ComponentContext context, GenericLocalComponentFactory factory)
+        public FluentGenericLocalComponentConfig(ComponentContext context, GenericComponentRegistration registration)
             : base(context)
         {
-            Factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            Registration = new ComponentRegistration(Factory);
+            _genericComponentRegistration = registration;
         }
 
         #endregion
@@ -33,8 +33,8 @@ namespace ComposerCore.FluentExtensions
         public FluentGenericLocalComponentConfig SetComponent(
             string memberName, Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
-                required, new ComponentQuery(contractType, contractName)));
+            _genericComponentRegistration.AddConfiguredInitializationPoint(new ComponentQuery(contractType, contractName), memberName,
+                null, required);
 
             return this;
         }
@@ -46,63 +46,55 @@ namespace ComposerCore.FluentExtensions
 
         public FluentGenericLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            _genericComponentRegistration.AddConfiguredConstructorArg(new ComponentQuery(contractType, contractName), required);
             return this;
         }
 
         public FluentGenericLocalComponentConfig AddConstructorValue(object value)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            _genericComponentRegistration.AddConfiguredConstructorArg(new SimpleValueQuery(value), false);
             return this;
         }
 
         public FluentGenericLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, 
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _genericComponentRegistration.AddConfiguredConstructorArg(new FuncValueQuery(c => valueCalculator(c)), required);
             return this;
         }
 
         public FluentGenericLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            _genericComponentRegistration.AddConfiguredConstructorArg(new VariableQuery(variableName), required);
             return this;
         }
 
         public FluentGenericLocalComponentConfig SetValue(string memberName, object value)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, false, 
-                new SimpleValueQuery(value)));
-
+            _genericComponentRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), memberName);
             return this;
         }
 
         public FluentGenericLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _genericComponentRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), memberName, null, required);
             return this;
         }
 
         public FluentGenericLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new VariableQuery(variableName)));
-
+            _genericComponentRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), memberName, null, required);
             return this;
         }
 
         public FluentGenericLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
         {
-            Factory.CompositionNotificationMethods.Add(initAction);
+            _genericComponentRegistration.AddCompositionNotification(initAction);
             return this;
         }
         
         public FluentGenericLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
-            Factory.ConstructorResolutionPolicy = policy;
+            _genericComponentRegistration.SetConstructorResolutionPolicy(policy);
             return this;
         }
 

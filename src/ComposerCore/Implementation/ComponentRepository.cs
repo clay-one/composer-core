@@ -14,7 +14,7 @@ namespace ComposerCore.Implementation
 			_registrationMap = new Dictionary<ContractIdentity, List<IComponentRegistration>>();
 		}
 
-		public void Add(ComponentRegistration registration)
+		public void Add(IComponentRegistration registration)
 		{
 			foreach (var contract in registration.Contracts)
 			{

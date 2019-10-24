@@ -49,9 +49,7 @@ namespace ComposerCore.Factories
 
         public void AddConfiguredConstructorArg(ConstructorArgSpecification cas)
         {
-	        if (_configuredConstructorArgSpecs == null)
-		        _configuredConstructorArgSpecs = new List<ConstructorArgSpecification>();
-	        
+	        _configuredConstructorArgSpecs ??= new List<ConstructorArgSpecification>();
 	        _configuredConstructorArgSpecs.Add(cas);
         }
 
