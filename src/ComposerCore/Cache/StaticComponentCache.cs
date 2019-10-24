@@ -8,17 +8,17 @@ namespace ComposerCore.Cache
 	[Component(nameof(StaticComponentCache)), Transient, ConstructorResolutionPolicy(null)]
 	public class StaticComponentCache : IComponentCache
 	{
-		private static readonly ConcurrentDictionary<ConcreteComponentRegistration, object> CacheContent =
-			new ConcurrentDictionary<ConcreteComponentRegistration, object>();
+		private static readonly ConcurrentDictionary<IComponentRegistration, object> CacheContent =
+			new ConcurrentDictionary<IComponentRegistration, object>();
 
 		[CompositionConstructor]
 		public StaticComponentCache()
 		{
 		}
 
-		public object GetComponent(ContractIdentity contract, ConcreteComponentRegistration registration, IComposer dependencyResolver)
+		public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
 		{
-			return CacheContent.GetOrAdd(registration, r => r.Factory.GetComponentInstance(contract));
+			return CacheContent.GetOrAdd(registration, r => r.CreateComponent(contract, dependencyResolver));
 		}
 	}
 }

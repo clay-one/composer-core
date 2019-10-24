@@ -36,9 +36,7 @@ namespace ComposerCore.Implementation
 		
 		private void RegisterBuiltInComponents()
 		{
-			Register(new ConcreteComponentRegistration(
-				new LocalComponentFactory(typeof(PerRegistrationComponentCache)),
-				NoComponentCache.Instance));
+			Register(new ConcreteTypeRegistration(typeof(PerRegistrationComponentCache), NoComponentCache.Instance));
 			
 			this.RegisterObject(NoComponentCache.Instance);
 			this.RegisterObject(new CompositionListenerChain());

@@ -55,6 +55,19 @@ namespace ComposerCore.Implementation
             AddContract(new ContractIdentity(contractType, DefaultContractName));
         }
 
+        public virtual void AddContract(ContractIdentity contract)
+        {
+            EnsureNotInitialized();
+
+            if (TargetType != null && !contract.Type.IsAssignableFrom(TargetType))
+                throw new CompositionException("This component type / factory cannot be registered with the contract " +
+                                               $"{contract.Type.FullName}. The component type is not assignable to " +
+                                               $"the contract or the factory logic prevents such registration.");
+            
+            _contracts.Add(contract);
+        }
+
+
         public virtual void SetAsRegistered(IComponentContext registrationContext)
         {
             EnsureNotInitialized();
@@ -68,12 +81,28 @@ namespace ComposerCore.Implementation
             RegistrationContext = registrationContext;
         }
 
-        public abstract void AddContract(ContractIdentity contract);
-        public abstract bool IsResolvable(Type contractType);
-        public abstract object GetComponent(ContractIdentity contract, IComposer dependencyResolver);
+        public virtual bool IsResolvable(Type contractType)
+        {
+            return Contracts != null && Contracts.Any(c => contractType.IsAssignableFrom(c.Type));
+        }
 
-        protected abstract void ReadContractsFromTarget();
-        protected abstract void EnsureComponentAttribute();
+        public abstract object GetComponent(ContractIdentity contract, IComposer dependencyResolver);
+        public abstract object CreateComponent(ContractIdentity contract, IComposer dependencyResolver);
+
+        protected virtual void ReadContractsFromTarget()
+        {
+            foreach (var contractType in ComponentContextUtils.FindContracts(TargetType) ?? Enumerable.Empty<Type>())
+            {
+                AddContractType(contractType);
+            }
+        }
+
+        protected virtual void EnsureComponentAttribute()
+        {
+            if (!ComponentContextUtils.HasComponentAttribute(TargetType))
+                throw new CompositionException("The type '" + TargetType +
+                                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
+        }
         
         protected void EnsureNotInitialized()
         {

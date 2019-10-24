@@ -7,16 +7,16 @@ namespace ComposerCore.Cache
     [Component(nameof(NoComponentCache)), Singleton, ConstructorResolutionPolicy(null)]
     public class NoComponentCache : IComponentCache
     {
-        public static NoComponentCache Instance = new NoComponentCache();
+        public static readonly NoComponentCache Instance = new NoComponentCache();
         
         [CompositionConstructor]
         public NoComponentCache()
         {
         }
         
-        public object GetComponent(ContractIdentity contract, ConcreteComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
         {
-            return registration.Factory.GetComponentInstance(contract);
+            return registration.CreateComponent(contract, dependencyResolver);
         }
     }
 }

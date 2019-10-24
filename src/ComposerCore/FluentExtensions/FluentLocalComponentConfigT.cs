@@ -4,7 +4,6 @@ using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
@@ -14,7 +13,7 @@ namespace ComposerCore.FluentExtensions
         #region Constructors
 
         public FluentLocalComponentConfig(ComponentContext context) 
-            : base(context, new LocalComponentFactory(typeof(TComponent)))
+            : base(context, typeof(TComponent))
         {
         }
 
@@ -46,7 +45,7 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
             
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(
                 new ComponentQuery(typeof(TPlugContract), contractName), 
                 memberExpression.Member.Name, memberExpression.Member.MemberType, required);
             
@@ -111,7 +110,7 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), 
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), 
                 memberExpression.Member.Name, memberExpression.Member.MemberType, false);
 
             return this;
@@ -128,7 +127,7 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), 
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), 
                 memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;
@@ -157,7 +156,7 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), 
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), 
                 memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;

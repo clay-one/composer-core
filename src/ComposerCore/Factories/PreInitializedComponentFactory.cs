@@ -5,6 +5,7 @@ using ComposerCore.Implementation;
 
 namespace ComposerCore.Factories
 {
+	[Obsolete]
 	public class PreInitializedComponentFactory : IComponentFactory
 	{
 		private readonly object _componentInstance;

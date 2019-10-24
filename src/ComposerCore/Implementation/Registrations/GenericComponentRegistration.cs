@@ -17,7 +17,7 @@ namespace ComposerCore.Implementation
         private readonly IDictionary<Type, Type> _openToBoundContractTypeMap;
 
         private readonly ConcurrentDictionary<Type, Type> _closedContractToComponentMap;
-        private readonly ConcurrentDictionary<Type, ConcreteComponentRegistration> _subRegistrations;
+        private readonly ConcurrentDictionary<Type, ConcreteTypeRegistration> _subRegistrations;
         
         public GenericComponentRegistration(Type targetType) : base(targetType)
         {
@@ -26,7 +26,7 @@ namespace ComposerCore.Implementation
 
             _openToBoundContractTypeMap = new Dictionary<Type, Type>();
             _closedContractToComponentMap = new ConcurrentDictionary<Type, Type>();
-            _subRegistrations = new ConcurrentDictionary<Type, ConcreteComponentRegistration>();
+            _subRegistrations = new ConcurrentDictionary<Type, ConcreteTypeRegistration>();
         }
 
         public void AddOpenGenericContractType(Type openContractType)
@@ -96,14 +96,22 @@ namespace ComposerCore.Implementation
             
             var subRegistration = _subRegistrations.GetOrAdd(closedTargetType, type =>
             {
-                var newSubRegistration = new ConcreteComponentRegistration(new LocalComponentFactory(type));
+                var newSubRegistration = new ConcreteTypeRegistration(type);
                 newSubRegistration.SetAsRegistered(RegistrationContext);
                 return newSubRegistration;
             });
 
             return subRegistration.GetComponent(contract, dependencyResolver);
         }
-        
+
+        public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
+        {
+            throw new InvalidOperationException(
+                "CreateComponent should never be called on the GenericComponentRegistration class. Instead, " +
+                "calling its GetComponent will create sub-registrations for closed generic types and call them " +
+                "instead.");
+        }
+
         protected override void ReadContractsFromTarget()
         {
             var boundGenericContracts = ComponentContextUtils.FindContracts(TargetType)
@@ -117,13 +125,6 @@ namespace ComposerCore.Implementation
             }
         }
 
-        protected override void EnsureComponentAttribute()
-        {
-            if (!ComponentContextUtils.HasComponentAttribute(TargetType))
-                throw new CompositionException("The type '" + TargetType +
-                                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
-        }
-        
         private Type MapToClosedComponentType(Type contractType)
         {
             if (!contractType.IsGenericType)

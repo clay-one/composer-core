@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ComposerCore.Cache;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -53,7 +52,7 @@ namespace ComposerCore
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
             
-            context.Register(new ConcreteComponentRegistration(factory));
+            context.Register(new ComponentFactoryRegistration(factory));
         }
 
         public static void Register(this IComponentContext context, string name, IComponentFactory factory)
@@ -61,7 +60,7 @@ namespace ComposerCore
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
             
-            var registration = new ConcreteComponentRegistration(factory);
+            var registration = new ComponentFactoryRegistration(factory);
             registration.SetDefaultContractName(name);
             
             context.Register(registration);
@@ -95,7 +94,7 @@ namespace ComposerCore
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
             
-            var registration = new ConcreteComponentRegistration(factory);
+            var registration = new ComponentFactoryRegistration(factory);
             registration.AddContractType(contract);
             
             context.Register(registration);
@@ -108,7 +107,7 @@ namespace ComposerCore
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
             
-            var registration = new ConcreteComponentRegistration(factory);
+            var registration = new ComponentFactoryRegistration(factory);
             registration.AddContract(new ContractIdentity(contract, name));
             
             context.Register(registration);
@@ -119,9 +118,7 @@ namespace ComposerCore
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 
-            context.Register(new ConcreteComponentRegistration(
-                new PreInitializedComponentFactory(componentInstance), 
-                NoComponentCache.Instance));
+            context.Register(new PreInitializedComponentRegistration(componentInstance));
         }
 
         public static void RegisterObject<TContract>(this IComponentContext context, object componentInstance)
@@ -137,11 +134,9 @@ namespace ComposerCore
                 throw new ArgumentNullException(nameof(componentInstance));
 
             
-            var registration = new ConcreteComponentRegistration(
-                new PreInitializedComponentFactory(componentInstance),
-                NoComponentCache.Instance);
-
+            var registration = new PreInitializedComponentRegistration(componentInstance);
             registration.AddContractType(contract);
+            
             context.Register(registration);
         }
 
@@ -151,11 +146,9 @@ namespace ComposerCore
                 throw new ArgumentNullException(nameof(componentInstance));
 	        
             
-            var registration = new ConcreteComponentRegistration(
-                new PreInitializedComponentFactory(componentInstance), 
-                NoComponentCache.Instance);
-            
+            var registration = new PreInitializedComponentRegistration(componentInstance);
             registration.SetDefaultContractName(name);
+            
             context.Register(registration);
         }
 
@@ -171,11 +164,9 @@ namespace ComposerCore
             if (componentInstance == null)
                 throw new ArgumentNullException(nameof(componentInstance));
 
-            var registration = new ConcreteComponentRegistration(
-                new PreInitializedComponentFactory(componentInstance),
-                NoComponentCache.Instance);
-
+            var registration = new PreInitializedComponentRegistration(componentInstance);
             registration.AddContract(new ContractIdentity(contract, name));
+            
             context.Register(registration);
         }
 
@@ -231,7 +222,7 @@ namespace ComposerCore
             if (componentType.IsOpenGenericType())
                 return new GenericComponentRegistration(componentType);
             
-            return new ConcreteComponentRegistration(new LocalComponentFactory(componentType));
+            return new ConcreteTypeRegistration(componentType);
         }
         
         #endregion

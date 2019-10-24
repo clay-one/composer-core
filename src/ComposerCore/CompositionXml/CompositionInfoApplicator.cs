@@ -6,7 +6,6 @@ using ComposerCore.CompositionalQueries;
 using ComposerCore.CompositionXml.Info;
 using ComposerCore.CompositionXml.ValueParser;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
@@ -231,7 +230,7 @@ namespace ComposerCore.CompositionXml
 
 			ComponentBuilderRegistration registration = componentType.IsOpenGenericType()
 				? (ComponentBuilderRegistration)new GenericComponentRegistration(componentType)
-				: new ConcreteComponentRegistration(new LocalComponentFactory(componentType));
+				: new ConcreteTypeRegistration(componentType);
 			
 			// Add each configured plug, into the InitializationPoints
 			// in the component configuration.

@@ -6,11 +6,11 @@ using ComposerCore.Utility;
 
 namespace ComposerCore.Implementation
 {
-    public class ConcreteComponentRegistration : ComponentBuilderRegistration
+    public class ComponentFactoryRegistration : ComponentBuilderRegistration
     {
         public IComponentFactory Factory { get; }
         
-        public ConcreteComponentRegistration(IComponentFactory factory) : base(factory?.TargetType)
+        public ComponentFactoryRegistration(IComponentFactory factory) : base(factory?.TargetType)
         {
             Factory = factory;
             if (TargetType.IsOpenGenericType())
@@ -18,13 +18,13 @@ namespace ComposerCore.Implementation
                                                     "GenericComponentRegistration instead.");
         }
 
-        public ConcreteComponentRegistration(IComponentFactory factory, string componentCacheName)
+        public ComponentFactoryRegistration(IComponentFactory factory, string componentCacheName)
             : this(factory)
         {
             SetCache(componentCacheName);
         }
         
-        public ConcreteComponentRegistration(IComponentFactory factory, IComponentCache cache)
+        public ComponentFactoryRegistration(IComponentFactory factory, IComponentCache cache)
             : this(factory)
         {
             SetCache(cache);
@@ -36,45 +36,17 @@ namespace ComposerCore.Implementation
             Factory.Initialize(registrationContext);
         }
 
-        public override void AddContract(ContractIdentity contract)
-        {
-            EnsureNotInitialized();
-
-            if (TargetType != null && !contract.Type.IsAssignableFrom(TargetType))
-                throw new CompositionException("This component type / factory cannot be registered with the contract " +
-                                               $"{contract.Type.FullName}. The component type is not assignable to " +
-                                               $"the contract or the factory logic prevents such registration.");
-            
-            _contracts.Add(contract);
-        }
-        
-
-        public override bool IsResolvable(Type contractType)
-        {
-            return Contracts != null && Contracts.Any(c => contractType.IsAssignableFrom(c.Type));
-        }
-
         public override object GetComponent(ContractIdentity identity, IComposer dependencyResolver)
         {
             FillCache(dependencyResolver);
             return Cache.GetComponent(identity, this, dependencyResolver);
         }
 
-        protected override void ReadContractsFromTarget()
+        public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
         {
-            foreach (var contractType in Factory.GetContractTypes() ?? Enumerable.Empty<Type>())
-            {
-                AddContractType(contractType);
-            }
+            return Factory.GetComponentInstance(contract);
         }
-
-        protected override void EnsureComponentAttribute()
-        {
-            if (!ComponentContextUtils.HasComponentAttribute(Factory.TargetType))
-                throw new CompositionException("The type '" + Factory.TargetType +
-                                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
-        }
-
+        
         private void FillCacheQuery()
         {
             if (CacheQuery != null)

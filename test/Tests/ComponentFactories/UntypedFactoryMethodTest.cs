@@ -96,7 +96,7 @@ namespace ComposerCore.Tests.ComponentFactories
             var factory = new UntypedFactoryMethodComponentFactory(composer => new SampleComponentOne());
             factory.ContractTypes = new List<Type> {typeof(ISampleContractOne)};
             
-            var registration = new ConcreteComponentRegistration(factory);
+            var registration = new ComponentFactoryRegistration(factory);
             registration.SetCache(NoComponentCache.Instance);
             _context.Register(registration);
 
@@ -123,7 +123,7 @@ namespace ComposerCore.Tests.ComponentFactories
             var factory = new UntypedFactoryMethodComponentFactory(composer => new SampleComponentOne());
             factory.ContractTypes = new List<Type> {typeof(ISampleContractOne)};
 
-            var registration = new ConcreteComponentRegistration(factory);
+            var registration = new ComponentFactoryRegistration(factory);
             registration.SetCache(nameof(ContractAgnosticComponentCache));
             _context.Register(registration);
 

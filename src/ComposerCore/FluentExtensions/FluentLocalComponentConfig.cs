@@ -3,25 +3,22 @@ using System.Reflection;
 using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {
     public class FluentLocalComponentConfig : FluentComponentConfigBase<FluentLocalComponentConfig>
     {
-        protected readonly LocalComponentFactory Factory;
-        protected readonly ConcreteComponentRegistration _concreteComponentRegistration;
+        protected readonly ConcreteTypeRegistration _concreteTypeRegistration;
 
-        protected override IComponentRegistration Registration => _concreteComponentRegistration;
+        protected override IComponentRegistration Registration => _concreteTypeRegistration;
 
         #region Constructors
 
-        public FluentLocalComponentConfig(ComponentContext context, LocalComponentFactory factory)
+        public FluentLocalComponentConfig(ComponentContext context, Type targetType)
             : base(context)
         {
-            Factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _concreteComponentRegistration = new ConcreteComponentRegistration(Factory);
+            _concreteTypeRegistration = new ConcreteTypeRegistration(targetType ?? throw new ArgumentNullException(nameof(targetType)));
         }
 
         #endregion
@@ -30,12 +27,12 @@ namespace ComposerCore.FluentExtensions
         
         public void RegisterAsItself()
         {
-            RegisterWith(Factory.TargetType);
+            RegisterWith(_concreteTypeRegistration.TargetType);
         }
 
         public void RegisterAsItself(string contractName)
         {
-            RegisterWith(Factory.TargetType, contractName);
+            RegisterWith(_concreteTypeRegistration.TargetType, contractName);
         }
 
         #endregion
@@ -51,7 +48,7 @@ namespace ComposerCore.FluentExtensions
         public FluentLocalComponentConfig SetComponent(
             string memberName, Type contractType, string contractName = null, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(
                 new ComponentQuery(contractType, contractName), memberName, null, required);
 
             return this;
@@ -59,10 +56,10 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            var constructor = _concreteComponentRegistration.TargetType.GetConstructor(argTypes);
+            var constructor = _concreteTypeRegistration.TargetType.GetConstructor(argTypes);
             if (constructor == null)
                 throw new ArgumentException("Could not find a public constructor with the specified parameter types " +
-                                            $"in the class '{Factory.TargetType.FullName}'");
+                                            $"in the class '{_concreteTypeRegistration.TargetType}'");
 
             return UseConstructor(constructor);
         }
@@ -72,8 +69,8 @@ namespace ComposerCore.FluentExtensions
             if (constructorInfo == null)
                 throw new ArgumentNullException(nameof(constructorInfo));
             
-            Context.GetComponent<IPresetConstructorStore>().SetConstructor(Factory.TargetType, constructorInfo);
-            _concreteComponentRegistration.SetConstructorResolutionPolicy(ConstructorResolutionPolicy.Preset);
+            Context.GetComponent<IPresetConstructorStore>().SetConstructor(_concreteTypeRegistration.TargetType, constructorInfo);
+            _concreteTypeRegistration.SetConstructorResolutionPolicy(ConstructorResolutionPolicy.Preset);
             
             return this;
         }
@@ -85,56 +82,56 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredConstructorArg(new ComponentQuery(contractType, contractName), required);
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new ComponentQuery(contractType, contractName), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue(object value)
         {
-            _concreteComponentRegistration.AddConfiguredConstructorArg(new SimpleValueQuery(value), false);
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new SimpleValueQuery(value), false);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredConstructorArg(new FuncValueQuery(c => valueCalculator(c)), required);
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new FuncValueQuery(c => valueCalculator(c)), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredConstructorArg(new VariableQuery(variableName), required);
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new VariableQuery(variableName), required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValue(string memberName, object value)
         {
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), memberName);
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), memberName);
 
             return this;
         }
 
         public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), memberName, null, required);
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
-            _concreteComponentRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), memberName, null, required);
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
         {
-            _concreteComponentRegistration.AddCompositionNotification(initAction);
+            _concreteTypeRegistration.AddCompositionNotification(initAction);
             return this;
         }
 
         public FluentLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
-            _concreteComponentRegistration.SetConstructorResolutionPolicy(policy);
+            _concreteTypeRegistration.SetConstructorResolutionPolicy(policy);
             return this;
         }
         
