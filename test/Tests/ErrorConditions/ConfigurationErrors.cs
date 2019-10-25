@@ -36,17 +36,17 @@ namespace ComposerCore.Tests.ErrorConditions
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ConfigWithoutSetter()
 		{
 			_context.Register(typeof(ConfigPointWithoutSetter));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ConfigPointWithoutSetter>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ConfigWithPrivateSetter()
 		{
 			_context.Register(typeof(ConfigPointWithPrivateSetter));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ConfigPointWithPrivateSetter>());
 		}
 	}
 }
