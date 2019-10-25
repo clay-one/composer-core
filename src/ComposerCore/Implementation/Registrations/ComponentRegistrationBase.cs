@@ -20,7 +20,7 @@ namespace ComposerCore.Implementation
         public IComponentContext RegistrationContext { get; private set; }
 
         public IEnumerable<ContractIdentity> Contracts => _contracts;
-        
+
         protected ComponentRegistrationBase(Type targetType)
         {
             TargetType = targetType;
@@ -30,6 +30,13 @@ namespace ComposerCore.Implementation
             DefaultContractName = ComponentContextUtils.GetComponentDefaultName(targetType);
 
             _contracts = new List<ContractIdentity>();
+        }
+
+        public void CopyConfigFrom(ComponentRegistrationBase original)
+        {
+            CacheQuery = original.CacheQuery;
+            Cache = original.Cache;
+            DefaultContractName = original.DefaultContractName;
         }
 
         public void SetCache(string cacheComponentName)

@@ -17,19 +17,25 @@ namespace ComposerCore.Factories
         private List<InitializationPointSpecification> _initializationPoints;
         private List<Action<IComposer, object>> _compositionNotifications;
 
-        public LocalComponentInitializer(Type targetType, LocalComponentInitializer original = null)
+        public LocalComponentInitializer(Type targetType)
         {
             _targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
 
+            _configuredInitializationPoints = null;
+            _configuredCompositionNotifications = null;
+
+            _initializationPoints = null;
+            _compositionNotifications = null;
+        }
+
+        public void CopyConfigFrom(LocalComponentInitializer original)
+        {
             _configuredInitializationPoints = original?._configuredInitializationPoints == null
                 ? null
                 : new List<InitializationPointSpecification>(original._configuredInitializationPoints);
             _configuredCompositionNotifications = original?._configuredCompositionNotifications == null
                 ? null
                 : new List<Action<IComposer, object>>(original._configuredCompositionNotifications);
-
-            _initializationPoints = null;
-            _compositionNotifications = null;
         }
 
 

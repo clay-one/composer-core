@@ -8,10 +8,16 @@ namespace ComposerCore.Implementation
     public abstract class ComponentBuilderRegistration : ComponentInitializerRegistration
     {
         protected LocalComponentBuilder Builder { get; }
-        
+
         protected ComponentBuilderRegistration(Type targetType) : base(targetType)
         {
             Builder = new LocalComponentBuilder(targetType);
+        }
+
+        public void CopyConfigFrom(ComponentBuilderRegistration original)
+        {
+            CopyConfigFrom((ComponentInitializerRegistration)original);
+            Builder.CopyConfigFrom(original.Builder);
         }
 
         public override void SetAsRegistered(IComponentContext registrationContext)

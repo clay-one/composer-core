@@ -9,10 +9,16 @@ namespace ComposerCore.Implementation
     public abstract class ComponentInitializerRegistration : ComponentRegistrationBase
     {
         protected LocalComponentInitializer Initializer { get; }
-        
+
         protected ComponentInitializerRegistration(Type targetType) : base(targetType)
         {
             Initializer = new LocalComponentInitializer(targetType ?? typeof(object));
+        }
+
+        public void CopyConfigFrom(ComponentInitializerRegistration original)
+        {
+            CopyConfigFrom((ComponentRegistrationBase)original);
+            Initializer.CopyConfigFrom(original.Initializer);
         }
 
         public override void SetAsRegistered(IComponentContext registrationContext)

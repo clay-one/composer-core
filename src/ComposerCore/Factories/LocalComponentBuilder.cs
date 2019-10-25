@@ -18,16 +18,22 @@ namespace ComposerCore.Factories
         private List<ConstructorArgSpecification> _constructorArgSpecs;
         private ConstructorResolutionPolicy? _constructorResolutionPolicy;
 
-        public LocalComponentBuilder(Type targetType, LocalComponentBuilder original = null)
+        public LocalComponentBuilder(Type targetType)
         {
             _targetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
-            _constructorResolutionPolicy = original?._constructorResolutionPolicy;
-            _configuredConstructorArgSpecs = original?._configuredConstructorArgSpecs == null
-	            ? null
-	            : new List<ConstructorArgSpecification>(original._configuredConstructorArgSpecs);
+            _constructorResolutionPolicy = null;
+            _configuredConstructorArgSpecs = null;
             
             _resolvedConstructor = null;
             _constructorArgSpecs = null;
+        }
+
+        public void CopyConfigFrom(LocalComponentBuilder original)
+        {
+	        _constructorResolutionPolicy = original?._constructorResolutionPolicy;
+	        _configuredConstructorArgSpecs = original?._configuredConstructorArgSpecs == null
+		        ? null
+		        : new List<ConstructorArgSpecification>(original._configuredConstructorArgSpecs);
         }
 
         public ConstructorResolutionPolicy? ConstructorResolutionPolicy

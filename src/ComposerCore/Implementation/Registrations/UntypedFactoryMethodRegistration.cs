@@ -8,7 +8,7 @@ namespace ComposerCore.Implementation
     {
         private readonly Func<IComposer, object> _factoryMethod;
 
-        public UntypedFactoryMethodRegistration(Func<IComposer, object> factoryMethod) : base(null)
+        public UntypedFactoryMethodRegistration(Func<IComposer, object> factoryMethod) : base((Type)null)
         {
             _factoryMethod = factoryMethod;
         }

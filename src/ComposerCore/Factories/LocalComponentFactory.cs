@@ -21,14 +21,14 @@ namespace ComposerCore.Factories
 			set => Builder.ConstructorResolutionPolicy = value;
 		}
 		
-		public LocalComponentFactory(Type targetType, LocalComponentFactory original = null)
+		public LocalComponentFactory(Type targetType)
 		{
 			TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
             
 			Composer = null;
-			Builder = new LocalComponentBuilder(targetType, original?.Builder);
+			Builder = new LocalComponentBuilder(targetType);
 		}
-
+		
 		#region IComponentFactory Members
 
 		public void Initialize(IComposer composer)

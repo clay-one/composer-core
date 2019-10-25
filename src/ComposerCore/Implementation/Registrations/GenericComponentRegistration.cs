@@ -96,6 +96,8 @@ namespace ComposerCore.Implementation
             var subRegistration = _subRegistrations.GetOrAdd(closedTargetType, type =>
             {
                 var newSubRegistration = new ConcreteTypeRegistration(type);
+                newSubRegistration.CopyConfigFrom(this);
+                newSubRegistration.AddContractType(contract.Type);
                 newSubRegistration.SetAsRegistered(RegistrationContext);
                 return newSubRegistration;
             });

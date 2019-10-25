@@ -26,7 +26,7 @@ namespace ComposerCore.Implementation
         {
             SetCache(cache);
         }
-        
+
         public override object GetComponent(ContractIdentity contract, IComposer dependencyResolver)
         {
             FillCache(dependencyResolver);
