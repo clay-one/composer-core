@@ -13,7 +13,7 @@ namespace ComposerCore.Tests.ErrorConditions.Components
 			_sampleContract = null;
 		}
 
-		[ComponentPlug]
+		[ComponentPlug(false)]
 		public ISampleContract SampleContract
 		{
 			get

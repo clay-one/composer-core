@@ -10,7 +10,7 @@ namespace ComposerCore.FluentExtensions
 {
     public class FluentUntypedFactoryMethodComponentConfig : FluentComponentConfigBase<FluentUntypedFactoryMethodComponentConfig>
     {
-        private readonly FactoryMethodRegistration _factoryMethodRegistration;
+        private readonly FactoryMethodRegistration<object> _factoryMethodRegistration;
 
         protected override IComponentRegistration Registration => _factoryMethodRegistration;
 
@@ -22,7 +22,7 @@ namespace ComposerCore.FluentExtensions
             : base(context)
         {
             Factory = new UntypedFactoryMethodComponentFactory(factoryMethod);
-            _factoryMethodRegistration = new FactoryMethodRegistration(typeof(object));
+            _factoryMethodRegistration = new FactoryMethodRegistration<object>(factoryMethod);
         }
 
         #endregion

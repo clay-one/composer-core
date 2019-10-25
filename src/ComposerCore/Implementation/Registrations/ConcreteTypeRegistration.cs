@@ -27,10 +27,10 @@ namespace ComposerCore.Implementation
             SetCache(cache);
         }
         
-        public override object GetComponent(ContractIdentity identity, IComposer dependencyResolver)
+        public override object GetComponent(ContractIdentity contract, IComposer dependencyResolver)
         {
             FillCache(dependencyResolver);
-            return Cache.GetComponent(identity, this, dependencyResolver);
+            return Cache.GetComponent(contract, this, dependencyResolver);
         }
 
         public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
