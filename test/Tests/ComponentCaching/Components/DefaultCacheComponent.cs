@@ -16,6 +16,9 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	public class DefaultCacheComponentWithPlugs
 	{
 		[ComponentPlug]
+		public ScopedComponent ScopedComponent { get; set; }
+        
+		[ComponentPlug]
 		public ContractAgnosticComponent ContractAgnosticComponent { get; set; }
 
 		[ComponentPlug]

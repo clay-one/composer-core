@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
@@ -188,33 +187,6 @@ namespace ComposerCore
             context.GetComponent<CompositionListenerChain>().UnregisterCompositionListener(name);
         }
         
-        public static bool IsResolvable<TContract>(this IComposer composer, string name = null) where TContract : class
-        {
-            return composer.IsResolvable(typeof(TContract), name);
-        }
-        
-        public static TContract GetComponent<TContract>(this IComposer composer, string name = null)
-            where TContract : class
-        {
-            return (TContract) composer.GetComponent(typeof (TContract), name);
-        }
-
-        public static IEnumerable<TContract> GetAllComponents<TContract>(this IComposer composer, string name = null)
-            where TContract : class
-        {
-            return composer.GetAllComponents(typeof (TContract), name).Cast<TContract>();
-        }
-
-        public static IEnumerable<TContract> GetComponentFamily<TContract>(this IComposer composer)
-        {
-            return composer.GetComponentFamily(typeof (TContract)).Cast<TContract>();
-        }
-
-        public static void InitializePlugs<T>(this IComposer composer, T componentInstance)
-        {
-            composer.InitializePlugs(componentInstance, typeof (T));
-        }
-
         #region Private helpers
 
         private static IComponentRegistration CreateRegistration(Type componentType)

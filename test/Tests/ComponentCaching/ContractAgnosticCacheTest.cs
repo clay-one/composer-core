@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentCaching.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,7 +9,6 @@ namespace ComposerCore.Tests.ComponentCaching
 	[TestClass]
 	public class ContractAgnosticCacheTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -38,6 +38,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		#endregion
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void RegisterTwoTimesQueryBySelf()
 		{
 			_context.Register(typeof(ContractAgnosticComponent));
@@ -53,6 +54,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void RegisterTwoTimesQueryByContract()
 		{
 			_context.Register(typeof(ContractAgnosticComponent));
@@ -98,6 +100,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void QueryTwoTimesIndirect()
 		{
 			_context.Register(typeof(ContractAgnosticComponentWithPlugs));

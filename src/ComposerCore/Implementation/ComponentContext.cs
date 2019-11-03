@@ -256,5 +256,14 @@ namespace ComposerCore.Implementation
 		}
 
 		#endregion
+		
+		#region IDisposable implementation
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
+		}
+
+		#endregion
 	}
 }
