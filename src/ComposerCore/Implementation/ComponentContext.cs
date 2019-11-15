@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation.ConstructorResolvers;
 using ComposerCore.Utility;
-
 
 namespace ComposerCore.Implementation
 {
@@ -46,6 +45,7 @@ namespace ComposerCore.Implementation
             this.Register(typeof(ContractAgnosticComponentCache));
             this.Register(typeof(SingletonComponentCache));
             this.Register(typeof(TransientComponentCache));
+            this.Register(typeof(ScopedComponentCache));
             this.Register(typeof(StaticComponentCache));
             this.Register(typeof(ThreadLocalComponentCache));
 
@@ -214,6 +214,7 @@ namespace ComposerCore.Implementation
 			return variableValue;
 		}
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "IEnumerable is over an in-memory at runtime array and doesn't impose any cost to enumerate it multiple times.'")]
         public virtual void InitializePlugs(object componentInstance, Type componentType)
 		{
 			var initializationPoints = ComponentContextUtils.ExtractInitializationPoints(this, componentType);

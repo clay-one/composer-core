@@ -3,7 +3,7 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-    [Component(nameof(ContractAgnosticComponentCache)), Transient, ConstructorResolutionPolicy(null)]
+    [Component(nameof(ScopedComponentCache)), Transient, ConstructorResolutionPolicy(null)]
     public class ScopedComponentCache : IComponentCache
     {
         [CompositionConstructor]

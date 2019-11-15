@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Implementation;
 
 namespace ComposerCore
 {
@@ -90,7 +91,7 @@ namespace ComposerCore
 
         public static IComposer CreateScope(this IComposer composer)
         {
-            throw new NotImplementedException();
+            return new ComposerScope(composer);
         }
         
         #endregion

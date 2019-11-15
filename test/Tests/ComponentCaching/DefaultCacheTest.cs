@@ -106,6 +106,7 @@ namespace ComposerCore.Tests.ComponentCaching
 			_context.Register(typeof(DefaultCacheComponentWithPlugs));
 			_context.Register(typeof(ContractAgnosticComponent));
 			_context.Register(typeof(UncachedComponent));
+			_context.Register(typeof(ScopedComponent));
 
 			var all = _context.GetAllComponents<DefaultCacheComponentWithPlugs>();
 			Assert.IsNotNull(all);

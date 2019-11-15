@@ -105,7 +105,9 @@ namespace ComposerCore.Tests.FluentRegistration
         {
             var o = new NonAttributedComponent();
 
+#pragma warning disable 618
             _context.ForObject(o).RegisterWith<INonAttributedContract>();
+#pragma warning restore 618
 
             var c = _context.GetComponent<INonAttributedContract>();
 
@@ -118,7 +120,9 @@ namespace ComposerCore.Tests.FluentRegistration
         {
             var o = new ComponentOne();
 
+#pragma warning disable 618
             _context.ForObject(o).Register();
+#pragma warning restore 618
 
             var c = _context.GetComponent<IComponentOne>();
 

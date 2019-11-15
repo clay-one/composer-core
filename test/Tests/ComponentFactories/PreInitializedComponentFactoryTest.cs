@@ -1,8 +1,8 @@
-using System;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentFactories.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#pragma warning disable 612
 
 namespace ComposerCore.Tests.ComponentFactories
 {
