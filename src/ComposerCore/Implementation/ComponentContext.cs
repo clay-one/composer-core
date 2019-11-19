@@ -23,6 +23,11 @@ namespace ComposerCore.Implementation
 		#region Constructors
 
 		public ComponentContext()
+			: this(true)
+		{
+		}
+
+		protected ComponentContext(bool registerComponents)
 		{
 			Configuration = new ComposerConfiguration();
 
@@ -30,7 +35,9 @@ namespace ComposerCore.Implementation
 			_variables = new Dictionary<string, object>();
 
 			this.RegisterObject(this);
-			RegisterBuiltInComponents();
+			
+			if (registerComponents)
+				RegisterBuiltInComponents();
 		}
 		
 		private void RegisterBuiltInComponents()
@@ -45,6 +52,7 @@ namespace ComposerCore.Implementation
             this.Register(typeof(ContractAgnosticComponentCache));
             this.Register(typeof(SingletonComponentCache));
             this.Register(typeof(TransientComponentCache));
+            this.Register(typeof(ScopedComponentCacheStore));
             this.Register(typeof(ScopedComponentCache));
             this.Register(typeof(StaticComponentCache));
             this.Register(typeof(ThreadLocalComponentCache));
@@ -70,7 +78,7 @@ namespace ComposerCore.Implementation
 	        _repository.Add(registration);
         }
 
-        public virtual void Unregister(ContractIdentity identity)
+        public void Unregister(ContractIdentity identity)
 		{
 			if (identity == null)
 				throw new ArgumentNullException();
@@ -78,7 +86,7 @@ namespace ComposerCore.Implementation
 			_repository.Remove(identity);
 		}
 
-        public virtual void UnregisterFamily(Type type)
+        public void UnregisterFamily(Type type)
 		{
 			if (type == null)
 				throw new ArgumentNullException();
@@ -86,7 +94,7 @@ namespace ComposerCore.Implementation
 			_repository.RemoveAll(type);
 		}
 
-        public virtual void SetVariable(string name, Lazy<object> value)
+        public void SetVariable(string name, Lazy<object> value)
 		{
 			RemoveVariable(name);
 
@@ -96,7 +104,7 @@ namespace ComposerCore.Implementation
 			_variables.Add(name, value);
 		}
 
-        public virtual void RemoveVariable(string name)
+        public void RemoveVariable(string name)
 		{
 			if (name == null)
 				throw new ArgumentNullException();
@@ -110,7 +118,7 @@ namespace ComposerCore.Implementation
 
 	    public ComposerConfiguration Configuration { get; }
 
-	    public bool IsResolvable(Type contract, string name = null)
+	    public virtual bool IsResolvable(Type contract, string name = null)
 	    {
 		    if (contract.ContainsGenericParameters)
 			    throw new CompositionException("Requested contract type " + contract.Name +
@@ -145,52 +153,18 @@ namespace ComposerCore.Implementation
 	    }
 
         public virtual object GetComponent(Type contract, string name = null)
-		{
-			if (contract.ContainsGenericParameters)
-				throw new CompositionException("Requested contract type " + contract.Name +
-				                               " contains open generic parameters. Can not construct a concrete type.");
-
-			var identity = new ContractIdentity(contract, name);
-			var registrations = _repository.Find(identity);
-
-		    using (var enumerator = registrations?.GetEnumerator())
-		    {
-		        if (enumerator == null)
-		            return null;
-
-		        while (enumerator.MoveNext())
-		        {
-                    var result = enumerator.Current?.GetComponent(identity, this);
-		            if (result != null)
-		                return result;
-		        }
-            }
-
-		    var enumerableElementType = contract.GetEnumerableElementType();
-		    if (enumerableElementType != null)
-			    return GetAllComponents(enumerableElementType, name);
-
-		    return null;
+        {
+	        return GetComponent(contract, name, this);
 		}
 
         public virtual IEnumerable<object> GetAllComponents(Type contract, string name = null)
-		{
-			var identity = new ContractIdentity(contract, name);
-			var registrations = _repository.Find(identity);
-
-			return registrations
-				.Select(f => f.GetComponent(identity, this))
-				.Where(result => result != null)
-				.CastToRuntimeType(contract);
+        {
+	        return GetAllComponents(contract, name, this);
 		}
 
         public virtual IEnumerable<object> GetComponentFamily(Type contract)
-		{
-			var identities = _repository.GetContractIdentityFamily(contract);
-
-			return identities.SelectMany(identity => _repository.Find(identity),
-					(identity, registration) => registration.GetComponent(identity, this))
-				.CastToRuntimeType(contract);
+        {
+	        return GetComponentFamily(contract, this);
 		}
 
         public virtual bool HasVariable(string name)
@@ -265,6 +239,60 @@ namespace ComposerCore.Implementation
 			throw new NotImplementedException();
 		}
 
+		#endregion
+		
+		#region Protected component query methods
+		
+		protected object GetComponent(Type contract, string name, IComposer dependencyResolver)
+		{
+			if (contract.ContainsGenericParameters)
+				throw new CompositionException("Requested contract type " + contract.Name +
+				                               " contains open generic parameters. Can not construct a concrete type.");
+
+			var identity = new ContractIdentity(contract, name);
+			var registrations = _repository.Find(identity);
+
+			using (var enumerator = registrations?.GetEnumerator())
+			{
+				if (enumerator == null)
+					return null;
+
+				while (enumerator.MoveNext())
+				{
+					var result = enumerator.Current?.GetComponent(identity, dependencyResolver);
+					if (result != null)
+						return result;
+				}
+			}
+
+			var enumerableElementType = contract.GetEnumerableElementType();
+			if (enumerableElementType != null)
+				return GetAllComponents(enumerableElementType, name);
+
+			return null;
+		}
+
+		protected IEnumerable<object> GetAllComponents(Type contract, string name, IComposer dependencyResolver)
+		{
+			var identity = new ContractIdentity(contract, name);
+			var registrations = _repository.Find(identity);
+
+			return registrations
+				.Select(f => f.GetComponent(identity, dependencyResolver))
+				.Where(result => result != null)
+				.CastToRuntimeType(contract);
+		}
+
+		protected IEnumerable<object> GetComponentFamily(Type contract, IComposer dependencyResolver)
+		{
+			var identities = _repository.GetContractIdentityFamily(contract);
+
+			return identities.SelectMany(identity => _repository.Find(identity),
+					(identity, registration) => registration.GetComponent(identity, dependencyResolver))
+				.CastToRuntimeType(contract);
+		}
+
+		
 		#endregion
 	}
 }

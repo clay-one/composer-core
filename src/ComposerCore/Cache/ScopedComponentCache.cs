@@ -13,7 +13,8 @@ namespace ComposerCore.Cache
 
         public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
         {
-            throw new System.NotImplementedException();
+            var store = dependencyResolver.GetComponent<ScopedComponentCacheStore>();
+            return store.GetOrCreate(contract, registration, dependencyResolver);
         }
     }
 }

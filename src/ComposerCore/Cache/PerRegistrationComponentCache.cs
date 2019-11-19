@@ -1,7 +1,6 @@
 using System.Threading;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
-using ComposerCore.Implementation;
 
 namespace ComposerCore.Cache
 {

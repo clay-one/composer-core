@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ComposerCore.Cache;
 using ComposerCore.Implementation;
 
 namespace ComposerCore
@@ -91,7 +92,10 @@ namespace ComposerCore
 
         public static IComposer CreateScope(this IComposer composer)
         {
-            return new ComposerScope(composer);
+            var result = new ChildComponentContext(composer);
+            result.Register(typeof(ScopedComponentCacheStore));
+            
+            return result;
         }
         
         #endregion
