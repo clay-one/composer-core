@@ -152,17 +152,17 @@ namespace ComposerCore.Implementation
 		    return false;
 	    }
 
-        public virtual object GetComponent(Type contract, string name = null)
+        public object GetComponent(Type contract, string name = null)
         {
 	        return GetComponent(contract, name, this);
 		}
 
-        public virtual IEnumerable<object> GetAllComponents(Type contract, string name = null)
+        public IEnumerable<object> GetAllComponents(Type contract, string name = null)
         {
 	        return GetAllComponents(contract, name, this);
 		}
 
-        public virtual IEnumerable<object> GetComponentFamily(Type contract)
+        public IEnumerable<object> GetComponentFamily(Type contract)
         {
 	        return GetComponentFamily(contract, this);
 		}
@@ -189,7 +189,7 @@ namespace ComposerCore.Implementation
 		}
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "IEnumerable is over an in-memory at runtime array and doesn't impose any cost to enumerate it multiple times.'")]
-        public virtual void InitializePlugs(object componentInstance, Type componentType)
+        public void InitializePlugs(object componentInstance, Type componentType)
 		{
 			var initializationPoints = ComponentContextUtils.ExtractInitializationPoints(this, componentType);
 
@@ -230,6 +230,14 @@ namespace ComposerCore.Implementation
 			}
 		}
 
+        public IComposer CreateScope()
+        {
+	        var result = new ChildComponentContext(this);
+	        result.Register(typeof(ScopedComponentCacheStore));
+            
+	        return result;
+        }
+        
 		#endregion
 		
 		#region IDisposable implementation
@@ -243,7 +251,7 @@ namespace ComposerCore.Implementation
 		
 		#region Protected component query methods
 		
-		protected object GetComponent(Type contract, string name, IComposer dependencyResolver)
+		protected internal virtual object GetComponent(Type contract, string name, IComposer dependencyResolver)
 		{
 			if (contract.ContainsGenericParameters)
 				throw new CompositionException("Requested contract type " + contract.Name +
@@ -272,7 +280,7 @@ namespace ComposerCore.Implementation
 			return null;
 		}
 
-		protected IEnumerable<object> GetAllComponents(Type contract, string name, IComposer dependencyResolver)
+		protected internal virtual IEnumerable<object> GetAllComponents(Type contract, string name, IComposer dependencyResolver)
 		{
 			var identity = new ContractIdentity(contract, name);
 			var registrations = _repository.Find(identity);
@@ -283,7 +291,7 @@ namespace ComposerCore.Implementation
 				.CastToRuntimeType(contract);
 		}
 
-		protected IEnumerable<object> GetComponentFamily(Type contract, IComposer dependencyResolver)
+		protected internal virtual IEnumerable<object> GetComponentFamily(Type contract, IComposer dependencyResolver)
 		{
 			var identities = _repository.GetContractIdentityFamily(contract);
 

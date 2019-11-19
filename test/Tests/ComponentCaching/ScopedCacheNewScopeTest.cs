@@ -79,6 +79,7 @@ namespace ComposerCore.Tests.ComponentCaching
             _context.Register(typeof(UncachedComponentWithPlugs));
             _context.Register(typeof(ContractAgnosticComponent));
             _context.Register(typeof(DefaultCacheComponent));
+            _context.Register(typeof(UncachedComponent));
 
             var scope = _context.CreateScope();
 
@@ -101,6 +102,7 @@ namespace ComposerCore.Tests.ComponentCaching
             _context.Register(typeof(UncachedComponentWithPlugs));
             _context.Register(typeof(ContractAgnosticComponent));
             _context.Register(typeof(DefaultCacheComponent));
+            _context.Register(typeof(UncachedComponent));
 
             var scope1 = _context.CreateScope();
             var scope2 = _context.CreateScope();

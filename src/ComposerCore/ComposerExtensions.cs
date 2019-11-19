@@ -87,17 +87,5 @@ namespace ComposerCore
         }
 
         #endregion
-        
-        #region Scope utilities
-
-        public static IComposer CreateScope(this IComposer composer)
-        {
-            var result = new ChildComponentContext(composer);
-            result.Register(typeof(ScopedComponentCacheStore));
-            
-            return result;
-        }
-        
-        #endregion
     }
 }

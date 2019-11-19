@@ -22,5 +22,7 @@ namespace ComposerCore
 		object GetVariable(string name);
 
 		void InitializePlugs(object componentInstance, Type componentType);
+
+		IComposer CreateScope();
 	}
 }
