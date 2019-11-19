@@ -14,5 +14,7 @@ namespace ComposerCore
 
 		void SetVariable(string name, Lazy<object> value);
 		void RemoveVariable(string name);
+
+		IComponentContext CreateChildContext();
 	}
 }

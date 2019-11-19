@@ -112,7 +112,12 @@ namespace ComposerCore.Implementation
 			_variables.Remove(name);
 		}
 
-		#endregion
+        public IComponentContext CreateChildContext()
+        {
+	        return new ChildComponentContext(this);
+        }
+
+        #endregion
 
 		#region IComposer implementation
 
@@ -232,10 +237,10 @@ namespace ComposerCore.Implementation
 
         public IComposer CreateScope()
         {
-	        var result = new ChildComponentContext(this);
-	        result.Register(typeof(ScopedComponentCacheStore));
+	        var scope = CreateChildContext();
+	        scope.Register(typeof(ScopedComponentCacheStore));
             
-	        return result;
+	        return scope;
         }
         
 		#endregion
