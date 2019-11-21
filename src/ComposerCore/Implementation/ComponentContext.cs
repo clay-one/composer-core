@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
@@ -15,6 +16,7 @@ namespace ComposerCore.Implementation
 	{
         #region Private Data
 
+        private bool _disposed;
 		private readonly ComponentRepository _repository;
 		private readonly Dictionary<string, object> _variables;
 
@@ -31,6 +33,7 @@ namespace ComposerCore.Implementation
 		{
 			Configuration = new ComposerConfiguration();
 
+			_disposed = false;
 			_repository = new ComponentRepository();
 			_variables = new Dictionary<string, object>();
 
@@ -74,12 +77,16 @@ namespace ComposerCore.Implementation
 		
         public void Register(IComponentRegistration registration)
         {
+	        EnsureNotDisposed();
+	        
 	        registration.SetAsRegistered(this);
 	        _repository.Add(registration);
         }
 
         public void Unregister(ContractIdentity identity)
 		{
+			EnsureNotDisposed();
+	        
 			if (identity == null)
 				throw new ArgumentNullException();
 
@@ -88,6 +95,8 @@ namespace ComposerCore.Implementation
 
         public void UnregisterFamily(Type type)
 		{
+			EnsureNotDisposed();
+	        
 			if (type == null)
 				throw new ArgumentNullException();
 
@@ -106,6 +115,8 @@ namespace ComposerCore.Implementation
 
         public void RemoveVariable(string name)
 		{
+			EnsureNotDisposed();
+	        
 			if (name == null)
 				throw new ArgumentNullException();
 
@@ -114,6 +125,7 @@ namespace ComposerCore.Implementation
 
         public IComponentContext CreateChildContext()
         {
+	        EnsureNotDisposed();
 	        return new ChildComponentContext(this);
         }
 
@@ -125,6 +137,8 @@ namespace ComposerCore.Implementation
 
 	    public virtual bool IsResolvable(Type contract, string name = null)
 	    {
+		    EnsureNotDisposed();
+	        
 		    if (contract.ContainsGenericParameters)
 			    throw new CompositionException("Requested contract type " + contract.Name +
 			                                   " contains open generic parameters. Can not construct a concrete type.");
@@ -159,21 +173,26 @@ namespace ComposerCore.Implementation
 
         public object GetComponent(Type contract, string name = null)
         {
+	        EnsureNotDisposed();
 	        return GetComponent(contract, name, this);
 		}
 
         public IEnumerable<object> GetAllComponents(Type contract, string name = null)
         {
+	        EnsureNotDisposed();
 	        return GetAllComponents(contract, name, this);
 		}
 
         public IEnumerable<object> GetComponentFamily(Type contract)
         {
+	        EnsureNotDisposed();
 	        return GetComponentFamily(contract, this);
 		}
 
         public virtual bool HasVariable(string name)
         {
+	        EnsureNotDisposed();
+	        
 	        if (name == null)
 		        throw new ArgumentNullException(nameof(name));
 
@@ -182,6 +201,8 @@ namespace ComposerCore.Implementation
         
         public virtual object GetVariable(string name)
 		{
+			EnsureNotDisposed();
+
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -196,6 +217,8 @@ namespace ComposerCore.Implementation
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "IEnumerable is over an in-memory at runtime array and doesn't impose any cost to enumerate it multiple times.'")]
         public void InitializePlugs(object componentInstance, Type componentType)
 		{
+			EnsureNotDisposed();
+
 			var initializationPoints = ComponentContextUtils.ExtractInitializationPoints(this, componentType);
 
 			var initializationPointResults = new List<object>();
@@ -237,6 +260,8 @@ namespace ComposerCore.Implementation
 
         public IComposer CreateScope()
         {
+	        EnsureNotDisposed();
+	        
 	        var scope = CreateChildContext();
 	        scope.Register(typeof(ScopedComponentCacheStore));
             
@@ -245,11 +270,22 @@ namespace ComposerCore.Implementation
         
 		#endregion
 		
-		#region IDisposable implementation
+		#region Disposable pattern implementation
 
 		public void Dispose()
 		{
-			throw new NotImplementedException();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose inner objects
+			}
+			
+			_disposed = true;
 		}
 
 		#endregion
@@ -304,8 +340,14 @@ namespace ComposerCore.Implementation
 					(identity, registration) => registration.GetComponent(identity, dependencyResolver))
 				.CastToRuntimeType(contract);
 		}
-
 		
 		#endregion
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void EnsureNotDisposed()
+		{
+			if (_disposed)
+				throw new InvalidOperationException("The ComponentContext is already disposed.");
+		}
 	}
 }
