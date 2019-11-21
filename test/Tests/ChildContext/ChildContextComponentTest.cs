@@ -49,8 +49,8 @@ namespace ComposerCore.Tests.ChildContext
             
             Assert.IsNotNull(c1);
             Assert.IsNotNull(c2);
-            Assert.IsTrue(c1 is ComponentOneA);
-            Assert.IsTrue(c2 is ComponentOneA);
+            Assert.IsInstanceOfType(c1, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(c2, typeof(ComponentOneA));
         }
 
         [TestMethod]
@@ -80,8 +80,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneB);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneB));
         }
 
         [TestMethod]
@@ -106,8 +106,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneB);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneB));
         }
 
         [TestMethod]
@@ -122,8 +122,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneB);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneB));
             
             _childContext.Unregister(typeof(IContractOne));
             
@@ -133,8 +133,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneA);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneA));
         }
 
         [TestMethod]
@@ -149,8 +149,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneB);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneB));
             
             _childContext.UnregisterFamily(typeof(IContractOne));
             
@@ -160,8 +160,8 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsNotNull(ca);
             Assert.IsNotNull(cb);
             
-            Assert.IsTrue(ca is ComponentOneA);
-            Assert.IsTrue(cb is ComponentOneA);
+            Assert.IsInstanceOfType(ca, typeof(ComponentOneA));
+            Assert.IsInstanceOfType(cb, typeof(ComponentOneA));
         }
 
         [TestMethod]

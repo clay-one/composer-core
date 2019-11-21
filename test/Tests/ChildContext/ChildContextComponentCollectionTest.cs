@@ -51,7 +51,7 @@ namespace ComposerCore.Tests.ChildContext
 
             var c = e.Single();
             Assert.IsNotNull(c);
-            Assert.IsTrue(c is ComponentOneA);
+            Assert.IsInstanceOfType(c, typeof(ComponentOneA));
         }
 
         [TestMethod]
@@ -75,15 +75,15 @@ namespace ComposerCore.Tests.ChildContext
             
             Assert.IsNotNull(e1);
             Assert.IsTrue(e1.Any());
-            Assert.IsTrue(e1.Count() == 1);
+            Assert.AreEqual(e1.Count(), 1);
             Assert.IsNotNull(e1.Single());
-            Assert.IsTrue(e1.Single() is ComponentOneA);
+            Assert.IsInstanceOfType(e1.Single(), typeof(ComponentOneA));
             
             var e2 = _childContext.GetAllComponents<IContractOne>();
             
             Assert.IsNotNull(e2);
             Assert.IsTrue(e2.Any());
-            Assert.IsTrue(e2.Count() == 2);
+            Assert.AreEqual(e2.Count(), 2);
             Assert.IsTrue(e2.All(e => e != null));
             Assert.IsTrue(e2.Any(e => e is ComponentOneA));
             Assert.IsTrue(e2.Any(e => e is ComponentOneB));
@@ -103,17 +103,17 @@ namespace ComposerCore.Tests.ChildContext
             Assert.IsTrue(e1.Any());
             Assert.IsTrue(e1.Count() == 2);
             Assert.IsTrue(e1.All(e => e != null));
-            Assert.IsTrue(e1.Count(e => e is ComponentOneA) == 1);
-            Assert.IsTrue(e1.Count(e => e is ComponentOneB) == 1);
+            Assert.AreEqual(e1.Count(e => e is ComponentOneA), 1);
+            Assert.AreEqual(e1.Count(e => e is ComponentOneB), 1);
             
             var e2 = _childContext.GetAllComponents<IContractOne>();
             
             Assert.IsNotNull(e2);
             Assert.IsTrue(e2.Any());
-            Assert.IsTrue(e2.Count() == 4);
+            Assert.AreEqual(e2.Count(), 4);
             Assert.IsTrue(e2.All(e => e != null));
-            Assert.IsTrue(e2.Count(e => e is ComponentOneA) == 2);
-            Assert.IsTrue(e2.Count(e => e is ComponentOneB) == 2);
+            Assert.AreEqual(e2.Count(e => e is ComponentOneA), 2);
+            Assert.AreEqual(e2.Count(e => e is ComponentOneB), 2);
         }
     }
 }

@@ -89,5 +89,8 @@
       <LastGenOutput>SampleResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConfigurationVariables" />
+  </ItemGroup>
   
 </Project>

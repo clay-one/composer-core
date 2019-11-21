@@ -105,6 +105,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		public void QueryTwoTimesIndirect()
 		{
 			_context.Register(typeof(ScopedComponentWithPlugs));
+			_context.Register(typeof(ContractAgnosticComponent));
 			_context.Register(typeof(ContractAgnosticComponentWithPlugs));
 			_context.Register(typeof(DefaultCacheComponent));
 			_context.Register(typeof(UncachedComponent));
