@@ -5,7 +5,7 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation
 {
-	internal class ComponentRepository : IDisposable
+	internal sealed class ComponentRepository : IDisposable
 	{
 		private readonly IDictionary<ContractIdentity, List<IComponentRegistration>> _registrationMap;
 		private readonly List<WeakReference<IDisposable>> _recycleBin;
@@ -68,17 +68,11 @@ namespace ComposerCore.Implementation
 			if (_disposed)
 				return;
 
-			var disposables = _recycleBin
-				.Select(wr => wr.TryGetTarget(out var d) ? d : null)
-				.Where(d => d != null)
-				.Distinct();
-			
-			foreach (var disposable in disposables)
-			{
+			_disposed = true;
+			foreach (var disposable in _recycleBin.Select(wr => wr.TryGetTarget(out var d) ? d : null))
 				disposable?.Dispose();
-			}
 		}
-
+		
 		public void AddToRecycleBin(IDisposable disposable)
 		{
 			_recycleBin.Add(new WeakReference<IDisposable>(disposable));

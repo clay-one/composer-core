@@ -273,6 +273,9 @@ namespace ComposerCore.Implementation
 
         public void TrackDisposable(IDisposable disposable)
         {
+	        if (Configuration.DisableDisposableTracking)
+		        return;
+	        
 	        _repository.AddToRecycleBin(disposable);
         }
 
@@ -286,7 +289,7 @@ namespace ComposerCore.Implementation
 			GC.SuppressFinalize(this);
 		}
 
-		protected void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (_disposed)
 				return;
