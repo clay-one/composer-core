@@ -126,7 +126,10 @@ namespace ComposerCore.Implementation
         public IComponentContext CreateChildContext()
         {
 	        EnsureNotDisposed();
-	        return new ChildComponentContext(this);
+	        var childContext = new ChildComponentContext(this);
+	        
+	        _repository.AddToRecycleBin(childContext);
+	        return childContext;
         }
 
         #endregion
@@ -285,12 +288,14 @@ namespace ComposerCore.Implementation
 
 		protected void Dispose(bool disposing)
 		{
+			if (_disposed)
+				return;
+			
+			_disposed = true;
 			if (disposing)
 			{
 				_repository.Dispose();
 			}
-			
-			_disposed = true;
 		}
 
 		#endregion
