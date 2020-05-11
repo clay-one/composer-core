@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ComposerCore.Cache;
-using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentFactories.Components;
@@ -97,7 +97,7 @@ namespace ComposerCore.Tests.ComponentFactories
             factory.ContractTypes = new List<Type> {typeof(ISampleContractOne)};
             
             var registration = new ComponentFactoryRegistration(factory);
-            registration.SetCache(NoComponentCache.Instance);
+            registration.SetCache(_context.GetComponent<IComponentCache>(nameof(NoComponentCache)));
             _context.Register(registration);
 
             var originalInstanceCount = SampleComponentOne.TimesInstantiated;

@@ -1,11 +1,12 @@
+using System;
 using ComposerCore.Attributes;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.Extensibility
 {
     [Contract]
-    public interface IComponentCache
+    public interface IComponentCache : IDisposable
     {
-        object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver);
+        object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope);
     }
 }

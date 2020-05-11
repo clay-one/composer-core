@@ -7,7 +7,7 @@ namespace ComposerCore.Cache
 	public class ContractAgnosticComponentCache : PerRegistrationComponentCache
 	{
 		[CompositionConstructor]
-		public ContractAgnosticComponentCache()
+		public ContractAgnosticComponentCache(IComposer composer) : base(composer)
 		{
 		}
 	}

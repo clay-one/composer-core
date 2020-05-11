@@ -11,10 +11,15 @@ namespace ComposerCore.Cache
         {
         }
 
-        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            var store = dependencyResolver.GetComponent<ScopedComponentCacheStore>();
-            return store.GetOrCreate(contract, registration, dependencyResolver);
+            var store = scope.GetComponent<ScopedComponentCacheStore>();
+            return store.GetOrCreate(contract, registration, scope);
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

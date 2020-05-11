@@ -21,7 +21,7 @@ namespace ComposerCore.CompositionalQueries
 			return composerToUse.HasVariable(VariableName);
 		}
 		
-		public object Query(IComposer composer)
+		public object Query(IComposer composer, IComposer scope = null)
 		{
 			var composerToUse = ComposerOverride ?? composer;
 			if (composerToUse == null)

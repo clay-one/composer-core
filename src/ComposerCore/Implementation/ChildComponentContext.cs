@@ -33,22 +33,22 @@ namespace ComposerCore.Implementation
             return base.GetVariable(name) ?? _parent.GetVariable(name);
         }
 
-        protected internal override object GetComponent(Type contract, string name, IComposer dependencyResolver)
+        protected internal override object GetComponentInternal(Type contract, string name, IComposer scope)
         {
-            return base.GetComponent(contract, name, dependencyResolver) ?? _parent.GetComponent(contract, name, dependencyResolver);
+            return base.GetComponentInternal(contract, name, scope) ?? _parent.GetComponentInternal(contract, name, scope);
         }
 
-        protected internal override IEnumerable<object> GetAllComponents(Type contract, string name, IComposer dependencyResolver)
+        protected internal override IEnumerable<object> GetAllComponentsInternal(Type contract, string name, IComposer scope)
         {
-            return (base.GetAllComponents(contract, name, dependencyResolver) ?? Enumerable.Empty<object>())
-                .Concat(_parent.GetAllComponents(contract, name, dependencyResolver) ?? Enumerable.Empty<object>())
+            return (base.GetAllComponentsInternal(contract, name, scope) ?? Enumerable.Empty<object>())
+                .Concat(_parent.GetAllComponentsInternal(contract, name, scope) ?? Enumerable.Empty<object>())
                 .CastToRuntimeType(contract);
         }
 
-        protected internal override IEnumerable<object> GetComponentFamily(Type contract, IComposer dependencyResolver)
+        protected internal override IEnumerable<object> GetComponentFamilyInternal(Type contract, IComposer scope)
         {
-            return (base.GetComponentFamily(contract, dependencyResolver) ?? Enumerable.Empty<object>())
-                .Concat(_parent.GetComponentFamily(contract, dependencyResolver) ?? Enumerable.Empty<object>())
+            return (base.GetComponentFamilyInternal(contract, scope) ?? Enumerable.Empty<object>())
+                .Concat(_parent.GetComponentFamilyInternal(contract, scope) ?? Enumerable.Empty<object>())
                 .CastToRuntimeType(contract);
         }
     }

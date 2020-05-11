@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
@@ -46,7 +45,7 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(typeof(TComponent));
 		}
 
-		public object GetComponentInstance(ContractIdentity contract)
+		public object GetComponentInstance(ContractIdentity contract, IComposer scope)
 		{
 			// Check if the factory is initialized
 

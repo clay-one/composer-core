@@ -80,7 +80,7 @@ namespace ComposerCore.Implementation
             return MapToClosedComponentType(contractType) != null;
         }
 
-        public override object GetComponent(ContractIdentity contract, IComposer dependencyResolver)
+        public override object GetComponent(ContractIdentity contract, IComposer scope)
         {
             if (!contract.Type.IsGenericType)
                 throw new CompositionException("Requested contract " + contract.Type.Name + " is not a generic type.");
@@ -102,10 +102,10 @@ namespace ComposerCore.Implementation
                 return newSubRegistration;
             });
 
-            return subRegistration.GetComponent(contract, dependencyResolver);
+            return subRegistration.GetComponent(contract, scope);
         }
 
-        public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
+        public override object CreateComponent(ContractIdentity contract, IComposer scope)
         {
             throw new InvalidOperationException(
                 "CreateComponent should never be called on the GenericComponentRegistration class. Instead, " +

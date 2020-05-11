@@ -17,12 +17,9 @@ namespace ComposerCore.CompositionalQueries
             return true;
         }
         
-        public object Query(IComposer composer)
+        public object Query(IComposer composer, IComposer scope = null)
         {
-            IComposer composerToUse = ComposerOverride ?? composer;
-            if (composerToUse == null)
-                throw new ArgumentNullException(nameof(composer));
-
+            IComposer composerToUse = ComposerOverride ?? composer ?? throw new ArgumentNullException(nameof(composer));
             return ValueCalculator(composerToUse);
         }
 

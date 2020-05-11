@@ -53,7 +53,7 @@ namespace ComposerCore.Factories
 			return _contractTypes;
 		}
 		
-		public object GetComponentInstance(ContractIdentity contract)
+		public object GetComponentInstance(ContractIdentity contract, IComposer scope)
 		{
 			// Check if the factory is initialized
 

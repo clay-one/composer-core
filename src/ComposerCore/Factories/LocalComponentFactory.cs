@@ -51,7 +51,7 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
-		public object GetComponentInstance(ContractIdentity contract)
+		public object GetComponentInstance(ContractIdentity contract, IComposer scope)
 		{
 			if (!Initialized)
 				throw new InvalidOperationException(

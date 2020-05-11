@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
@@ -13,14 +14,22 @@ namespace ComposerCore.Cache
             new ThreadLocal<ConcurrentDictionary<IComponentRegistration, object>>(() =>
                 new ConcurrentDictionary<IComponentRegistration, object>());
 
+        private readonly IComposer _composer;
+
         [CompositionConstructor]
-        public ThreadLocalComponentCache()
+        public ThreadLocalComponentCache(IComposer composer)
         {
+            _composer = composer ?? throw new ArgumentNullException(nameof(composer));
         }
 
-        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return _cacheContent.Value.GetOrAdd(registration, r => r.CreateComponent(contract, dependencyResolver));
+            return _cacheContent.Value.GetOrAdd(registration, r => r.CreateComponent(contract, scope));
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

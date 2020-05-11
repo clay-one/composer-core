@@ -62,7 +62,7 @@ namespace ComposerCore.Factories
             _composer = composer;
         }
 
-        public void Apply(object originalComponentInstance, IComposer dependencyResolver)
+        public void Apply(object originalComponentInstance, IComposer scope)
         {
             if (!Initialized)
                 throw new InvalidOperationException("LocalComponentInitializer should be Initialized before calling Build");
@@ -70,8 +70,8 @@ namespace ComposerCore.Factories
             LoadInitializationPoints();
             LoadCompositionNotificationMethods();
 
-            ApplyInitializationPoints(originalComponentInstance, dependencyResolver);
-            InvokeCompositionNotifications(originalComponentInstance, dependencyResolver);
+            ApplyInitializationPoints(originalComponentInstance, scope);
+            InvokeCompositionNotifications(originalComponentInstance, scope);
         }
         
         private void LoadInitializationPoints()
@@ -107,7 +107,7 @@ namespace ComposerCore.Factories
             _compositionNotifications = _configuredCompositionNotifications?.Concat(methodsFound).ToList() ?? methodsFound;
         }
         
-        private List<object> ApplyInitializationPoints(object originalComponentInstance, IComposer dependencyResolver)
+        private List<object> ApplyInitializationPoints(object originalComponentInstance, IComposer scope)
         {
             var initializationPointResults = new List<object>();
 
@@ -117,9 +117,9 @@ namespace ComposerCore.Factories
                     throw new CompositionException(
                         $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{_targetType.FullName}'");
 
-                if (initializationPoint.Query.IsResolvable(dependencyResolver))
+                if (initializationPoint.Query.IsResolvable(_composer))
                 {
-                    var initializationPointResult = initializationPoint.Query.Query(dependencyResolver);
+                    var initializationPointResult = initializationPoint.Query.Query(_composer, scope);
 
                     initializationPointResults.Add(initializationPointResult);
                     ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
@@ -142,14 +142,14 @@ namespace ComposerCore.Factories
             return initializationPointResults;
         }
         
-        private void InvokeCompositionNotifications(object componentInstance, IComposer dependencyResolver)
+        private void InvokeCompositionNotifications(object componentInstance, IComposer scope)
         {
             if (_compositionNotifications == null)
                 return;
 
             foreach (var method in _compositionNotifications)
             {
-                method(dependencyResolver, componentInstance);
+                method(scope, componentInstance);
             }
         }
     }

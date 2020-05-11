@@ -93,8 +93,8 @@ namespace ComposerCore.Implementation
             return Contracts != null && Contracts.Any(c => contractType.IsAssignableFrom(c.Type));
         }
 
-        public abstract object GetComponent(ContractIdentity contract, IComposer dependencyResolver);
-        public abstract object CreateComponent(ContractIdentity contract, IComposer dependencyResolver);
+        public abstract object GetComponent(ContractIdentity contract, IComposer scope);
+        public abstract object CreateComponent(ContractIdentity contract, IComposer scope);
 
         protected virtual void ReadContractsFromTarget()
         {

@@ -1,6 +1,6 @@
+using System;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
-using ComposerCore.Implementation;
 
 namespace ComposerCore.Cache
 {
@@ -14,9 +14,14 @@ namespace ComposerCore.Cache
         {
         }
         
-        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer dependencyResolver)
+        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return registration.CreateComponent(contract, dependencyResolver);
+            return registration.CreateComponent(contract, scope);
+        }
+
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

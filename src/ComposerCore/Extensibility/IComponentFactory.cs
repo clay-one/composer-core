@@ -13,6 +13,6 @@ namespace ComposerCore.Extensibility
 		void Initialize(IComposer composer);
 		IEnumerable<Type> GetContractTypes();
 
-		object GetComponentInstance(ContractIdentity contract);
+		object GetComponentInstance(ContractIdentity contract, IComposer scope);
 	}
 }

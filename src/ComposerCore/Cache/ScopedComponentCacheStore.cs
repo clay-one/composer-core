@@ -15,10 +15,9 @@ namespace ComposerCore.Cache
             _store = new ConcurrentDictionary<IComponentRegistration, object>();
         }
 
-        public object GetOrCreate(ContractIdentity contractIdentity, IComponentRegistration registration, 
-            IComposer dependencyResolver)
+        public object GetOrCreate(ContractIdentity contractIdentity, IComponentRegistration registration, IComposer scope)
         {
-            var result = _store.GetOrAdd(registration, r => r.CreateComponent(contractIdentity, dependencyResolver));
+            var result = _store.GetOrAdd(registration, r => r.CreateComponent(contractIdentity, scope));
             return result;
         }
     }

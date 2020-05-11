@@ -12,12 +12,12 @@ namespace ComposerCore.Implementation
             _componentInstance = componentInstance;
         }
         
-        public override object GetComponent(ContractIdentity contract, IComposer dependencyResolver)
+        public override object GetComponent(ContractIdentity contract, IComposer scope)
         {
             return _componentInstance;
         }
 
-        public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
+        public override object CreateComponent(ContractIdentity contract, IComposer scope)
         {
             throw new InvalidOperationException(
                 "CreateComponent should never be called on an PreInitializedComponentRegistration object. " +

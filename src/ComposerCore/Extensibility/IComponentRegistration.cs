@@ -17,7 +17,7 @@ namespace ComposerCore.Extensibility
         void SetAsRegistered(IComponentContext registrationContext);
         
         bool IsResolvable(Type contractType);
-        object GetComponent(ContractIdentity contract, IComposer dependencyResolver);
-        object CreateComponent(ContractIdentity contract, IComposer dependencyResolver);
+        object GetComponent(ContractIdentity contract, IComposer scope);
+        object CreateComponent(ContractIdentity contract, IComposer scope);
     }
 }

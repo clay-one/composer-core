@@ -17,7 +17,7 @@ namespace ComposerCore.CompositionalQueries
 			return true;
 		}
         
-		public object Query(IComposer composer)
+		public object Query(IComposer composer, IComposer scope = null)
 		{
 			return Value.Value;
 		}

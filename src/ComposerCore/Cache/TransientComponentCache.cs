@@ -6,7 +6,7 @@ namespace ComposerCore.Cache
     public class TransientComponentCache : PerRegistrationComponentCache
     {
 	    [CompositionConstructor]
-	    public TransientComponentCache()
+	    public TransientComponentCache(IComposer composer) : base(composer)
 	    {
 	    }
     }

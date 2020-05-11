@@ -26,7 +26,7 @@ namespace ComposerCore.Factories
 			return ComponentContextUtils.FindContracts(_componentInstance.GetType());
 		}
 
-	    public object GetComponentInstance(ContractIdentity contract)
+	    public object GetComponentInstance(ContractIdentity contract, IComposer scope)
 		{
 			return _componentInstance;
 		}

@@ -26,12 +26,9 @@ namespace ComposerCore.CompositionalQueries
             return VariableNames.Where(n => n != null).Any(variableName => composerToUse.HasVariable(variableName));
         }
 		
-        public object Query(IComposer composer)
+        public object Query(IComposer composer, IComposer scope = null)
         {
-            var composerToUse = ComposerOverride ?? composer;
-            if (composerToUse == null)
-                throw new ArgumentNullException(nameof(composer));
-
+            var composerToUse = ComposerOverride ?? composer ?? throw new ArgumentNullException(nameof(composer));
             return VariableNames.Where(n => n != null).Select(n => composerToUse.GetVariable(n)).FirstOrDefault(v => v != null);
         }
 
@@ -54,6 +51,5 @@ namespace ComposerCore.CompositionalQueries
         /// the Query method) will be used to query for the value.
         /// </remarks>
         public IComposer ComposerOverride { get; set; }
-
     }
 }

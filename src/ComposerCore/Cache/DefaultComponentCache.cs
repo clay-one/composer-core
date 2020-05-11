@@ -8,7 +8,7 @@ namespace ComposerCore.Cache
 	public class DefaultComponentCache : PerContractComponentCache
 	{
 		[CompositionConstructor]
-		public DefaultComponentCache()
+		public DefaultComponentCache(IComposer composer) : base(composer)
 		{
 		}
 	}

@@ -18,23 +18,17 @@ namespace ComposerCore.CompositionalQueries
 			if (ContractType == null)
 				return false;
 
-			var composerToUse = ComposerOverride ?? composer;
-			if (composerToUse == null)
-				throw new ArgumentNullException(nameof(composer));
-
+			var composerToUse = ComposerOverride ?? composer ?? throw new ArgumentNullException(nameof(composer));
 			return composerToUse.IsResolvable(ContractType, ContractName);
 		}
 		
-		public object Query(IComposer composer)
+		public object Query(IComposer composer, IComposer scope = null)
 		{
 		    if (ContractType == null)
 		        return null;
 
-			var composerToUse = ComposerOverride ?? composer;
-			if (composerToUse == null)
-				throw new ArgumentNullException(nameof(composer));
-
-			return composerToUse.GetComponent(ContractType, ContractName);
+			var composerToUse = ComposerOverride ?? composer ?? throw new ArgumentNullException(nameof(composer));
+			return composerToUse.GetComponent(ContractType, ContractName, scope);
 		}
 
 		#endregion

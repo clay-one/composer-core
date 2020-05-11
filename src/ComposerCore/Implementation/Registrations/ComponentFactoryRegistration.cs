@@ -37,20 +37,20 @@ namespace ComposerCore.Implementation
             Factory.Initialize(registrationContext);
         }
 
-        public override object GetComponent(ContractIdentity identity, IComposer dependencyResolver)
+        public override object GetComponent(ContractIdentity identity, IComposer scope)
         {
-            FillCache(dependencyResolver);
-            return Cache.GetComponent(identity, this, dependencyResolver);
+            FillCache();
+            return Cache.GetComponent(identity, this, scope);
         }
 
-        public override object CreateComponent(ContractIdentity contract, IComposer dependencyResolver)
+        public override object CreateComponent(ContractIdentity contract, IComposer scope)
         {
             // Save the original component instance reference, so that
             // we can apply initialization points to it later, as the
             // composition listeners may change the reference to a
             // wrapped one.
             
-            var originalComponentInstance = Factory.GetComponentInstance(contract);
+            var originalComponentInstance = Factory.GetComponentInstance(contract, scope);
 
             // After constructing the component object, first process
             // all composition listeners so that if the reference should
@@ -68,7 +68,7 @@ namespace ComposerCore.Implementation
             // an instance that does not have the original configuration points.
 
 //			var initializationPointResults = Initializer.Apply(originalComponentInstance, Composer);
-            Initializer.Apply(originalComponentInstance, dependencyResolver);
+            Initializer.Apply(originalComponentInstance, scope);
 
             // Inform all composition listeners of the newly composed
             // component instance by calling OnComponentComposed method.
@@ -113,13 +113,13 @@ namespace ComposerCore.Implementation
             SetCache(name);
         }
 
-        private void FillCache(IComposer dependencyResolver)
+        private void FillCache()
         {
             if (Cache != null)
                 return;
             
             FillCacheQuery();
-            Cache ??= CacheQuery.Query(dependencyResolver) as IComponentCache
+            Cache ??= CacheQuery.Query(RegistrationContext) as IComponentCache
                       ?? throw new CompositionException("Could not resolve cache component for factory " +
                                                         $"{Factory}.");
         }
