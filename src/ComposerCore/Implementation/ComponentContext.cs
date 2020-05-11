@@ -267,8 +267,13 @@ namespace ComposerCore.Implementation
             
 	        return scope;
         }
-        
-		#endregion
+
+        public void TrackDisposable(IDisposable disposable)
+        {
+	        _repository.AddToRecycleBin(disposable);
+        }
+
+        #endregion
 		
 		#region Disposable pattern implementation
 
@@ -278,11 +283,11 @@ namespace ComposerCore.Implementation
 			GC.SuppressFinalize(this);
 		}
 
-		protected virtual void Dispose(bool disposing)
+		protected void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				// Dispose inner objects
+				_repository.Dispose();
 			}
 			
 			_disposed = true;

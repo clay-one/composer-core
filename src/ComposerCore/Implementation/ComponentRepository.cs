@@ -5,13 +5,17 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation
 {
-	internal class ComponentRepository
+	internal class ComponentRepository : IDisposable
 	{
 		private readonly IDictionary<ContractIdentity, List<IComponentRegistration>> _registrationMap;
+		private readonly List<WeakReference<IDisposable>> _recycleBin;
+		private volatile bool _disposed;
 
 		public ComponentRepository()
 		{
 			_registrationMap = new Dictionary<ContractIdentity, List<IComponentRegistration>>();
+			_recycleBin = new List<WeakReference<IDisposable>>();
+			_disposed = false;
 		}
 
 		public void Add(IComponentRegistration registration)
@@ -57,6 +61,27 @@ namespace ComposerCore.Implementation
 		public IEnumerable<ContractIdentity> GetContractIdentityFamily(Type type)
 		{
 			return _registrationMap.Keys.Where(i => i.Type == type);
+		}
+
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+
+			var disposables = _recycleBin
+				.Select(wr => wr.TryGetTarget(out var d) ? d : null)
+				.Where(d => d != null)
+				.Distinct();
+			
+			foreach (var disposable in disposables)
+			{
+				disposable?.Dispose();
+			}
+		}
+
+		public void AddToRecycleBin(IDisposable disposable)
+		{
+			_recycleBin.Add(new WeakReference<IDisposable>(disposable));
 		}
 	}
 }

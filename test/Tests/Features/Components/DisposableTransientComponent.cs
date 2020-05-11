@@ -1,9 +1,10 @@
+using System;
 using ComposerCore.Attributes;
 
 namespace ComposerCore.Tests.Features.Components
 {
     [Contract, Component, Transient]
-    public class DisposableTransientComponent
+    public class DisposableTransientComponent : IDisposable
     {
         public bool Disposed { get; private set; }
         

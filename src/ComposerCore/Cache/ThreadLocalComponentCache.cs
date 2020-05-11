@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Threading;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
-using ComposerCore.Implementation;
 
 namespace ComposerCore.Cache
 {
@@ -14,22 +13,21 @@ namespace ComposerCore.Cache
             new ThreadLocal<ConcurrentDictionary<IComponentRegistration, object>>(() =>
                 new ConcurrentDictionary<IComponentRegistration, object>());
 
-        private readonly IComposer _composer;
-
         [CompositionConstructor]
-        public ThreadLocalComponentCache(IComposer composer)
+        public ThreadLocalComponentCache()
         {
-            _composer = composer ?? throw new ArgumentNullException(nameof(composer));
         }
 
         public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return _cacheContent.Value.GetOrAdd(registration, r => r.CreateComponent(contract, scope));
-        }
+            return _cacheContent.Value.GetOrAdd(registration, r =>
+            {
+                var component = r.CreateComponent(contract, scope);
+                if (component is IDisposable disposable)
+                    registration.RegistrationContext.TrackDisposable(disposable);
 
-        public void Dispose()
-        {
-            throw new System.NotImplementedException();
+                return component;
+            });
         }
     }
 }

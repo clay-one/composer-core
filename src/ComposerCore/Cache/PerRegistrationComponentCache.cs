@@ -8,14 +8,12 @@ namespace ComposerCore.Cache
     [Component(nameof(PerRegistrationComponentCache)), Transient, ConstructorResolutionPolicy(null)]
     public class PerRegistrationComponentCache : IComponentCache
     {
-        private readonly IComposer _composer;
         private readonly object _syncKey = new object();
         private object _componentInstance;
 
         [CompositionConstructor]
-        public PerRegistrationComponentCache(IComposer composer)
+        public PerRegistrationComponentCache()
         {
-            _composer = composer ?? throw new ArgumentNullException(nameof(composer));
         }
 
         public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
@@ -29,16 +27,14 @@ namespace ComposerCore.Cache
                     return _componentInstance;
 
                 var result = registration.CreateComponent(contract, scope);
-
+                if (result is IDisposable disposable)
+                    registration.RegistrationContext.TrackDisposable(disposable);
+                
                 Thread.MemoryBarrier();
                 _componentInstance = result;
+                
                 return result;
             }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -11,22 +11,21 @@ namespace ComposerCore.Cache
 		private static readonly ConcurrentDictionary<IComponentRegistration, object> CacheContent =
 			new ConcurrentDictionary<IComponentRegistration, object>();
 
-		private readonly IComposer _composer;
-
 		[CompositionConstructor]
-		public StaticComponentCache(IComposer composer)
+		public StaticComponentCache()
 		{
-			_composer = composer ?? throw new ArgumentNullException(nameof(composer));
 		}
 
 		public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
 		{
-			return CacheContent.GetOrAdd(registration, r => r.CreateComponent(contract, scope));
-		}
+			return CacheContent.GetOrAdd(registration, r =>
+			{
+				var component = r.CreateComponent(contract, scope);
+				if (component is IDisposable disposable)
+					registration.RegistrationContext.TrackDisposable(disposable);
 
-		public void Dispose()
-		{
-			throw new NotImplementedException();
+				return component;
+			});
 		}
 	}
 }

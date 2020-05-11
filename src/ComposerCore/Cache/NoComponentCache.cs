@@ -16,12 +16,11 @@ namespace ComposerCore.Cache
         
         public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return registration.CreateComponent(contract, scope);
-        }
+            var component = registration.CreateComponent(contract, scope);
+            if (component is IDisposable disposable)
+                registration.RegistrationContext.TrackDisposable(disposable);
 
-        public void Dispose()
-        {
-            throw new System.NotImplementedException();
+            return component;
         }
     }
 }

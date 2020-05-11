@@ -8,25 +8,24 @@ namespace ComposerCore.Cache
     [Component(nameof(PerContractComponentCache)), Transient, ConstructorResolutionPolicy(null)]
     public class PerContractComponentCache : IComponentCache
     {
-        private readonly IComposer _composer;
-        
         private readonly ConcurrentDictionary<ContractIdentity, object> _cacheContent =
             new ConcurrentDictionary<ContractIdentity, object>();
 
         [CompositionConstructor]
-        public PerContractComponentCache(IComposer composer)
+        public PerContractComponentCache()
         {
-            _composer = composer ?? throw new ArgumentNullException(nameof(composer));
         }
         
         public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return _cacheContent.GetOrAdd(contract, c => registration.CreateComponent(c, scope));
-        }
+            return _cacheContent.GetOrAdd(contract, c =>
+            {
+                var component = registration.CreateComponent(c, scope);
+                if (component is IDisposable disposable)
+                    registration.RegistrationContext.TrackDisposable(disposable);
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+                return component;
+            });
         }
     }
 }

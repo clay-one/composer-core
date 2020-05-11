@@ -16,5 +16,6 @@ namespace ComposerCore
 		void RemoveVariable(string name);
 
 		IComponentContext CreateChildContext();
+		void TrackDisposable(IDisposable disposable);
 	}
 }

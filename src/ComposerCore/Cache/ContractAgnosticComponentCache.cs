@@ -1,5 +1,4 @@
 ﻿using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
@@ -7,7 +6,7 @@ namespace ComposerCore.Cache
 	public class ContractAgnosticComponentCache : PerRegistrationComponentCache
 	{
 		[CompositionConstructor]
-		public ContractAgnosticComponentCache(IComposer composer) : base(composer)
+		public ContractAgnosticComponentCache()
 		{
 		}
 	}

@@ -7,6 +7,7 @@ namespace ComposerCore.Extensibility
     {
         Type TargetType { get; }
         IEnumerable<ContractIdentity> Contracts { get; }
+        IComponentContext RegistrationContext { get; }
 
         void SetCache(string cacheComponentName);
         void SetCache(IComponentCache cache);

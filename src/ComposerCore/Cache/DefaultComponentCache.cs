@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
+﻿using ComposerCore.Attributes;
 
 namespace ComposerCore.Cache
 {
@@ -8,7 +6,7 @@ namespace ComposerCore.Cache
 	public class DefaultComponentCache : PerContractComponentCache
 	{
 		[CompositionConstructor]
-		public DefaultComponentCache(IComposer composer) : base(composer)
+		public DefaultComponentCache()
 		{
 		}
 	}

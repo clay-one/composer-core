@@ -6,7 +6,7 @@ namespace ComposerCore.Cache
     public class SingletonComponentCache : PerRegistrationComponentCache
     {
         [CompositionConstructor]
-        public SingletonComponentCache(IComposer composer) : base(composer)
+        public SingletonComponentCache()
         {
         }
     }

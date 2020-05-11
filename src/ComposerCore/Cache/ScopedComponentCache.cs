@@ -16,10 +16,5 @@ namespace ComposerCore.Cache
             var store = scope.GetComponent<ScopedComponentCacheStore>();
             return store.GetOrCreate(contract, registration, scope);
         }
-
-        public void Dispose()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }
