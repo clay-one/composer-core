@@ -11,6 +11,8 @@ namespace ComposerCore.Implementation
 		private readonly List<WeakReference<IDisposable>> _recycleBin;
 		private volatile bool _disposed;
 
+		public List<WeakReference<IDisposable>> RecycleBin => _recycleBin;
+
 		public ComponentRepository()
 		{
 			_registrationMap = new Dictionary<ContractIdentity, List<IComponentRegistration>>();

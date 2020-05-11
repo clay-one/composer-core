@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.Features.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -70,15 +71,13 @@ namespace ComposerCore.Tests.Features
             _context.Register<DisposableTransientComponent>();
             CreateComponentLocalFunction();
             
-            // Check if there is one object being tracked for disposal
-            Assert.Inconclusive();
+            Assert.AreEqual(1, _context.Repository.RecycleBin.Count(wr => wr.TryGetTarget(out _)));
             
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
             
-            // Check if there are no objects being tracked for disposal
-            Assert.Inconclusive();
+            Assert.AreEqual(0, _context.Repository.RecycleBin.Count(wr => wr.TryGetTarget(out _)));
         }
 
         [TestMethod]
@@ -90,8 +89,7 @@ namespace ComposerCore.Tests.Features
             _context.GetComponent<NonDisposableSingletonComponent>();
             _context.GetComponent<NonDisposableTransientComponent>();
             
-            // Check if there are no objects being tracked for disposal
-            Assert.Inconclusive();
+            Assert.IsFalse(_context.Repository.RecycleBin.Any());
         }
 
         [TestMethod]

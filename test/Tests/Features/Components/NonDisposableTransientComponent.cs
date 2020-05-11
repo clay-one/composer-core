@@ -4,7 +4,7 @@ using ComposerCore.Attributes;
 namespace ComposerCore.Tests.Features.Components
 {
     [Contract, Component, Transient]
-    public class NonDisposableTransientComponent : IDisposable
+    public class NonDisposableTransientComponent
     {
         public bool Disposed { get; private set; }
         

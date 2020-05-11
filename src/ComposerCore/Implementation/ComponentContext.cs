@@ -20,6 +20,8 @@ namespace ComposerCore.Implementation
 		private readonly ComponentRepository _repository;
 		private readonly Dictionary<string, object> _variables;
 
+		internal ComponentRepository Repository => _repository;
+
 		#endregion
 
 		#region Constructors
