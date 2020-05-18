@@ -29,7 +29,12 @@ namespace ComposerCore.Implementation
         public override object GetComponent(ContractIdentity contract, IComposer scope)
         {
             FillCache();
-            return Cache.GetComponent(contract, this, scope);
+
+            var listenerChain = RegistrationContext.GetComponent<ICompositionListenerChain>();
+            var component = Cache.GetComponent(contract, this, scope);
+            listenerChain.NotifyRetrieved(component, component, contract, null, TargetType);
+            
+            return component;
         }
 
         public override object CreateComponent(ContractIdentity contract, IComposer scope)

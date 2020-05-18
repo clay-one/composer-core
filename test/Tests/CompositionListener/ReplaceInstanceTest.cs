@@ -39,6 +39,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void ReplaceWhenCreating()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			var listener = new ReplaceUponCreationListener();
 			_context.RegisterCompositionListener("replacer", listener);
 
@@ -52,6 +54,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void ReplaceWhenRetrieving()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			var listener = new ReplaceUponRetrievalListener();
 			_context.RegisterCompositionListener("replacer", listener);
 

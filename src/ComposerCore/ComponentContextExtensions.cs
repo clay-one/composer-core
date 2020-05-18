@@ -177,12 +177,12 @@ namespace ComposerCore
 
         public static void RegisterCompositionListener(this IComponentContext context, string name, ICompositionListener listener)
         {
-            context.GetComponent<CompositionListenerChain>().RegisterCompositionListener(name, listener);
+            context.GetComponent<ICompositionListenerChain>().RegisterCompositionListener(name, listener);
         }
 
         public static void UnregisterCompositionListener(this IComponentContext context, string name)
         {
-            context.GetComponent<CompositionListenerChain>().UnregisterCompositionListener(name);
+            context.GetComponent<ICompositionListenerChain>().UnregisterCompositionListener(name);
         }
         
         #region Private helpers
