@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
+using ComposerCore.Attributes;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
@@ -20,20 +22,20 @@ namespace ComposerCore.FluentExtensions
         #region Fluent configuration methods
 
         public new FluentLocalComponentConfig<TComponent> SetComponent<TPlugContract>(
-            string memberName, string contractName = null, bool required = true)
+            string memberName, string contractName = null, bool? required = null)
         {
             return SetComponent(memberName, typeof(TPlugContract), contractName, required);
         }
 
         public new FluentLocalComponentConfig<TComponent> SetComponent(
-            string memberName, Type contractType, string contractName = null, bool required = true)
+            string memberName, Type contractType, string contractName = null, bool? required = null)
         {
             base.SetComponent(memberName, contractType, contractName, required);
             return this;
         }
 
         public FluentLocalComponentConfig<TComponent> SetComponent<TPlugContract>(
-            Expression<Func<TComponent, TPlugContract>> member, string contractName = null, bool required = true)
+            Expression<Func<TComponent, TPlugContract>> member, string contractName = null, bool? required = null)
         {
             if (!(member.Body is MemberExpression memberExpression) ||
                 !(memberExpression.Expression is ParameterExpression parameterExpression) ||
@@ -55,13 +57,19 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> UseConstructor(ConstructorInfo constructorInfo)
+        {
+            base.UseConstructor(constructorInfo);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> AddConstructorComponent<TPlugContract>(string contractName = null, bool? required = null)
         {
             base.AddConstructorComponent<TPlugContract>(contractName, required);
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
             base.AddConstructorComponent(contractType, contractName, required);
             return this;
@@ -73,13 +81,13 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> AddConstructorValue<TValue>(Func<IComposer, TValue> valueCalculator, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> AddConstructorValue<TValue>(Func<IComposer, TValue> valueCalculator, bool? required = null)
         {
             base.AddConstructorValue(valueCalculator, required);
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> AddConstructorValueFromVariable(string variableName, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
             base.AddConstructorValueFromVariable(variableName, required);
             return this;
@@ -109,7 +117,7 @@ namespace ComposerCore.FluentExtensions
         }
 
         public FluentLocalComponentConfig<TComponent> SetValue<TMember>(Expression<Func<TComponent, TMember>> member,
-            Func<IComposer, TMember> valueCalculator, bool required = true)
+            Func<IComposer, TMember> valueCalculator, bool? required = false)
         {
             if (!(member.Body is MemberExpression memberExpression) ||
                 !(memberExpression.Expression is ParameterExpression parameterExpression) ||
@@ -126,20 +134,20 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
             base.SetValue(memberName, valueCalculator, required);
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> SetValueFromVariable(string memberName, string variableName, bool required = true)
+        public new FluentLocalComponentConfig<TComponent> SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
             base.SetValueFromVariable(memberName, variableName, required);
             return this;
         }
 
         public FluentLocalComponentConfig<TComponent> SetValueFromVariable<TMember>(
-            Expression<Func<TComponent, TMember>> member, string variableName, bool required = true)
+            Expression<Func<TComponent, TMember>> member, string variableName, bool? required = null)
         {
             if (!(member.Body is MemberExpression memberExpression) ||
                 !(memberExpression.Expression is ParameterExpression parameterExpression) ||
@@ -171,6 +179,12 @@ namespace ComposerCore.FluentExtensions
         public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)
         {
             base.UseComponentCache<TCacheContract>(cacheContractName);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
+        {
+            base.SetConstructorResolutionPolicy(policy);
             return this;
         }
 

@@ -7,7 +7,7 @@ namespace ComposerCore.Implementation
 {
 	public class InitializationPointSpecification
 	{
-		public InitializationPointSpecification(string name, MemberTypes memberType, bool required = true, ICompositionalQuery query = null)
+		public InitializationPointSpecification(string name, MemberTypes memberType, bool? required = true, ICompositionalQuery query = null)
 		{
 		    Name = name ?? throw new ArgumentNullException(nameof(name));
 			MemberType = memberType;
@@ -17,7 +17,7 @@ namespace ComposerCore.Implementation
 
 		public string Name { get; }
 		public MemberTypes MemberType { get; }
-		public bool Required { get; }
+		public bool? Required { get; }
 
 		public ICompositionalQuery Query { get; set; }
 	}

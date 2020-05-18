@@ -14,6 +14,7 @@ namespace ComposerCore.Attributes
 		{
 		}
 
+		[Obsolete("Specifying contract names on the [CompositionConstructor] is no longer supported. Use [ComponentPlug] or [ConfigurationPoint] on the parameters instead.")]
 		public CompositionConstructorAttribute(params string[] names)
 		{
 			Names = names;

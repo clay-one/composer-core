@@ -27,7 +27,19 @@ namespace ComposerCore.FluentExtensions
             
             return new FluentGenericLocalComponentConfig(context, new GenericLocalComponentFactory(componentType));
         }
+        
+        public static FluentUntypedFactoryMethodComponentConfig ForUntypedFactoryMethod(this ComponentContext context, Func<IComposer, object> func)
+        {
+            return new FluentUntypedFactoryMethodComponentConfig(context, func);
+        }        
 
+        public static FluentFactoryMethodComponentConfig<TComponent> ForFactoryMethod<TComponent> 
+            (this ComponentContext context, Func<IComposer, TComponent> func) where TComponent : class
+        {
+            return new FluentFactoryMethodComponentConfig<TComponent>(context, func);
+        }
+
+        [Obsolete("Use ComponentContext.RegisterObject overloads instead")]
         public static FluentPreInitializedComponentConfig ForObject(this ComponentContext context, object componentInstance)
         {
             return new FluentPreInitializedComponentConfig(context, componentInstance);

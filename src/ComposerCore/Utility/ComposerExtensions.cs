@@ -8,49 +8,27 @@ namespace ComposerCore.Utility
 		#region Lazy query utilities
 
 		// GetComponent overloads
-
-		public static Lazy<TContract> LazyGetComponent<TContract>(this IComposer composer) 
-			where TContract : class
-		{
-			return new Lazy<TContract>(composer.GetComponent<TContract>);
-		}
-
-		public static Lazy<TContract> LazyGetComponent<TContract>(this IComposer composer, string name) 
+		
+		public static Lazy<TContract> LazyGetComponent<TContract>(this IComposer composer, string name = null) 
 			where TContract : class
 		{
 			return new Lazy<TContract>(() => composer.GetComponent<TContract>(name));
 		}
-
-		public static Lazy<object> LazyGetComponent(this IComposer composer, Type contract)
-		{
-			return new Lazy<object>(() => composer.GetComponent(contract));
-		}
-
-		public static Lazy<object> LazyGetComponent(this IComposer composer, Type contract, string name)
+		
+		public static Lazy<object> LazyGetComponent(this IComposer composer, Type contract, string name = null)
 		{
 			return new Lazy<object>(() => composer.GetComponent(contract, name));
 		}
 
 		// GetAllComponents overloads
-
-		public static Lazy<IEnumerable<TContract>> LazyGetAllComponents<TContract>(this IComposer composer) 
-			where TContract : class
-		{
-			return new Lazy<IEnumerable<TContract>>(composer.GetAllComponents<TContract>);
-		}
-
-		public static Lazy<IEnumerable<TContract>> LazyGetAllComponents<TContract>(this IComposer composer, string name) 
+		
+		public static Lazy<IEnumerable<TContract>> LazyGetAllComponents<TContract>(this IComposer composer, string name = null)
 			where TContract : class
 		{
 			return new Lazy<IEnumerable<TContract>>(() => composer.GetAllComponents<TContract>(name));
 		}
-
-		public static Lazy<IEnumerable<object>> LazyGetAllComponents(this IComposer composer, Type contract)
-		{
-			return new Lazy<IEnumerable<object>>(() => composer.GetAllComponents(contract));
-		}
-
-		public static Lazy<IEnumerable<object>> LazyGetAllComponents(this IComposer composer, Type contract, string name)
+		
+		public static Lazy<IEnumerable<object>> LazyGetAllComponents(this IComposer composer, Type contract, string name = null)
 		{
 			return new Lazy<IEnumerable<object>>(() => composer.GetAllComponents(contract, name));
 		}

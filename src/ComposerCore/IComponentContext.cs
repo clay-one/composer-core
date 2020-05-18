@@ -16,6 +16,11 @@ namespace ComposerCore
 		void Register(Type contract, IComponentFactory factory);
 		void Register(Type contract, string name, IComponentFactory factory);
 
+		void RegisterObject(object componentInstance);
+		void RegisterObject(Type contract, object componentInstance);
+		void RegisterObject(string name, object componentInstance);
+		void RegisterObject(Type contract, string name, object componentInstance);
+
 		void Unregister(ContractIdentity identity);
 		void UnregisterFamily(Type type);
 
@@ -23,7 +28,9 @@ namespace ComposerCore
 		void SetVariable(string name, Lazy<object> value);
 		void RemoveVariable(string name);
 
+		[Obsolete("Resolve ICompositionListenerChain from the context and use its methods instead.")]
 		void RegisterCompositionListener(string name, ICompositionListener listener);
+		[Obsolete("Resolve ICompositionListenerChain from the context and use its methods instead.")]
 		void UnregisterCompositionListener(string name);
 	}
 }

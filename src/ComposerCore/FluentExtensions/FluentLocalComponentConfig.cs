@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
@@ -45,13 +47,13 @@ namespace ComposerCore.FluentExtensions
         }
 
         public FluentLocalComponentConfig SetComponent<TPlugContract>(
-            string memberName, string contractName = null, bool required = true)
+            string memberName, string contractName = null, bool? required = null)
         {
             return SetComponent(memberName, typeof(TPlugContract), contractName, required);
         }
 
         public FluentLocalComponentConfig SetComponent(
-            string memberName, Type contractType, string contractName = null, bool required = true)
+            string memberName, Type contractType, string contractName = null, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
                 required, new ComponentQuery(contractType, contractName)));
@@ -61,38 +63,53 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            Factory.TargetConstructor = Factory.TargetType.GetConstructor(argTypes);
+            var constructor = Factory.TargetType.GetConstructor(argTypes);
+            if (constructor == null)
+                throw new ArgumentException("Could not find a public constructor with the specified parameter types " +
+                                            $"in the class '{Factory.TargetType.FullName}'");
+
+            return UseConstructor(constructor);
+        }
+
+        public FluentLocalComponentConfig UseConstructor(ConstructorInfo constructorInfo)
+        {
+            if (constructorInfo == null)
+                throw new ArgumentNullException(nameof(constructorInfo));
+            
+            Context.GetComponent<IPresetConstructorStore>().SetConstructor(Factory.TargetType, constructorInfo);
+            Factory.ConstructorResolutionPolicy = ConstructorResolutionPolicy.Preset;
+            
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool required = true)
+        public FluentLocalComponentConfig AddConstructorComponent<TPlugContract>(string contractName = null, bool? required = null)
         {
             return AddConstructorComponent(typeof(TPlugContract), contractName, required);
         }
 
-        public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool required = true)
+        public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue(object value)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, 
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, 
                 new FuncValueQuery(c => valueCalculator(c))));
 
             return this;
         }
 
-        public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool required = true)
+        public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
-            Factory.ConstructorArgs.Add(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
             return this;
         }
 
@@ -104,7 +121,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool required = true)
+        public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new FuncValueQuery(c => valueCalculator(c))));
@@ -112,7 +129,7 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool required = true)
+        public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
             Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
                 new VariableQuery(variableName)));
@@ -149,6 +166,12 @@ namespace ComposerCore.FluentExtensions
         public FluentLocalComponentConfig AsTransient()
         {
             return UseComponentCache(null);
+        }
+
+        public FluentLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
+        {
+            Factory.ConstructorResolutionPolicy = policy;
+            return this;
         }
         
         #endregion

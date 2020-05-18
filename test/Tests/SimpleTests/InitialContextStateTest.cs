@@ -1,4 +1,6 @@
-﻿using ComposerCore.Implementation;
+﻿using System.Diagnostics.CodeAnalysis;
+using ComposerCore.Attributes;
+using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ComposerCore.Tests.SimpleTests
@@ -6,7 +8,6 @@ namespace ComposerCore.Tests.SimpleTests
 	[TestClass]
 	public class InitialContextStateTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -35,6 +36,7 @@ namespace ComposerCore.Tests.SimpleTests
 		#endregion
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public void IComposerIsRegistered()
 		{
 			var c = _context.GetComponent<IComposer>();
@@ -43,6 +45,7 @@ namespace ComposerCore.Tests.SimpleTests
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public void IComponentContextIsRegistered()
 		{
 			var c = _context.GetComponent<IComponentContext>();
@@ -69,5 +72,24 @@ namespace ComposerCore.Tests.SimpleTests
 			Assert.AreSame(c2, c3);
 		}
 
+		[TestMethod]
+		public void DefaultAttributeCheckingConfig()
+		{
+			Assert.IsFalse(_context.Configuration.DisableAttributeChecking);
+		}
+
+		[TestMethod]
+		public void DefaultRequiredOrOptionalConfig()
+		{
+			Assert.IsTrue(_context.Configuration.ConstructorArgumentRequiredByDefault);
+			Assert.IsTrue(_context.Configuration.InitializationPointsRequiredByDefault);
+		}
+
+		[TestMethod]
+		public void DefaultConstructorResolutionConfig()
+		{
+			Assert.AreEqual(ConstructorResolutionPolicy.SingleOrDefault, 
+				_context.Configuration.DefaultConstructorResolutionPolicy);
+		}
 	}
 }

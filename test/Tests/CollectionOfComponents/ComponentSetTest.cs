@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CollectionOfComponents.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable PossibleMultipleEnumeration
 
 namespace ComposerCore.Tests.CollectionOfComponents
 {

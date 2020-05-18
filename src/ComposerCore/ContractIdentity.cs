@@ -51,5 +51,10 @@ namespace ComposerCore
 		{
 			return !Equals(a, b);
 		}
+		
+		public static implicit operator ContractIdentity(Type type)
+		{
+			return new ContractIdentity(type);
+		}
 	}
 }

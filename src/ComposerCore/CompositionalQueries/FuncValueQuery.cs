@@ -12,6 +12,11 @@ namespace ComposerCore.CompositionalQueries
 
         #region Implementation of ICompositionalQuery
 
+        public bool IsResolvable(IComposer composer)
+        {
+            return true;
+        }
+        
         public object Query(IComposer composer)
         {
             IComposer composerToUse = ComposerOverride ?? composer;

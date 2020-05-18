@@ -16,6 +16,11 @@
         {
         }
 
+        public NonAttributedComponent(IComponentOne componentOne)
+        {
+            ComponentOne = componentOne;
+        }
+        
         public NonAttributedComponent(IComponentOne componentOne, IComponentTwo componentTwo)
         {
             ComponentOne = componentOne;

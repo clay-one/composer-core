@@ -5,6 +5,7 @@ using System.Resources;
 using System.Linq;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Attributes;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Utility;
 
@@ -74,9 +75,14 @@ namespace ComposerCore.Implementation
 		    if (contract == component)
 		        return;
 
-			if (!component.IsSubclassOf(contract) && component.GetInterface(contract.Name) == null)
-				throw new CompositionException(
-				        $"Component type '{component.FullName}' is not a sub-type of contract '{contract.FullName}");
+		    if (component.IsSubclassOf(contract))
+			    return;
+		    
+		    if (contract.IsInterface && component.GetInterfaces().Any(i => i == contract))
+			    return;
+		    
+			throw new CompositionException(
+			        $"Component type '{component.FullName}' is not a sub-type of contract '{contract.FullName}");
 		}
 
 		internal static ComponentCacheAttribute GetComponentCacheAttribute(Type component)
@@ -97,6 +103,16 @@ namespace ComposerCore.Implementation
 				return null;
 
 			return ((ComponentAttribute)attributes[0]).DefaultName;
+		}
+
+		internal static ConstructorResolutionPolicyAttribute GetComponentConstructorResolutionAttribute(Type component)
+		{
+			var attributes = component.GetCustomAttributes(typeof(ConstructorResolutionPolicyAttribute), true);
+
+			if (attributes.Length == 0 || !(attributes[0] is ConstructorResolutionPolicyAttribute))
+				return null;
+
+			return (ConstructorResolutionPolicyAttribute) attributes[0];
 		}
 
 		internal static void CheckAndAddInitializationPoint(IComposer composer,
@@ -167,8 +183,7 @@ namespace ComposerCore.Implementation
 					new InitializationPointSpecification(memberInfo.Name,
 					                                     memberInfo.MemberType,
 					                                     GetComponentPlugAttribute(memberInfo).Required,
-					                                     new ComponentQuery(contractType,
-					                                                        GetComponentPlugAttribute(memberInfo).Name)));
+					                                     new ComponentQuery(contractType, GetComponentPlugAttribute(memberInfo).Name)));
 			}
 			else if (HasResourceManagerPlugAttribute(memberInfo))
 			{
@@ -216,30 +231,23 @@ namespace ComposerCore.Implementation
 
 				var configurationPointAttribute = GetConfigurationPointAttribute(memberInfo);
 
-				if (string.IsNullOrEmpty(configurationPointAttribute.ConfigurationVariableName))
+				// If the name of the variable is provided, add it
+				// to the initialization points list by creating a
+				// reference to the variable.
+
+				var variableNames = new[]
 				{
-					// If the variable name is not provided and the configuration point
-					// is required, throw.
-
-					if (configurationPointAttribute.Required)
-						throw new CompositionException(
-							"Configuration points marked as required should either have a variable name set, or be initialized in the component configuration by caller.");
-
-					// If it is not provided, ignore and don't add it to the
-					// list of initialization points.
-				}
-				else
-				{
-					// If the name of the variable is provided, add it
-					// to the initialization points list by creating a
-					// reference to the variable.
-
-					initializationPoints.Add(
-						new InitializationPointSpecification(memberInfo.Name,
-						                                     memberInfo.MemberType,
-						                                     configurationPointAttribute.Required,
-						                                     new VariableQuery(configurationPointAttribute.ConfigurationVariableName)));
-				}
+					configurationPointAttribute.ConfigurationVariableName,
+					(memberInfo.ReflectedType?.FullName ?? "") + "." + memberInfo.Name,
+					(memberInfo.ReflectedType?.Name ?? "") + "." + memberInfo.Name,
+					memberInfo.Name
+				};
+				
+				initializationPoints.Add(
+					new InitializationPointSpecification(memberInfo.Name,
+					                                     memberInfo.MemberType,
+					                                     configurationPointAttribute.Required,
+					                                     new CascadeVariableQuery(variableNames)));
 			}
 		}
 
@@ -307,7 +315,12 @@ namespace ComposerCore.Implementation
 
 		internal static ComponentPlugAttribute GetComponentPlugAttribute(MemberInfo memberInfo)
 		{
-			return memberInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false)[0] as ComponentPlugAttribute;
+			return memberInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false).FirstOrDefault() as ComponentPlugAttribute;
+		}
+
+		internal static ComponentPlugAttribute GetComponentPlugAttribute(ParameterInfo parameterInfo)
+		{
+			return parameterInfo.GetCustomAttributes(typeof(ComponentPlugAttribute), false).FirstOrDefault() as ComponentPlugAttribute;
 		}
 
 		internal static ResourceManagerPlugAttribute GetResourceManagerPlugAttribute(MemberInfo memberInfo)
@@ -438,9 +451,9 @@ namespace ComposerCore.Implementation
 			throw new ArgumentException("Specified member type is not supported: " + memberType);
 		}
 
-	    internal static ILocalComponentFactory CreateLocalFactory(Type component)
+	    internal static IComponentFactory CreateLocalFactory(Type component)
 	    {
-	        ILocalComponentFactory result;
+	        IComponentFactory result;
 	        if (component.IsOpenGenericType())
 	            result = new GenericLocalComponentFactory(component);
 	        else

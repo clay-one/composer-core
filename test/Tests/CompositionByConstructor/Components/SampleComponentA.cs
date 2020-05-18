@@ -2,8 +2,7 @@
 
 namespace ComposerCore.Tests.CompositionByConstructor.Components
 {
-	[Component]
-	[ComponentCache(null)]
+	[Component, Transient]
 	public class SampleComponentA : ISampleContractA
 	{
 	}

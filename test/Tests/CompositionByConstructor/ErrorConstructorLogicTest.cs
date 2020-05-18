@@ -7,7 +7,6 @@ namespace ComposerCore.Tests.CompositionByConstructor
 	[TestClass]
 	public class ErrorConstructorLogicTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -38,64 +37,61 @@ namespace ComposerCore.Tests.CompositionByConstructor
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PrivateDefaultConstructorThrows()
 		{
 			_context.Register(typeof(PrivateDefaultSingleConstructor));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<PrivateDefaultSingleConstructor>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PrivateDefaultWithOtherUnmarkedConstructorsThrows()
 		{
 			_context.Register(typeof(PrivateDefaultNoneMarkedFromOtherConstructors));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<PrivateDefaultNoneMarkedFromOtherConstructors>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PrivateMarkedConstructorThrows()
 		{
 			_context.Register(typeof(PrivateMarkedConstructor));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<PrivateMarkedConstructor>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void MultipleMarkedConstructorsThrows()
 		{
 			_context.Register(typeof(MultipleMarkedConstructors));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultipleMarkedConstructors>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void MultipleNonDefaultNoneMarkedThrows()
 		{
 			_context.Register(typeof(NoDefaultMultipleUnmarkedConstructors));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<NoDefaultMultipleUnmarkedConstructors>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ConstructorParameterAreRequired()
 		{
 			_context.UnregisterFamily(typeof(ISampleContractA));
 			_context.Register(typeof(MultiConstructorsWithDefaultAndMarked));
 
-			_context.GetComponent<MultiConstructorsWithDefaultAndMarked>();
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<MultiConstructorsWithDefaultAndMarked>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void NonContractParameterThrows()
 		{
 			_context.Register(typeof(ConstructorWithIntegerParam));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ConstructorWithIntegerParam>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ExtraNamesThrows()
 		{
 			_context.Register(typeof(NamesMoreThanParamCount));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<NamesMoreThanParamCount>());
 		}
-
-
 	}
 }

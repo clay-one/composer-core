@@ -1,4 +1,6 @@
-﻿using ComposerCore.FluentExtensions;
+﻿using System.Linq;
+using ComposerCore.Attributes;
+using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.FluentRegistration.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -6,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ComposerCore.Tests.FluentRegistration
 {
     [TestClass]
-    public class FluentSetConstructorArgsTest
+    public class FluentConstructorCompositionTest
     {
         public TestContext TestContext { get; set; }
         private ComponentContext _context;
@@ -28,6 +30,7 @@ namespace ComposerCore.Tests.FluentRegistration
         {
             _context = new ComponentContext();
             _context.Configuration.DisableAttributeChecking = true;
+            _context.Configuration.DefaultConstructorResolutionPolicy = ConstructorResolutionPolicy.MostResolvable;
 
             _context.Register(typeof(ComponentOne));
             _context.Register(typeof(IComponentTwo), "name", typeof(ComponentTwo));
@@ -50,6 +53,7 @@ namespace ComposerCore.Tests.FluentRegistration
                 .AddConstructorComponent<IComponentTwo>("name")
                 .RegisterWith<INonAttributedContract>();
 
+            var x = _context.GetComponent<IComponentOne>();
             var i = _context.GetComponent<INonAttributedContract>();
             var c = i as NonAttributedComponent;
 
@@ -166,6 +170,50 @@ namespace ComposerCore.Tests.FluentRegistration
             Assert.AreEqual(5, c.SomeOtherValue);
         }
 
+        [TestMethod]
+        public void SetConstructorResolutionPolicy()
+        {
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)
+                .RegisterWith<INonAttributedContract>();
+            
+            var i = _context.GetComponent<INonAttributedContract>();
+            var c = i as NonAttributedComponent;
 
+            Assert.IsNotNull(i);
+            Assert.IsNotNull(c);
+            Assert.IsNotNull(c.ComponentOne);
+            Assert.IsNull(c.ComponentTwo);
+            Assert.IsNull(c.SomeValue);
+            Assert.AreEqual(default, c.SomeOtherValue);
+        }
+
+        [TestMethod]
+        public void SetConstructorResolutionWithGetAllComponents()
+        {
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.MostResolvable)
+                .RegisterWith<INonAttributedContract>();
+            
+            _context.ForComponent<NonAttributedComponent>()
+                .SetConstructorResolutionPolicy(ConstructorResolutionPolicy.DefaultConstructor)
+                .RegisterWith<INonAttributedContract>();
+
+            var ii = _context.GetAllComponents<INonAttributedContract>().ToList();
+            
+            Assert.IsNotNull(ii);
+            Assert.IsTrue(ii.All(i => i is NonAttributedComponent));
+
+            var cc = ii.Cast<NonAttributedComponent>().ToList();
+            
+            Assert.IsNotNull(cc);
+            Assert.IsTrue(cc.All(c => c != null));
+            Assert.IsTrue(cc.All(c => c.ComponentTwo == default));
+            Assert.IsTrue(cc.All(c => c.SomeValue == default));
+            Assert.IsTrue(cc.All(c => c.SomeOtherValue == default));
+            
+            Assert.IsTrue(cc.Any(c => c.ComponentOne == default));
+            Assert.IsTrue(cc.Any(c => c.ComponentOne != default));
+        }
     }
 }

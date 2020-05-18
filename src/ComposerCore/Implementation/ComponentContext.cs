@@ -5,6 +5,8 @@ using ComposerCore.Attributes;
 using ComposerCore.Cache;
 using ComposerCore.Extensibility;
 using ComposerCore.Factories;
+using ComposerCore.Implementation.ConstructorResolvers;
+using ComposerCore.Utility;
 
 
 namespace ComposerCore.Implementation
@@ -16,7 +18,6 @@ namespace ComposerCore.Implementation
 	{
         #region Private Data
 
-        private readonly Dictionary<string, ICompositionListener> _compositionListeners;
 		private readonly Repository _repository;
 		private readonly Dictionary<string, object> _variables;
 
@@ -34,12 +35,8 @@ namespace ComposerCore.Implementation
 
 			_repository = new Repository();
 			_variables = new Dictionary<string, object>();
-			_compositionListeners = new Dictionary<string, ICompositionListener>();
 
-		    var componentContextFactory = new PreInitializedComponentFactory(this);
-            InternalRegister(typeof(IComposer), null, componentContextFactory, false);
-            InternalRegister(typeof(IComponentContext), null, componentContextFactory, false);
-            InternalRegister(typeof(ComponentContext), null, componentContextFactory, false);
+			RegisterObject(this);
 
 			if (registerBuiltInComponents)
 				RegisterBuiltInComponents();
@@ -47,10 +44,23 @@ namespace ComposerCore.Implementation
 
 		private void RegisterBuiltInComponents()
 		{
+			RegisterObject(new CompositionListenerChain());
+			
 		    InternalRegister(typeof (DefaultComponentCache), null,
 		        ComponentContextUtils.CreateLocalFactory(typeof (DefaultComponentCache)), false);
             InternalRegister(typeof(ContractAgnosticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(ContractAgnosticComponentCache)), false);
+
+            RegisterObject((string)null, new ExplicitConstructorResolver());
+            Register(typeof(ExplicitConstructorResolver));
+            Register(typeof(DefaultConstructorResolver));
+            Register(typeof(SingleOrDefaultConstructorResolver));
+            Register(typeof(MostParametersConstructorResolver));
+            Register(typeof(LeastParametersConstructorResolver));
+            Register(typeof(MostResolvableConstructorResolver));
+            Register(typeof(PresetConstructorStore));
+            Register(typeof(PresetConstructorResolver));
+            
             InternalRegister(typeof(StaticComponentCache), null,
                 ComponentContextUtils.CreateLocalFactory(typeof(StaticComponentCache)), false);
             InternalRegister(typeof(ThreadLocalComponentCache), null,
@@ -69,9 +79,11 @@ namespace ComposerCore.Implementation
         public virtual void Register(Type component)
 		{
 			if (component == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(component));
 
-			Register(ComponentContextUtils.GetComponentDefaultName(component), ComponentContextUtils.CreateLocalFactory(component));
+			Register(
+				ComponentContextUtils.GetComponentDefaultName(component), 
+				ComponentContextUtils.CreateLocalFactory(component));
 		}
 
         public virtual void Register(Type contract, string name, Type component)
@@ -94,11 +106,10 @@ namespace ComposerCore.Implementation
         public virtual void Register(string name, IComponentFactory componentFactory)
 		{
 			if (componentFactory == null)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException(nameof(componentFactory));
 
-			var contracts = componentFactory.GetContractTypes();
+			var contracts = componentFactory.GetContractTypes().ToArray();
 
-			// TODO: Better description of the component causing the exception
 			if (!contracts.Any())
 				throw new CompositionException("No contracts found for the component factory " + componentFactory);
 
@@ -130,6 +141,50 @@ namespace ComposerCore.Implementation
 
 			InternalRegister(contract, name, factory, true);
 		}
+
+        public void RegisterObject(object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        var componentType = componentInstance.GetType();
+	        var name = ComponentContextUtils.GetComponentDefaultName(componentType);
+	        
+	        RegisterObject(name, componentInstance);
+        }
+
+        public void RegisterObject(Type contract, object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        var componentType = componentInstance.GetType();
+	        var name = ComponentContextUtils.GetComponentDefaultName(componentType);
+	        
+	        RegisterObject(contract, name, componentInstance);
+        }
+
+        public void RegisterObject(string name, object componentInstance)
+        {
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+	        
+	        var factory = new PreInitializedComponentFactory(componentInstance);
+	        Register(name, factory);
+        }
+
+        public void RegisterObject(Type contract, string name, object componentInstance)
+        {
+	        if (contract == null)
+		        throw new ArgumentNullException(nameof(contract));
+	        if (componentInstance == null)
+		        throw new ArgumentNullException(nameof(componentInstance));
+
+	        ComponentContextUtils.ThrowIfNotSubTypeOf(contract, componentInstance.GetType());
+
+	        var factory = new PreInitializedComponentFactory(componentInstance);
+	        Register(contract, name, factory);
+        }
 
         public virtual void Unregister(ContractIdentity identity)
 		{
@@ -175,21 +230,12 @@ namespace ComposerCore.Implementation
 
         public virtual void RegisterCompositionListener(string name, ICompositionListener listener)
 		{
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-
-			if ((_compositionListeners.ContainsKey(name)) && (listener != null))
-				throw new ArgumentException($"Another composition listener with the name '{name}' is already registered.");
-
-			if (listener == null)
-				_compositionListeners.Remove(name);
-			else
-				_compositionListeners[name] = listener;
+			GetComponent<CompositionListenerChain>().RegisterCompositionListener(name, listener);
 		}
 
         public virtual void UnregisterCompositionListener(string name)
 		{
-			RegisterCompositionListener(name, null);
+			GetComponent<CompositionListenerChain>().UnregisterCompositionListener(name);
 		}
 
 		#endregion
@@ -198,24 +244,52 @@ namespace ComposerCore.Implementation
 
 	    public ComposerConfiguration Configuration { get; }
 
-	    public virtual TContract GetComponent<TContract>()
+	    public bool IsResolvable<TContract>(string name = null) where TContract : class
+	    {
+		    return IsResolvable(typeof(TContract), name);
+	    }
+
+	    public bool IsResolvable(Type contract, string name = null)
+	    {
+		    if (contract.ContainsGenericParameters)
+			    throw new CompositionException("Requested contract type " + contract.Name +
+			                                   " contains open generic parameters. Can not construct a concrete type.");
+
+		    // IEnumerable<T> is always resolvable, since it is equal to calling GetAllComponents
+		    var enumerableElementType = contract.GetEnumerableElementType();
+		    if (enumerableElementType != null)
+			    return Configuration.DisableAttributeChecking ||
+			           ComponentContextUtils.HasContractAttribute(enumerableElementType);
+
+		    if (!Configuration.DisableAttributeChecking && !ComponentContextUtils.HasContractAttribute(contract))
+			    return false;
+		    
+		    var identity = new ContractIdentity(contract, name);
+		    var factories = _repository.FindFactories(identity);
+		    
+		    using (var enumerator = factories?.GetEnumerator())
+		    {
+			    if (enumerator == null)
+				    return false;
+
+			    while (enumerator.MoveNext())
+			    {
+				    var current = enumerator.Current;
+				    if (current != null && current.IsResolvable(identity.Type))
+					    return true;
+			    }
+		    }
+
+		    return false;
+	    }
+
+	    public virtual TContract GetComponent<TContract>(string name = null)
 			where TContract : class
 		{
-			return GetComponent(typeof (TContract), null) as TContract;
+			return (TContract) GetComponent(typeof (TContract), name);
 		}
 
-        public virtual TContract GetComponent<TContract>(string name)
-			where TContract : class
-		{
-			return GetComponent(typeof (TContract), name) as TContract;
-		}
-
-        public virtual object GetComponent(Type contract)
-		{
-			return GetComponent(contract, null);
-		}
-
-        public virtual object GetComponent(Type contract, string name)
+        public virtual object GetComponent(Type contract, string name = null)
 		{
 			if (contract.ContainsGenericParameters)
 				throw new CompositionException("Requested contract type " + contract.Name +
@@ -231,40 +305,34 @@ namespace ComposerCore.Implementation
 
 		        while (enumerator.MoveNext())
 		        {
-                    var result = enumerator.Current?.GetComponentInstance(identity, _compositionListeners.Values);
+                    var result = enumerator.Current?.GetComponentInstance(identity);
 		            if (result != null)
 		                return result;
 		        }
             }
 
+		    var enumerableElementType = contract.GetEnumerableElementType();
+		    if (enumerableElementType != null)
+			    return GetAllComponents(enumerableElementType, name);
+
 		    return null;
 		}
 
-        public virtual IEnumerable<TContract> GetAllComponents<TContract>()
-			where TContract : class
-		{
-			return GetAllComponents(typeof (TContract), null).Cast<TContract>();
-		}
-
-        public virtual IEnumerable<TContract> GetAllComponents<TContract>(string name)
+        public virtual IEnumerable<TContract> GetAllComponents<TContract>(string name = null)
 			where TContract : class
 		{
 			return GetAllComponents(typeof (TContract), name).Cast<TContract>();
 		}
 
-        public virtual IEnumerable<object> GetAllComponents(Type contract)
-		{
-			return GetAllComponents(contract, null);
-		}
-
-        public virtual IEnumerable<object> GetAllComponents(Type contract, string name)
+        public virtual IEnumerable<object> GetAllComponents(Type contract, string name = null)
 		{
 			var identity = new ContractIdentity(contract, name);
 			var factories = _repository.FindFactories(identity);
 
 			return factories
-				.Select(f => f.GetComponentInstance(identity, _compositionListeners.Values))
-				.Where(result => result != null);
+				.Select(f => f.GetComponentInstance(identity))
+				.Where(result => result != null)
+				.CastToRuntimeType(contract);
 		}
 
         public virtual IEnumerable<TContract> GetComponentFamily<TContract>()
@@ -277,10 +345,19 @@ namespace ComposerCore.Implementation
 			var identities = _repository.GetContractIdentityFamily(contract);
 
 			return identities.SelectMany(identity => _repository.FindFactories(identity),
-			                             (identity, factory) =>
-			                             factory.GetComponentInstance(identity, _compositionListeners.Values));
+				(identity, factory) =>
+					factory.GetComponentInstance(identity))
+			.CastToRuntimeType(contract);
 		}
 
+        public virtual bool HasVariable(string name)
+        {
+	        if (name == null)
+		        throw new ArgumentNullException(nameof(name));
+
+	        return _variables.ContainsKey(name);
+        }
+        
         public virtual object GetVariable(string name)
 		{
 			if (name == null)
@@ -312,6 +389,12 @@ namespace ComposerCore.Implementation
 					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{componentType.FullName}'");
 
 				var initializationPointResult = initializationPoint.Query.Query(this);
+				if (initializationPointResult == null &&
+				    initializationPoint.Required.GetValueOrDefault(Configuration.InitializationPointsRequiredByDefault))
+				{
+					throw new CompositionException($"Could not resolve required initialization point '{initializationPoint.Name}' on type '{componentType.FullName}'");
+				}
+				
 				initializationPointResults.Add(initializationPointResult);
 
 				ComponentContextUtils.ApplyInitializationPoint(componentInstance,
@@ -320,11 +403,9 @@ namespace ComposerCore.Implementation
 				                                               initializationPointResult);
 			}
 
-			foreach (var compositionListener in _compositionListeners.Values)
-			{
-				compositionListener.OnComponentComposed(null, initializationPoints, initializationPointResults, componentType,
-				                                        componentInstance, componentInstance);
-			}
+			GetComponent<ICompositionListenerChain>().NotifyComposed(
+				componentInstance, componentInstance, initializationPointResults, 
+				null, initializationPoints, componentType);
 
 			var compositionNotificationMethods = ComponentContextUtils.FindCompositionNotificationMethods(componentType);
 			if (compositionNotificationMethods != null)

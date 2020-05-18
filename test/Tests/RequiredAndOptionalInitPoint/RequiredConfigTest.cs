@@ -8,7 +8,6 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 	[TestClass]
 	public class RequiredConfigTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -50,10 +49,10 @@ namespace ComposerCore.Tests.RequiredAndOptionalInitPoint
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ReqConfigNotProvided()
 		{
 			_context.Register(typeof(ComponentWithRequiredConfig));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ComponentWithRequiredConfig>());
 		}
 
 		[TestMethod]

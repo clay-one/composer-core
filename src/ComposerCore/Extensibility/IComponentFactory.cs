@@ -12,6 +12,7 @@ namespace ComposerCore.Extensibility
 		void Initialize(IComposer composer);
 		IEnumerable<Type> GetContractTypes();
 
-		object GetComponentInstance(ContractIdentity contract, IEnumerable<ICompositionListener> listenerChain);
+		bool IsResolvable(Type contractType);
+		object GetComponentInstance(ContractIdentity contract);
 	}
 }

@@ -7,7 +7,6 @@ namespace ComposerCore.Tests.CompositionByConstructor
 	[TestClass]
 	public class WorkingConstructorLogicTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -115,6 +114,5 @@ namespace ComposerCore.Tests.CompositionByConstructor
 			Assert.AreNotSame(c.DefaultA, c.NamedA);
 			Assert.AreSame(c.DefaultB, c.UnnamedB);
 		}
-
 	}
 }

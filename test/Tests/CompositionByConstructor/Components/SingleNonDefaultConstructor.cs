@@ -2,34 +2,20 @@
 
 namespace ComposerCore.Tests.CompositionByConstructor.Components
 {
-	[Contract]
-	[Component]
+	[Contract, Component]
 	public class SingleNonDefaultConstructor
 	{
-		private readonly ISampleContractA _a;
-		private readonly ISampleContractB _b;
-		private readonly int _invokedConstructor;
-
 		public SingleNonDefaultConstructor(ISampleContractA a, ISampleContractB b)
 		{
-			_a = a;
-			_b = b;
-			_invokedConstructor = 3;
+			A = a;
+			B = b;
+			InvokedConstructor = 3;
 		}
 
-		public ISampleContractA A
-		{
-			get { return _a; }
-		}
+		public ISampleContractA A { get; }
 
-		public ISampleContractB B
-		{
-			get { return _b; }
-		}
+		public ISampleContractB B { get; }
 
-		public int InvokedConstructor
-		{
-			get { return _invokedConstructor; }
-		}
+		public int InvokedConstructor { get; }
 	}
 }

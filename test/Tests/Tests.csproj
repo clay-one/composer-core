@@ -54,6 +54,9 @@
     <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedConfigProvidedByReg.xml" />
     <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\ReqNamedPlugRedirected.xml" />
     <EmbeddedResource Include="InitializationPointVariety\Xmls\ResourceComposition.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\UnsConfigProvided.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\UnsNamedConfigProvidedByReg.xml" />
+    <EmbeddedResource Include="RequiredAndOptionalInitPoint\Xmls\UnsNamedPlugRedirected.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ABool.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ACollection.xml" />
     <EmbeddedResource Include="XmlValueParser\Xmls\ADouble.xml" />

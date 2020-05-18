@@ -5,11 +5,14 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-    [Contract]
-    [Component]
-    [ComponentCache(typeof(StaticComponentCache))]
+    [Contract, Component, ComponentCache(typeof(StaticComponentCache)), ConstructorResolutionPolicy(null)]
     public class ThreadLocalComponentCache : IComponentCache
     {
+        [CompositionConstructor]
+        public ThreadLocalComponentCache()
+        {
+        }
+        
         private readonly ThreadLocal<IDictionary<ContractIdentity, ComponentCacheEntry>> _cacheContent =
             new ThreadLocal<IDictionary<ContractIdentity, ComponentCacheEntry>>(() =>
                 new Dictionary<ContractIdentity, ComponentCacheEntry>());

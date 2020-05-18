@@ -1,5 +1,6 @@
 ﻿using System;
 using ComposerCore.Aop.Diagnostics;
+using ComposerCore.Aop.Matching;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.CompositionListener.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -61,6 +62,7 @@ namespace ComposerCore.Tests.CompositionListener
 			_context.Register(typeof(NonSharedComponent));
 
 			var listener = new CountingCompositionListener();
+			listener.IncludedComponents = new FullNamePatternTypeFilter { Pattern = "^ComposerCore\\.Tests\\..*" };
 			_context.RegisterCompositionListener("counter", listener);
 
 			_context.GetComponent<ISampleContract>();
