@@ -190,6 +190,11 @@ namespace ComposerCore.FluentExtensions
             return UseComponentCache(typeof(ContractAgnosticComponentCache));
         }
 
+        public new FluentLocalComponentConfig<TComponent> AsScoped()
+        {
+            return UseComponentCache(typeof(ScopedComponentCache));
+        }
+
         public new FluentLocalComponentConfig<TComponent> AsTransient()
         {
             return UseComponentCache(null);

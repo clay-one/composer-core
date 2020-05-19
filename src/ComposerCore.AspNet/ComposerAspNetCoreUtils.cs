@@ -5,7 +5,6 @@ using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ComposerCore.AspNet
@@ -26,38 +25,32 @@ namespace ComposerCore.AspNet
         {
             composer
                 .ForComponent<ComposerServiceProvider>()
-                .AsSingleton()
+                .AsScoped()
                 .RegisterWith<IServiceProvider>();
             
             composer
-                .ForComponent<HttpContextAccessor>()
-                .AsSingleton()
-                .RegisterWith<IHttpContextAccessor>();
-            
-            composer
                 .ForComponent<ComposerServiceScopeFactory>()
-                .AsSingleton()
+                .AsScoped()
                 .RegisterWith<IServiceScopeFactory>();
 
-            composer.ForComponent<AspNetCoreRequestComponentCache>().Register();
-            
             foreach (var service in serviceCollection)
             {
-                Console.WriteLine($"service: {service.ServiceType.FullName}");
+                var componentCacheType = MapComponentCacheType(service.Lifetime);
+                Console.WriteLine($"service: {service.ServiceType.FullName} - Cache type: {componentCacheType?.Name ?? "<NULL>"}");
                 if (service.ImplementationType != null)
                 {
                     if (service.ImplementationType.IsOpenGenericType())
                     {
                         composer
                             .ForGenericComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                            .UseComponentCache(componentCacheType)
                             .RegisterWith(service.ServiceType);
                     }
                     else
                     {
                         composer
                             .ForComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                            .UseComponentCache(componentCacheType)
                             .RegisterWith(service.ServiceType);
                     }
                 }
@@ -65,7 +58,7 @@ namespace ComposerCore.AspNet
                 {
                     composer
                         .ForUntypedFactoryMethod((c) => service.ImplementationFactory(c.GetComponent<IServiceProvider>()))
-                        .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                        .UseComponentCache(componentCacheType)
                         .RegisterWith(service.ServiceType);
                 }
                 else
@@ -86,7 +79,7 @@ namespace ComposerCore.AspNet
                     return null;
                 
                 case ServiceLifetime.Scoped:
-                    return typeof(AspNetCoreRequestComponentCache);
+                    return typeof(ScopedComponentCache);
                     
                 default:
                     return typeof(DefaultComponentCache);

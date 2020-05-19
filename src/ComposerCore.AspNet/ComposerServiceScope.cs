@@ -5,11 +5,18 @@ namespace ComposerCore.AspNet
 {
     public class ComposerServiceScope : IServiceScope
     {
-        public void Dispose()
+        private readonly IComposer _scope;
+        public IServiceProvider ServiceProvider { get; }
+
+        public ComposerServiceScope(IComposer scope)
         {
-            throw new NotImplementedException();
+            _scope = scope;
+            ServiceProvider = _scope.GetComponent<IServiceProvider>();
         }
 
-        public IServiceProvider ServiceProvider { get; }
+        public void Dispose()
+        {
+            _scope.Dispose();
+        }
     }
 }

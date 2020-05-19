@@ -3,21 +3,21 @@ using ComposerCore.Attributes;
 
 namespace ComposerCore.AspNet
 {
-    [Component]
+    [Component, Scoped]
     public class ComposerServiceProvider : IServiceProvider
     {
-        private readonly IComposer _composer;
+        private readonly IComposer _scope;
 
         [CompositionConstructor]
-        public ComposerServiceProvider(IComposer composer)
+        public ComposerServiceProvider(IComposer scope)
         {
-            _composer = composer;
+            _scope = scope;
         }
 
         public object GetService(Type serviceType)
         {
             Console.WriteLine($"Querying composer for '{serviceType.FullName}'");
-            return _composer.GetComponent(serviceType);
+            return _scope.GetComponent(serviceType);
         }
     }
 }
