@@ -10,11 +10,15 @@ namespace WebApiSample.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IComposer _composer;
+        
         public ValuesController(IComposer composer)
         {
-            ValueProvider = composer.GetComponent<IValueProvider>();
+            // Constructor injection
+            _composer = composer;
         }
 
+        // Property injection
         [ComponentPlug]
         public IValueProvider ValueProvider { get; set; }
         
