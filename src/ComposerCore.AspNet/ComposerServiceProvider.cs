@@ -16,7 +16,6 @@ namespace ComposerCore.AspNet
 
         public object GetService(Type serviceType)
         {
-            Console.WriteLine($"Querying composer for '{serviceType.FullName}'");
             return _scope.GetComponent(serviceType);
         }
     }

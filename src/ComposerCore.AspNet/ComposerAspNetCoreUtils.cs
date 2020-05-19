@@ -50,7 +50,6 @@ namespace ComposerCore.AspNet
         private static void RegisterAspNetService(ComponentContext composer, ServiceDescriptor service)
         {
             var componentCacheType = MapComponentCacheType(service.Lifetime);
-            Console.WriteLine($"service: {service.ServiceType.FullName} - Cache type: {componentCacheType?.Name ?? "<NULL>"}");
             if (service.ImplementationType != null)
             {
                 if (service.ImplementationType.IsOpenGenericType())
