@@ -5,7 +5,7 @@ using ComposerCore.Cache;
 using ComposerCore.FluentExtensions;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ComposerCore.AspNet
@@ -24,54 +24,59 @@ namespace ComposerCore.AspNet
         
         public static void Populate(this ComponentContext composer, IEnumerable<ServiceDescriptor> serviceCollection)
         {
-            composer
-                .ForComponent<ComposerServiceProvider>()
-                .AsSingleton()
-                .RegisterWith<IServiceProvider>();
-            
-            composer
-                .ForComponent<HttpContextAccessor>()
-                .AsSingleton()
-                .RegisterWith<IHttpContextAccessor>();
-            
-            composer
-                .ForComponent<ComposerServiceScopeFactory>()
-                .AsSingleton()
-                .RegisterWith<IServiceScopeFactory>();
+            RegisterAspNetScopeComponents(composer);
 
-            composer.ForComponent<AspNetCoreRequestComponentCache>().Register();
-            
             foreach (var service in serviceCollection)
             {
-                Console.WriteLine($"service: {service.ServiceType.FullName}");
-                if (service.ImplementationType != null)
-                {
-                    if (service.ImplementationType.IsOpenGenericType())
-                    {
-                        composer
-                            .ForGenericComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
-                            .RegisterWith(service.ServiceType);
-                    }
-                    else
-                    {
-                        composer
-                            .ForComponent(service.ImplementationType)
-                            .UseComponentCache(MapComponentCacheType(service.Lifetime))
-                            .RegisterWith(service.ServiceType);
-                    }
-                }
-                else if (service.ImplementationFactory != null)
+                RegisterAspNetService(composer, service);
+            }
+
+            ReplaceDefaultAspNetComponents(composer);
+        }
+
+        private static void RegisterAspNetScopeComponents(ComponentContext composer)
+        {
+            composer
+                .ForComponent<ComposerServiceProvider>()
+                .AsScoped()
+                .RegisterWith<IServiceProvider>();
+
+            composer
+                .ForComponent<ComposerServiceScopeFactory>()
+                .AsScoped()
+                .RegisterWith<IServiceScopeFactory>();
+        }
+
+        private static void RegisterAspNetService(ComponentContext composer, ServiceDescriptor service)
+        {
+            var componentCacheType = MapComponentCacheType(service.Lifetime);
+            if (service.ImplementationType != null)
+            {
+                if (service.ImplementationType.IsOpenGenericType())
                 {
                     composer
-                        .ForUntypedFactoryMethod((c) => service.ImplementationFactory(c.GetComponent<IServiceProvider>()))
-                        .UseComponentCache(MapComponentCacheType(service.Lifetime))
+                        .ForGenericComponent(service.ImplementationType)
+                        .UseComponentCache(componentCacheType)
                         .RegisterWith(service.ServiceType);
                 }
                 else
                 {
-                    composer.RegisterObject(service.ServiceType, service.ImplementationInstance);
+                    composer
+                        .ForComponent(service.ImplementationType)
+                        .UseComponentCache(componentCacheType)
+                        .RegisterWith(service.ServiceType);
                 }
+            }
+            else if (service.ImplementationFactory != null)
+            {
+                composer
+                    .ForUntypedFactoryMethod((c) => service.ImplementationFactory(c.GetComponent<IServiceProvider>()))
+                    .UseComponentCache(componentCacheType)
+                    .RegisterWith(service.ServiceType);
+            }
+            else
+            {
+                composer.RegisterObject(service.ServiceType, service.ImplementationInstance);
             }
         }
 
@@ -86,11 +91,18 @@ namespace ComposerCore.AspNet
                     return null;
                 
                 case ServiceLifetime.Scoped:
-                    return typeof(AspNetCoreRequestComponentCache);
+                    return typeof(ScopedComponentCache);
                     
                 default:
                     return typeof(DefaultComponentCache);
             }
+        }
+        
+        private static void ReplaceDefaultAspNetComponents(ComponentContext composer)
+        {
+            var controllerFactory = composer.GetComponent<IControllerFactory>();
+            composer.UnregisterFamily(typeof(IControllerFactory));
+            composer.RegisterObject<IControllerFactory>(new ComposerControllerFactory(controllerFactory, composer));
         }
     }
 }

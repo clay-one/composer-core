@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using ComposerCore;
 using ComposerCore.AspNet;
 using ComposerCore.Utility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace WebApiSample
 {
@@ -28,11 +22,11 @@ namespace WebApiSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(s => s.EnableEndpointRouting = false);
 
             var composer = ComposerAspNetCoreUtils.BuildContext(services);
             composer.RegisterAssembly(Assembly.GetExecutingAssembly());
-            return new ComposerServiceProvider(composer);
+            return composer.GetComponent<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

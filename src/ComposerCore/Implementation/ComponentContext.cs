@@ -39,7 +39,7 @@ namespace ComposerCore.Implementation
 			_repository = new ComponentRepository();
 			_variables = new Dictionary<string, object>();
 
-			this.RegisterObject(this);
+			Register(new ComposerSelfRegistration(this));
 			
 			if (registerComponents)
 				RegisterBuiltInComponents();

@@ -70,6 +70,11 @@ namespace ComposerCore.FluentExtensions
             return UseComponentCache(typeof(ContractAgnosticComponentCache));
         }
 
+        public TSubType AsScoped()
+        {
+            return UseComponentCache(typeof(ScopedComponentCache));
+        }
+
         public TSubType AsTransient()
         {
             return UseComponentCache(null);
