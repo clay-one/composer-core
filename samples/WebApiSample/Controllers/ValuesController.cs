@@ -24,9 +24,10 @@ namespace WebApiSample.Controllers
         
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<string>> Get([FromServices] IValueProvider vp)
         {
-            return ValueProvider.GetValues();
+            // Action argument injection
+            return vp.GetValues();
         }
     }
 }
