@@ -201,6 +201,38 @@ namespace ComposerCore.Tests.ComponentCaching
             Assert.AreNotSame(c1, c3);
             Assert.AreNotSame(c2, c3);
         }
+        
+        [TestMethod]
+        public void ScopeIsInjectedToScopedComponents()
+        {
+            _context.Register(typeof(ContractAgnosticComponent));
+            _context.Register(typeof(DefaultCacheComponent));
+            _context.Register(typeof(UncachedComponent));
+            
+            var scope1 = _context.CreateScope();
+            var scope2 = scope1.CreateScope();
+            var scope3 = scope2.CreateScope();
+
+            var c0 = _context.GetComponent<ScopedComponentWithPlugs>();
+            var c1 = scope1.GetComponent<ScopedComponentWithPlugs>();
+            var c2 = scope2.GetComponent<ScopedComponentWithPlugs>();
+            var c3 = scope3.GetComponent<ScopedComponentWithPlugs>();
+            
+            Assert.IsNotNull(c0);
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsNotNull(c3);
+            
+            Assert.IsNotNull(c0.Scope);
+            Assert.IsNotNull(c1.Scope);
+            Assert.IsNotNull(c2.Scope);
+            Assert.IsNotNull(c3.Scope);
+            
+            Assert.AreEqual(c0.Scope, _context);
+            Assert.AreEqual(c1.Scope, scope1);
+            Assert.AreEqual(c2.Scope, scope2);
+            Assert.AreEqual(c3.Scope, scope3);
+        }
 
         [TestMethod]
         public void ScopeDisposalInOrder()

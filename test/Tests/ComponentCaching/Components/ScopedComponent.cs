@@ -21,6 +21,9 @@ namespace ComposerCore.Tests.ComponentCaching.Components
     public class ScopedComponentWithPlugs
     {
         [ComponentPlug]
+        public IComposer Scope { get; set; }
+        
+        [ComponentPlug]
         public ScopedComponent ScopedComponent { get; set; }
         
         [ComponentPlug]
