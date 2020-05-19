@@ -7,7 +7,6 @@ namespace ComposerCore.Tests.ErrorConditions
 	[TestClass]
 	public class PlugErrors
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -36,24 +35,24 @@ namespace ComposerCore.Tests.ErrorConditions
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PlugWithoutSetter()
 		{
 			_context.Register(typeof(PlugWithoutSetter));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<PlugWithoutSetter>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PlugWithPrivateSetter()
 		{
 			_context.Register(typeof(PlugWithPrivateSetter));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<PlugWithPrivateSetter>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void PlugWithNonContractType()
 		{
 			_context.Register(typeof(NonContractPlugType));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<NonContractPlugType>());
 		}
 	}
 }

@@ -1,12 +1,11 @@
 ﻿using ComposerCore.Implementation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ComposerCore.Tests.ConfigurationVariables
+namespace ComposerCore.Tests.Features
 {
 	[TestClass]
 	public class GetVariableTest
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes

@@ -1,108 +1,36 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
-namespace ComposerCore.Factories
+namespace ComposerCore.Implementation
 {
-    public class GenericLocalComponentFactory : LocalComponentFactoryBase
+    public class GenericComponentRegistration : ComponentBuilderRegistration
     {
         /// <summary>
-        /// Generic type definition (obtained by calling ) 
+        /// Generic type definition 
         /// -> 
-        /// Constructed generic type (obtained from base classes and interfaces)
+        /// Constructed (bound) generic type (obtained from base classes and interfaces)
         /// </summary>
-        private readonly IDictionary<Type, Type> _contractTypes;
+        private readonly IDictionary<Type, Type> _openToBoundContractTypeMap;
 
         private readonly ConcurrentDictionary<Type, Type> _closedContractToComponentMap;
-        private readonly ConcurrentDictionary<Type, LocalComponentFactory> _subFactories;
+        private readonly ConcurrentDictionary<Type, ConcreteTypeRegistration> _subRegistrations;
         
-        public GenericLocalComponentFactory(Type targetType) : base(targetType)
+        public GenericComponentRegistration(Type targetType) : base(targetType)
         {
             if (!targetType.IsOpenGenericType())
                 throw new ArgumentException("TargetType in GenericLocalComponentFactory should be an open generic type.");
 
-            _contractTypes = new Dictionary<Type, Type>();
+            _openToBoundContractTypeMap = new Dictionary<Type, Type>();
             _closedContractToComponentMap = new ConcurrentDictionary<Type, Type>();
-            _subFactories = new ConcurrentDictionary<Type, LocalComponentFactory>();
-
-            ExtractContractTypes();
+            _subRegistrations = new ConcurrentDictionary<Type, ConcreteTypeRegistration>();
         }
 
-        #region Implementation of IComponentFactory
-
-        public override bool ValidateContractType(Type contract)
+        public void AddOpenGenericContractType(Type openContractType)
         {
-            return TargetType.IsAssignableToGenericType(contract);
-        }
-
-        public override void Initialize(IComposer composer)
-        {
-            base.Initialize(composer);
-            
-            if (_contractTypes.Count < 1)
-                throw new CompositionException($"No open contracts found nor added for the type {TargetType.Name}. " +
-                                               "Use [Contract] attribute or use Fluent syntax to introduce contracts");
-        }
-
-        public override IEnumerable<Type> GetContractTypes()
-        {
-            return _contractTypes.Keys;
-        }
-
-        public override bool IsResolvable(Type contractType)
-        {
-            var requestedClosedContractType = contractType;
-            if (!requestedClosedContractType.IsGenericType || requestedClosedContractType.ContainsGenericParameters)
-                return false;
-
-            return MapToClosedComponentType(contractType) != null;
-            
-            var requestedGenericContractType = contractType.GetGenericTypeDefinition();
-            if (!_contractTypes.ContainsKey(requestedGenericContractType))
-                return false;
-
-            var originalGenericContractType = _contractTypes[requestedGenericContractType];
-            var closedTargetType = CloseGenericType(TargetType, originalGenericContractType, requestedClosedContractType);
-
-            if (closedTargetType == null || !requestedClosedContractType.IsAssignableFrom(closedTargetType))
-                return false;
-
-            return true;
-        }
-        
-        public override object GetComponentInstance(ContractIdentity contract)
-        {
-            if (!contract.Type.IsGenericType)
-                throw new CompositionException("Requested contract " + contract.Type.Name + " is not a generic type.");
-
-            if (contract.Type.ContainsGenericParameters)
-                throw new CompositionException("Requested contract " + contract.Type.Name +
-                                               " is not fully constructed and closed.");
-
-            var closedTargetType = MapToClosedComponentType(contract.Type);
-            if (closedTargetType == null)
-                return null;
-            
-            var subFactory = _subFactories.GetOrAdd(closedTargetType, type =>
-            {
-                var newSubFactory = new LocalComponentFactory(type, this);
-                newSubFactory.Initialize(Composer);
-                return newSubFactory;
-            });
-
-            return subFactory.GetComponentInstance(contract);
-        }
-
-        #endregion
-
-        #region Public methods and properties
-        
-        public void AddOpenGenericContract(Type openContractType)
-        {
-            EnsureNotInitialized("AddOpenGenericContract");
+            EnsureNotInitialized();
             
             if (!openContractType.IsOpenGenericType())
             {
@@ -130,15 +58,62 @@ namespace ComposerCore.Factories
                                                $"arguments are:\n{unresolvableGenericArgsString}");
             }
 
-            if (!_contractTypes.ContainsKey(openContractType))
-                _contractTypes.Add(openContractType, boundGenericContract);
+            if (!_openToBoundContractTypeMap.ContainsKey(openContractType))
+                _openToBoundContractTypeMap.Add(openContractType, boundGenericContract);
+            
+            var contractIdentity = new ContractIdentity(openContractType, DefaultContractName);
+            if (!_contracts.Contains(contractIdentity))
+                _contracts.Add(contractIdentity);
         }
 
-        #endregion
+        public override void AddContract(ContractIdentity contract)
+        {
+            AddOpenGenericContractType(contract.Type);
+            _contracts.Add(contract);
+        }
 
-        #region Private helper methods
+        public override bool IsResolvable(Type contractType)
+        {
+            if (!contractType.IsGenericType || contractType.ContainsGenericParameters)
+                return false;
 
-        private void ExtractContractTypes()
+            return MapToClosedComponentType(contractType) != null;
+        }
+
+        public override object GetComponent(ContractIdentity contract, IComposer scope)
+        {
+            if (!contract.Type.IsGenericType)
+                throw new CompositionException("Requested contract " + contract.Type.Name + " is not a generic type.");
+
+            if (contract.Type.ContainsGenericParameters)
+                throw new CompositionException("Requested contract " + contract.Type.Name +
+                                               " is not fully constructed and closed.");
+
+            var closedTargetType = MapToClosedComponentType(contract.Type);
+            if (closedTargetType == null)
+                return null;
+            
+            var subRegistration = _subRegistrations.GetOrAdd(closedTargetType, type =>
+            {
+                var newSubRegistration = new ConcreteTypeRegistration(type);
+                newSubRegistration.CopyConfigFrom(this);
+                newSubRegistration.AddContractType(contract.Type);
+                newSubRegistration.SetAsRegistered(RegistrationContext);
+                return newSubRegistration;
+            });
+
+            return subRegistration.GetComponent(contract, scope);
+        }
+
+        public override object CreateComponent(ContractIdentity contract, IComposer scope)
+        {
+            throw new InvalidOperationException(
+                "CreateComponent should never be called on the GenericComponentRegistration class. Instead, " +
+                "calling its GetComponent will create sub-registrations for closed generic types and call them " +
+                "instead.");
+        }
+
+        protected override void ReadContractsFromTarget()
         {
             var boundGenericContracts = ComponentContextUtils.FindContracts(TargetType)
                 .Where(t => t.IsOpenGenericType());
@@ -146,7 +121,8 @@ namespace ComposerCore.Factories
             foreach (var boundGenericContract in boundGenericContracts)
             {
                 var openContract = boundGenericContract.GetGenericTypeDefinition();
-                _contractTypes.Add(openContract, boundGenericContract);
+                _openToBoundContractTypeMap.Add(openContract, boundGenericContract);
+                _contracts.Add(new ContractIdentity(openContract, DefaultContractName));
             }
         }
 
@@ -162,14 +138,14 @@ namespace ComposerCore.Factories
             return _closedContractToComponentMap.GetOrAdd(contractType, closedContractType =>
             {
                 var genericContractType = closedContractType.GetGenericTypeDefinition();
-                if (!_contractTypes.ContainsKey(genericContractType))
+                if (!_openToBoundContractTypeMap.ContainsKey(genericContractType))
                     return null;
 
-                var originalGenericContractType = _contractTypes[genericContractType];
+                var originalGenericContractType = _openToBoundContractTypeMap[genericContractType];
                 return CloseGenericType(TargetType, originalGenericContractType, closedContractType);
             });
         }
-
+        
         private Type CloseGenericType(Type openType, Type templateType, Type closedType)
         {
             var templateTypeParams = templateType.GetGenericArguments();
@@ -233,12 +209,8 @@ namespace ComposerCore.Factories
 
             // Make sure the closed type is assignable to the requested closed type
             // (This might not be true for recurring type parameters in declaration)
-            if (!closedType.IsAssignableFrom(currentType))
-                return null;
-            
-            return currentType;
+            return closedType.IsAssignableFrom(currentType) ? currentType : null;
         }
 
-        #endregion
     }
 }

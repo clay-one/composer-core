@@ -9,31 +9,20 @@ namespace ComposerCore
 	/// ask for component instances.
 	/// </summary>
 	[Contract]
-	public interface IComposer
+	public interface IComposer : IDisposable
 	{
         ComposerConfiguration Configuration { get; }
 
-		// Component Lookup methods
-
-		bool IsResolvable<TContract>(string name = null) where TContract : class;
 		bool IsResolvable(Type contract, string name = null);
-		TContract GetComponent<TContract>(string name = null) where TContract : class;
-		object GetComponent(Type contract, string name = null);
-
-		IEnumerable<TContract> GetAllComponents<TContract>(string name = null) where TContract : class;
-		IEnumerable<object> GetAllComponents(Type contract, string name = null);
-
-		IEnumerable<TContract> GetComponentFamily<TContract>();
-		IEnumerable<object> GetComponentFamily(Type contract);
-
-		// Variable Lookup methods
+		object GetComponent(Type contract, string name = null, IComposer scope = null);
+		IEnumerable<object> GetAllComponents(Type contract, string name = null, IComposer scope = null);
+		IEnumerable<object> GetComponentFamily(Type contract, IComposer scope = null);
 
 		bool HasVariable(string name);
 		object GetVariable(string name);
 
-		// Other methods
-
-		void InitializePlugs<T>(T componentInstance);
 		void InitializePlugs(object componentInstance, Type componentType);
+
+		IComposer CreateScope();
 	}
 }

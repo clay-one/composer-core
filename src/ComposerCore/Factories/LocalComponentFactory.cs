@@ -1,128 +1,70 @@
 using System;
 using System.Collections.Generic;
-using ComposerCore.CompositionalQueries;
+using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
 using ComposerCore.Implementation;
 
 
 namespace ComposerCore.Factories
 {
-	public class LocalComponentFactory : LocalComponentFactoryBase
+	public class LocalComponentFactory : IComponentFactory
 	{
-		private IComponentCache _componentCache;
+		public Type TargetType { get; }
+		protected IComposer Composer { get; private set; }
+		protected LocalComponentBuilder Builder { get; }
+        
+		public bool Initialized => Composer != null;
 
-		#region Constructors
-
-		public LocalComponentFactory(Type targetType, LocalComponentFactoryBase original = null)
-			: base(targetType, original)
+		public ConstructorResolutionPolicy? ConstructorResolutionPolicy
 		{
-			_componentCache = null;
+			get => Builder.ConstructorResolutionPolicy;
+			set => Builder.ConstructorResolutionPolicy = value;
 		}
-
-		#endregion
-
+		
+		public LocalComponentFactory(Type targetType)
+		{
+			TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
+            
+			Composer = null;
+			Builder = new LocalComponentBuilder(targetType);
+		}
+		
 		#region IComponentFactory Members
 
-		public override bool ValidateContractType(Type contract)
+		public void Initialize(IComposer composer)
 		{
-			return contract.IsAssignableFrom(TargetType);
+			if (Initialized)
+				return;
+
+			if (TargetType == null)
+				throw new InvalidOperationException("TargetType is not specified.");
+
+			if (!composer.Configuration.DisableAttributeChecking && !ComponentContextUtils.HasComponentAttribute(TargetType))
+				throw new CompositionException("The type '" + TargetType +
+				                               "' is not a component, but it is being registered as one. Only classes marked with [Component] attribute can be registered.");
+			Builder.Initialize(composer);
+			Composer = composer;
 		}
 
-		public override void Initialize(IComposer composer)
-		{
-			base.Initialize(composer);
-
-			try
-			{
-				LoadInitializationPoints();
-				LoadComponentCacheQuery();
-				LoadComponentCache();
-				LoadCompositionNotificationMethods();
-			}
-			catch(Exception e)
-			{
-				throw new CompositionException(
-					$"Could not initialize LocalComponentFactory for type '{TargetType.FullName}'", e);
-			}
-		}
-
-		public override IEnumerable<Type> GetContractTypes()
+		public IEnumerable<Type> GetContractTypes()
 		{
 			return ComponentContextUtils.FindContracts(TargetType);
 		}
 
-		public override bool IsResolvable(Type contractType)
-		{
-			return contractType.IsAssignableFrom(TargetType);
-		}
-
-		public override object GetComponentInstance(ContractIdentity contract)
+		public object GetComponentInstance(ContractIdentity contract, IComposer scope)
 		{
 			if (!Initialized)
 				throw new InvalidOperationException(
 					"LocalComponentFactory should be initialized before calling GetComponentInstance method.");
 
-			var listenerChain = Composer.GetComponent<ICompositionListenerChain>();
-
-			if (_componentCache == null)
-			{
-				// If the component is not cached at all, then unique instances should
-				// be created for each call, then locking does not help and just
-				// degrades performance. So, create without locking.
-
-				var newComponent = CreateComponent(contract, listenerChain);
-				return listenerChain.NotifyRetrieved(
-					newComponent.ComponentInstance, newComponent.OriginalComponentInstance, contract, this, TargetType);
-			}
-
-			// Check if the component is cached, and ready to deliver
-
-			var componentCacheEntry = _componentCache.GetFromCache(contract);
-			if (componentCacheEntry != null)
-			{
-				return listenerChain.NotifyRetrieved(
-					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this, TargetType);
-			}
-
-			// If the component is cached, then lock the component instance
-			// to avoid creation of more than one cached components per config 
-			// when called in concurrent manner
-
-			lock (_componentCache.SynchronizationObject)
-			{
-				// Double-check the initialization to avoid rendezvous
-
-				componentCacheEntry = _componentCache.GetFromCache(contract) ?? CreateComponent(contract, listenerChain);
-				return listenerChain.NotifyRetrieved(
-					componentCacheEntry.ComponentInstance, componentCacheEntry.OriginalComponentInstance, contract, this, TargetType);
-			}
+			return CreateComponent(contract);
 		}
 
 		#endregion
 		
 		#region Private helper methods
-
-        private void LoadComponentCache()
-		{
-			if (_componentCacheQuery == null || _componentCacheQuery is NullQuery)
-			{
-				_componentCache = null;
-				return;
-			}
-
-			var result = _componentCacheQuery.Query(Composer);
-			if (result == null)
-				throw new CompositionException($"Can not register component type {TargetType.FullName} because " +
-				                               $"the specified ComponentCache contract ({_componentCache}) could not be queried from Composer.");
-
-			_componentCache = result as IComponentCache
-			                  ?? throw new CompositionException(
-				                  $"Component cache type {result.GetType().FullName} that is specified " +
-				                  $"as component cache handler on component {TargetType.FullName} does not implement " +
-				                  "IComponentCache interface.");
-		}
-
-		private ComponentCacheEntry CreateComponent(ContractIdentity contract, ICompositionListenerChain listenerChain)
+		
+		private object CreateComponent(ContractIdentity contract)
 		{
 			// Save the original component instance reference, so that
 			// we can apply initialization points to it later, as the
@@ -138,75 +80,46 @@ namespace ComposerCore.Factories
 			// components may get unwrapped component where the component
 			// is wrapped by composition listeners.
 
-			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
-
-			// Store the cache, so that if there is a circular dependency,
-			// applying initialization points is not blocked and chained
-			// recursively.
-
-			var result = new ComponentCacheEntry
-			             	{
-			             		ComponentInstance = componentInstance,
-			             		OriginalComponentInstance = originalComponentInstance
-			             	};
-
-		    _componentCache?.PutInCache(contract, result);
+//			var componentInstance = listenerChain.NotifyCreated(originalComponentInstance, contract, this, TargetType);
 
 		    // Complete the object initialization by applying the initialization
 			// points. They should be applied to the original component instance,
 			// as the reference may have been changed by composition listeners to
 			// an instance that does not have the original configuration points.
 
-			var initializationPointResults = ApplyInitializationPoints(originalComponentInstance);
+//			var initializationPointResults = Initializer.Apply(originalComponentInstance, Composer);
+//			Initializer.Apply(originalComponentInstance, Composer);
 
 			// Inform all composition listeners of the newly composed
 			// component instance by calling OnComponentComposed method.
 
-			listenerChain.NotifyComposed(
-				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
+//			listenerChain.NotifyComposed(
+//				componentInstance, originalComponentInstance, initializationPointResults, contract, _initializationPoints, TargetType);
 
 			// The composition is now finished for the component instance.
 			// See if an [OnCompositionComplete] method is specified, call it.
 			// This should be called on the original component instance
 			// for the same reason stated above.
 
-			InvokeCompositionNotifications(componentInstance);
-			return result;
+//			InvokeCompositionNotifications(componentInstance);
+			return originalComponentInstance;
 		}
 		
-		private List<object> ApplyInitializationPoints(object originalComponentInstance)
+		public void AddConfiguredConstructorArg(ConstructorArgSpecification cas)
 		{
-			var initializationPointResults = new List<object>();
+			Builder.AddConfiguredConstructorArg(cas);
+		}
 
-			foreach (var initializationPoint in _initializationPoints)
-			{
-				if (initializationPoint.Query == null)
-					throw new CompositionException(
-					        $"Query is null for initialization point '{initializationPoint.Name}' on component instance of type '{TargetType.FullName}'");
 
-				if (initializationPoint.Query.IsResolvable(Composer))
-				{
-					var initializationPointResult = initializationPoint.Query.Query(Composer);
+		public override string ToString()
+		{
+			return TargetType?.AssemblyQualifiedName ?? base.ToString();
+		}
 
-					initializationPointResults.Add(initializationPointResult);
-					ComponentContextUtils.ApplyInitializationPoint(originalComponentInstance,
-						initializationPoint.Name,
-						initializationPoint.MemberType,
-						initializationPointResult);
-				}
-				else
-				{
-					// Check if the required initialization points get a value.
-					if (initializationPoint.Required.GetValueOrDefault(Composer.Configuration.InitializationPointsRequiredByDefault))
-						throw new CompositionException(
-							$"Could not fill initialization point '{initializationPoint.Name}' of type '{TargetType.FullName}'.");
-					
-					initializationPointResults.Add(null);
-				}
-				
-			}
-
-			return initializationPointResults;
+		protected void EnsureNotInitialized()
+		{
+			if (Initialized)
+				throw new InvalidOperationException($"Cannot perform operation when the factory is not initialized.");
 		}
 
 		#endregion

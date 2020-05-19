@@ -5,8 +5,6 @@ using System.Resources;
 using System.Linq;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Attributes;
-using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Utility;
 
 
@@ -87,6 +85,9 @@ namespace ComposerCore.Implementation
 
 		internal static ComponentCacheAttribute GetComponentCacheAttribute(Type component)
 		{
+			if (component == null)
+				return null;
+			
 			var attributes = component.GetCustomAttributes(typeof(ComponentCacheAttribute), false);
 
 			if ((attributes.Length != 1) || !(attributes[0] is ComponentCacheAttribute))
@@ -97,6 +98,9 @@ namespace ComposerCore.Implementation
 
 		internal static string GetComponentDefaultName(Type component)
 		{
+			if (component == null)
+				return null;
+			
 			var attributes = component.GetCustomAttributes(typeof(ComponentAttribute), false);
 
 			if ((attributes.Length != 1) || !(attributes[0] is ComponentAttribute))
@@ -450,17 +454,5 @@ namespace ComposerCore.Implementation
 
 			throw new ArgumentException("Specified member type is not supported: " + memberType);
 		}
-
-	    internal static IComponentFactory CreateLocalFactory(Type component)
-	    {
-	        IComponentFactory result;
-	        if (component.IsOpenGenericType())
-	            result = new GenericLocalComponentFactory(component);
-	        else
-	            result = new LocalComponentFactory(component);
-
-	        return result;
-	    }
-
-    }
+	}
 }

@@ -21,6 +21,11 @@ namespace ComposerCore
 
 		public string Name { get; }
 
+		public override string ToString()
+		{
+			return $"[{Type.FullName}/{Name ?? "<null>"}]";
+		}
+
 		public bool Equals(Type type, string name)
 		{
 			return Type == type && Equals(Name, name);

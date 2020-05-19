@@ -1,4 +1,5 @@
 ﻿using ComposerCore.Attributes;
+#pragma warning disable 618
 
 namespace ComposerCore.Tests.CompositionByConstructor.Components
 {

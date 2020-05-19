@@ -1,4 +1,3 @@
-using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentCaching.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -75,7 +74,5 @@ namespace ComposerCore.Tests.ComponentCaching
             Assert.AreSame(c1, c3);
             Assert.AreSame(c1, c4);
         }
-
-
     }
 }

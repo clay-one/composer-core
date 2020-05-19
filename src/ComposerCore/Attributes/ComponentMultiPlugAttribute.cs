@@ -12,6 +12,7 @@ namespace ComposerCore.Attributes
 	/// corresponding to the type of target contract, or an array of the target contract type.
 	/// </remarks>
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	[Obsolete("Use [ComponentPlug] with the IEnumerable<T> as the element type instead.")]
 	public sealed class ComponentMultiPlugAttribute : Attribute
 	{
 		public ComponentMultiPlugAttribute()

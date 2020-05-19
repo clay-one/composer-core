@@ -24,6 +24,9 @@ namespace ComposerCore.Utility
 
         public static bool IsOpenGenericType(this Type type)
         {
+            if (type == null)
+                return false;
+            
             return type.ContainsGenericParameters && type.IsGenericType;
         }
 

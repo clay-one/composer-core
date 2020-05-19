@@ -42,6 +42,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void NullNameThrows()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			_context.RegisterCompositionListener(null, null);
 		}
 
@@ -49,6 +51,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[ExpectedException(typeof(ArgumentException))]
 		public void DuplicationNameRegistrationThrows()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			var listener1 = new CountingCompositionListener();
 			var listener2 = new CountingCompositionListener();
 
@@ -59,6 +63,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void RemoveListener()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			_context.Register(typeof(NonSharedComponent));
 
 			var listener = new CountingCompositionListener();

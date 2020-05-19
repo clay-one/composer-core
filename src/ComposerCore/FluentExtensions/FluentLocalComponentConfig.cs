@@ -1,50 +1,43 @@
 ﻿using System;
 using System.Reflection;
 using ComposerCore.Attributes;
-using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
 {
-    public class FluentLocalComponentConfig
+    public class FluentLocalComponentConfig : FluentComponentConfigBase<FluentLocalComponentConfig>
     {
-        protected readonly ComponentContext Context;
-        protected readonly LocalComponentFactory Factory;
+        protected readonly ConcreteTypeRegistration _concreteTypeRegistration;
+
+        protected override IComponentRegistration Registration => _concreteTypeRegistration;
 
         #region Constructors
 
-        public FluentLocalComponentConfig(ComponentContext context, LocalComponentFactory factory)
+        public FluentLocalComponentConfig(ComponentContext context, Type targetType)
+            : base(context)
         {
-            Context = context ?? throw new ArgumentNullException(nameof(context));
-            Factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _concreteTypeRegistration = new ConcreteTypeRegistration(targetType ?? throw new ArgumentNullException(nameof(targetType)));
+        }
+
+        #endregion
+        
+        #region Terminating methods
+        
+        public void RegisterAsItself()
+        {
+            RegisterWith(_concreteTypeRegistration.TargetType);
+        }
+
+        public void RegisterAsItself(string contractName)
+        {
+            RegisterWith(_concreteTypeRegistration.TargetType, contractName);
         }
 
         #endregion
 
         #region Fluent configuration methods
-
-        public void Register(string contractName = null)
-        {
-            Context.Register(contractName, Factory);
-        }
-
-        public void RegisterWith<TContract>(string contractName = null)
-        {
-            RegisterWith(typeof(TContract), contractName);
-        }
-
-        public void RegisterWith(Type contractType, string contractName = null)
-        {
-            Context.Register(contractType, contractName, Factory);
-        }
-
-        public void RegisterAsItself(string contractName = null)
-        {
-            RegisterWith(Factory.TargetType, contractName);
-        }
 
         public FluentLocalComponentConfig SetComponent<TPlugContract>(
             string memberName, string contractName = null, bool? required = null)
@@ -55,18 +48,18 @@ namespace ComposerCore.FluentExtensions
         public FluentLocalComponentConfig SetComponent(
             string memberName, Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All,
-                required, new ComponentQuery(contractType, contractName)));
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(
+                new ComponentQuery(contractType, contractName), memberName, null, required);
 
             return this;
         }
 
         public FluentLocalComponentConfig UseConstructor(params Type[] argTypes)
         {
-            var constructor = Factory.TargetType.GetConstructor(argTypes);
+            var constructor = _concreteTypeRegistration.TargetType.GetConstructor(argTypes);
             if (constructor == null)
                 throw new ArgumentException("Could not find a public constructor with the specified parameter types " +
-                                            $"in the class '{Factory.TargetType.FullName}'");
+                                            $"in the class '{_concreteTypeRegistration.TargetType}'");
 
             return UseConstructor(constructor);
         }
@@ -76,8 +69,8 @@ namespace ComposerCore.FluentExtensions
             if (constructorInfo == null)
                 throw new ArgumentNullException(nameof(constructorInfo));
             
-            Context.GetComponent<IPresetConstructorStore>().SetConstructor(Factory.TargetType, constructorInfo);
-            Factory.ConstructorResolutionPolicy = ConstructorResolutionPolicy.Preset;
+            Context.GetComponent<IPresetConstructorStore>().SetConstructor(_concreteTypeRegistration.TargetType, constructorInfo);
+            _concreteTypeRegistration.SetConstructorResolutionPolicy(ConstructorResolutionPolicy.Preset);
             
             return this;
         }
@@ -89,88 +82,56 @@ namespace ComposerCore.FluentExtensions
 
         public FluentLocalComponentConfig AddConstructorComponent(Type contractType, string contractName = null, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new ComponentQuery(contractType, contractName)));
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new ComponentQuery(contractType, contractName), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue(object value)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(false, new SimpleValueQuery(value)));
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new SimpleValueQuery(value), false);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValue<TMember>(Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, 
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new FuncValueQuery(c => valueCalculator(c)), required);
             return this;
         }
 
         public FluentLocalComponentConfig AddConstructorValueFromVariable(string variableName, bool? required = null)
         {
-            Factory.AddConfiguredConstructorArg(new ConstructorArgSpecification(required, new VariableQuery(variableName)));
+            _concreteTypeRegistration.AddConfiguredConstructorArg(new VariableQuery(variableName), required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValue(string memberName, object value)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, false, 
-                new SimpleValueQuery(value)));
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), memberName);
 
             return this;
         }
 
         public FluentLocalComponentConfig SetValue<TMember>(string memberName, Func<IComposer, TMember> valueCalculator, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new FuncValueQuery(c => valueCalculator(c))));
-
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig SetValueFromVariable(string memberName, string variableName, bool? required = null)
         {
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberName, MemberTypes.All, required,
-                new VariableQuery(variableName)));
-
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), memberName, null, required);
             return this;
         }
 
         public FluentLocalComponentConfig NotifyInitialized(Action<IComposer, object> initAction)
         {
-            Factory.CompositionNotificationMethods.Add(initAction);
+            _concreteTypeRegistration.AddCompositionNotification(initAction);
             return this;
-        }
-
-        public FluentLocalComponentConfig UseComponentCache(Type cacheContractType, string cacheContractName = null)
-        {
-            if (cacheContractType == null)
-                Factory.ComponentCacheQuery = new NullQuery();
-            else
-                Factory.ComponentCacheQuery = new ComponentQuery(cacheContractType, cacheContractName);
-
-            return this;
-        }
-
-        public FluentLocalComponentConfig UseComponentCache<TCacheContract>(string cacheContractName = null)
-        {
-            return UseComponentCache(typeof(TCacheContract), cacheContractName);
-        }
-
-        public FluentLocalComponentConfig AsSingleton()
-        {
-            return UseComponentCache(typeof(ContractAgnosticComponentCache));
-        }
-
-        public FluentLocalComponentConfig AsTransient()
-        {
-            return UseComponentCache(null);
         }
 
         public FluentLocalComponentConfig SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
-            Factory.ConstructorResolutionPolicy = policy;
+            _concreteTypeRegistration.SetConstructorResolutionPolicy(policy);
             return this;
         }
         

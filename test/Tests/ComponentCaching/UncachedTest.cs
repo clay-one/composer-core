@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentCaching.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,6 +39,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		#endregion
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void RegisterTwoTimesQueryBySelf()
 		{
 			_context.Register(typeof(UncachedComponent)); // Register for second time
@@ -53,6 +55,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void RegisterTwoTimesQueryByContract()
 		{
 			_context.Register(typeof(UncachedComponent));
@@ -68,6 +71,7 @@ namespace ComposerCore.Tests.ComponentCaching
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void CheckDifferentContracts()
 		{
 			var c0 = _context.GetComponent<ISomeContract>();
@@ -98,11 +102,13 @@ namespace ComposerCore.Tests.ComponentCaching
 		}
 
 		[TestMethod]
+		[SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
 		public void QueryTwoTimesIndirect()
 		{
 			_context.Register(typeof(UncachedComponentWithPlugs));
 			_context.Register(typeof(ContractAgnosticComponent));
 			_context.Register(typeof(DefaultCacheComponent));
+			_context.Register(typeof(ScopedComponent));
 
 			var all = _context.GetAllComponents<UncachedComponentWithPlugs>();
 			Assert.IsNotNull(all);

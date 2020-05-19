@@ -1,6 +1,7 @@
 using System;
 using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
+using ComposerCore.Extensibility;
 using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Tests.ComponentFactories.Components;
@@ -83,8 +84,10 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsTransient()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            factory.ComponentCacheQuery = null;
-            _context.Register(factory);
+            var registration = new ComponentFactoryRegistration(factory);
+            
+            registration.SetCache(_context.GetComponent<IComponentCache>(nameof(NoComponentCache)));
+            _context.Register(registration);
 
             var originalInstanceCount = SampleComponentOne.TimesInstantiated;
             
@@ -107,8 +110,10 @@ namespace ComposerCore.Tests.ComponentFactories
         public void RegisterAsSingleton()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentOne>(composer => new SampleComponentOne());
-            factory.ComponentCacheQuery = new ComponentQuery(typeof(ContractAgnosticComponentCache));
-            _context.Register(factory);
+            var registration = new ComponentFactoryRegistration(factory);
+            
+            registration.SetCache(nameof(ContractAgnosticComponentCache));
+            _context.Register(registration);
 
             var originalInstanceCount = SampleComponentOne.TimesInstantiated;
 
@@ -142,7 +147,7 @@ namespace ComposerCore.Tests.ComponentFactories
         }
 
         [TestMethod]
-        public void UnresolvableReuiredPlugs()
+        public void UnresolvableRequiredPlugs()
         {
             var factory = new FactoryMethodComponentFactory<SampleComponentTwo>(composer => new SampleComponentTwo());
             _context.Register(factory);

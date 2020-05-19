@@ -23,7 +23,7 @@ namespace ComposerCore.CompositionalQueries
 			return provider?.GetResourceManager(ResourceId) != null;
 		}
         
-		public object Query(IComposer composer)
+		public object Query(IComposer composer, IComposer scope = null)
 		{
 			var composerToUse = ComposerOverride ?? composer;
 			if (composerToUse == null)

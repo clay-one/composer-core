@@ -1,38 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-    [Contract, Component, ComponentCache(typeof(StaticComponentCache)), ConstructorResolutionPolicy(null)]
+    [Component(nameof(ThreadLocalComponentCache)), ComponentCache(typeof(StaticComponentCache)), ConstructorResolutionPolicy(null)]
     public class ThreadLocalComponentCache : IComponentCache
     {
+        private readonly ThreadLocal<ConcurrentDictionary<IComponentRegistration, object>> _cacheContent =
+            new ThreadLocal<ConcurrentDictionary<IComponentRegistration, object>>(() =>
+                new ConcurrentDictionary<IComponentRegistration, object>());
+
         [CompositionConstructor]
         public ThreadLocalComponentCache()
         {
         }
-        
-        private readonly ThreadLocal<IDictionary<ContractIdentity, ComponentCacheEntry>> _cacheContent =
-            new ThreadLocal<IDictionary<ContractIdentity, ComponentCacheEntry>>(() =>
-                new Dictionary<ContractIdentity, ComponentCacheEntry>());
 
-        private static readonly object StaticSynchronizationObject = new object();
-
-        #region Implementation of IComponentCache
-
-        public ComponentCacheEntry GetFromCache(ContractIdentity contract)
+        public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
         {
-            return _cacheContent.Value.TryGetValue(contract, out var entry) ? entry : null;
+            return _cacheContent.Value.GetOrAdd(registration, r =>
+            {
+                var component = r.CreateComponent(contract, scope);
+                if (component is IDisposable disposable)
+                    registration.RegistrationContext.TrackDisposable(disposable);
+
+                return component;
+            });
         }
-
-        public void PutInCache(ContractIdentity contract, ComponentCacheEntry entry)
-        {
-            _cacheContent.Value[contract] = entry;
-        }
-
-        public object SynchronizationObject => StaticSynchronizationObject;
-
-        #endregion
     }
 }

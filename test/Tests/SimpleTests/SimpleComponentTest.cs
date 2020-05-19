@@ -73,7 +73,7 @@ namespace ComposerCore.Tests.SimpleTests
 		[TestMethod]
 		public void GetAfterUnregisterReturnsNull()
 		{
-			_context.Unregister(new ContractIdentity(typeof(EmptyComponentAndContract), null));
+			_context.Unregister(new ContractIdentity(typeof(EmptyComponentAndContract)));
 			var c = _context.GetComponent<EmptyComponentAndContract>();
 
 			Assert.IsNull(c);

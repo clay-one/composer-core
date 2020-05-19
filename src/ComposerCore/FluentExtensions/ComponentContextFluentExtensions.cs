@@ -17,7 +17,7 @@ namespace ComposerCore.FluentExtensions
             if (componentType.IsOpenGenericType())
                 throw new ArgumentException($"Type {componentType.FullName} is generic. Use 'ForGenericComponent' method instead.");
             
-            return new FluentLocalComponentConfig(context, new LocalComponentFactory(componentType));
+            return new FluentLocalComponentConfig(context, componentType);
         }
 
         public static FluentGenericLocalComponentConfig ForGenericComponent(this ComponentContext context, Type componentType)
@@ -25,7 +25,7 @@ namespace ComposerCore.FluentExtensions
             if (!componentType.IsOpenGenericType())
                 throw new ArgumentException($"Type {componentType.FullName} is not generic.");
             
-            return new FluentGenericLocalComponentConfig(context, new GenericLocalComponentFactory(componentType));
+            return new FluentGenericLocalComponentConfig(context, new GenericComponentRegistration(componentType));
         }
         
         public static FluentUntypedFactoryMethodComponentConfig ForUntypedFactoryMethod(this ComponentContext context, Func<IComposer, object> func)

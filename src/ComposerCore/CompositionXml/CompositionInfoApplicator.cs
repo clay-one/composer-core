@@ -6,7 +6,6 @@ using ComposerCore.CompositionalQueries;
 using ComposerCore.CompositionXml.Info;
 using ComposerCore.CompositionXml.ValueParser;
 using ComposerCore.Extensibility;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 using ComposerCore.Utility;
 
@@ -228,25 +227,11 @@ namespace ComposerCore.CompositionXml
 				xmlProcessingContext.ReportError($"Type '{registerComponentInfo.Type}' could not be loaded.");
 				return;
 			}
+
+			ComponentBuilderRegistration registration = componentType.IsOpenGenericType()
+				? (ComponentBuilderRegistration)new GenericComponentRegistration(componentType)
+				: new ConcreteTypeRegistration(componentType);
 			
-			IComponentFactory componentFactory;
-			List<InitializationPointSpecification> initializationPoints;
-
-			if (componentType.IsOpenGenericType())
-			{
-				var genericLocalComponentFactory = new GenericLocalComponentFactory(componentType);
-
-				componentFactory = genericLocalComponentFactory;
-				initializationPoints = genericLocalComponentFactory.InitializationPoints;
-			}
-			else
-			{
-				var localComponentFactory = new LocalComponentFactory(componentType);
-
-				componentFactory = localComponentFactory;
-				initializationPoints = localComponentFactory.InitializationPoints;
-			}
-
 			// Add each configured plug, into the InitializationPoints
 			// in the component configuration.
 
@@ -264,12 +249,7 @@ namespace ComposerCore.CompositionXml
 
 				var plugRefName = plugInfo.RefName;
 
-				initializationPoints.Add(new InitializationPointSpecification(
-				                                          	plugInfo.Name,
-				                                          	MemberTypes.All,
-				                                          	true,
-				                                          	new ComponentQuery(plugRefType, plugRefName)));
-				
+				registration.AddConfiguredInitializationPoint(new ComponentQuery(plugRefType, plugRefName), plugInfo.Name);
 				// TODO: Add support for optional plugs in Composition XML
 
 				xmlProcessingContext.LeaveRunningLocation();
@@ -286,21 +266,18 @@ namespace ComposerCore.CompositionXml
 				                               configurationPointInfo.XAttributes,
 				                               xmlProcessingContext);
 
-				initializationPoints.Add(new InitializationPointSpecification(
-				                                          	configurationPointInfo.Name,
-				                                          	MemberTypes.All,
-				                                          	true,
-				                                          	new LazyValueQuery(value)));
-
+				registration.AddConfiguredInitializationPoint(new LazyValueQuery(value), configurationPointInfo.Name);
+				
 				xmlProcessingContext.LeaveRunningLocation();
 			}
 
 			// Register the component into the component context.
-
-			if (contractType == null)
-				xmlProcessingContext.ComponentContext.Register(contractName, componentFactory);
-			else
-				xmlProcessingContext.ComponentContext.Register(contractType, contractName, componentFactory);
+			
+			if (contractType != null)
+				registration.AddContractType(contractType);
+			
+			registration.SetDefaultContractName(contractName);
+			xmlProcessingContext.ComponentContext.Register(registration);
 		}
 
 		private static void RunUnregister(CompositionCommandInfo info, XmlProcessingContext xmlProcessingContext)

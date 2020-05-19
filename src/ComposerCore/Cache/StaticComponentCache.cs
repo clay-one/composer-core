@@ -1,36 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
 using ComposerCore.Attributes;
 using ComposerCore.Extensibility;
 
 namespace ComposerCore.Cache
 {
-	[Contract, Component, ComponentCache(null), ConstructorResolutionPolicy(null)]
+	[Component(nameof(StaticComponentCache)), Transient, ConstructorResolutionPolicy(null)]
 	public class StaticComponentCache : IComponentCache
 	{
+		private static readonly ConcurrentDictionary<IComponentRegistration, object> CacheContent =
+			new ConcurrentDictionary<IComponentRegistration, object>();
+
 		[CompositionConstructor]
 		public StaticComponentCache()
 		{
 		}
-		
-		private static readonly IDictionary<ContractIdentity, ComponentCacheEntry> CacheContent =
-			new Dictionary<ContractIdentity, ComponentCacheEntry>();
 
-		private static readonly object StaticSynchronizationObject = new object();
-
-		#region Implementation of IComponentCache
-
-		public ComponentCacheEntry GetFromCache(ContractIdentity contract)
+		public object GetComponent(ContractIdentity contract, IComponentRegistration registration, IComposer scope)
 		{
-		    return CacheContent.TryGetValue(contract, out var entry) ? entry : null;
+			return CacheContent.GetOrAdd(registration, r =>
+			{
+				var component = r.CreateComponent(contract, scope);
+				if (component is IDisposable disposable)
+					registration.RegistrationContext.TrackDisposable(disposable);
+
+				return component;
+			});
 		}
-
-		public void PutInCache(ContractIdentity contract, ComponentCacheEntry entry)
-		{
-			CacheContent[contract] = entry;
-		}
-
-		public object SynchronizationObject => StaticSynchronizationObject;
-
-	    #endregion
 	}
 }

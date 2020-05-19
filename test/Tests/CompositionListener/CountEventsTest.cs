@@ -40,6 +40,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void CountEventsGetShared()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			_context.Register(typeof(SharedComponent));
 
 			var listener = new CountingCompositionListener
@@ -60,6 +62,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void CountEventsGetNonShared()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			_context.Register(typeof(NonSharedComponent));
 
 			var listener = new CountingCompositionListener
@@ -80,6 +84,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void CountEventsInitializePlugs()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			var listener = new CountingCompositionListener
 			{
 				IncludedComponents = new FullNamePatternTypeFilter {Pattern = "^ComposerCore\\.Tests\\..*"}

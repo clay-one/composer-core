@@ -2,6 +2,8 @@
 using ComposerCore.Implementation;
 using ComposerCore.Tests.QueryVariety.Components;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+// ReSharper disable RedundantArgumentDefaultValue
+// ReSharper disable PossibleMultipleEnumeration
 
 namespace ComposerCore.Tests.QueryVariety
 {
@@ -84,7 +86,7 @@ namespace ComposerCore.Tests.QueryVariety
 		{
 			var cs = _context.GetAllComponents<ISampleContract>();
 			Assert.IsNotNull(cs);
-			Assert.IsTrue(cs.Count() == 0);
+			Assert.IsFalse(cs.Any());
 		}
 
 		[TestMethod]
@@ -92,7 +94,7 @@ namespace ComposerCore.Tests.QueryVariety
 		{
 			var cs = _context.GetAllComponents<ISampleContract>(null);
 			Assert.IsNotNull(cs);
-			Assert.IsTrue(cs.Count() == 0);
+			Assert.IsFalse(cs.Any());
 		}
 
 		[TestMethod]
@@ -109,7 +111,7 @@ namespace ComposerCore.Tests.QueryVariety
 		{
 			var cs = _context.GetAllComponents(typeof(ISampleContract));
 			Assert.IsNotNull(cs);
-			Assert.IsTrue(cs.Count() == 0);
+			Assert.IsFalse(cs.Any());
 		}
 
 		[TestMethod]
@@ -117,7 +119,7 @@ namespace ComposerCore.Tests.QueryVariety
 		{
 			var cs = _context.GetAllComponents(typeof(ISampleContract), null);
 			Assert.IsNotNull(cs);
-			Assert.IsTrue(cs.Count() == 0);
+			Assert.IsFalse(cs.Any());
 		}
 
 		[TestMethod]

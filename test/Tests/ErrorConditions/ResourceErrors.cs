@@ -7,7 +7,6 @@ namespace ComposerCore.Tests.ErrorConditions
 	[TestClass]
 	public class ResourceErrors
 	{
-		public TestContext TestContext { get; set; }
 		private ComponentContext _context;
 
 		#region Additional test attributes
@@ -36,17 +35,17 @@ namespace ComposerCore.Tests.ErrorConditions
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ResourcePlugWithoutName()
 		{
 			_context.Register(typeof(ResourcePlugWithoutName));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ResourcePlugWithoutName>());
 		}
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ResourcePlugWithWrongType()
 		{
 			_context.Register(typeof(ResourcePlugWithWrongType));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ResourcePlugWithWrongType>());
 		}
 	}
 }

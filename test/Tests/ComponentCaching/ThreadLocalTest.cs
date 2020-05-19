@@ -41,6 +41,5 @@ namespace ComposerCore.Tests.ComponentCaching
             var component = _context.GetComponent<ISomeContract>();
             Assert.IsNotNull(component);
         }
-
     }
 }

@@ -2,8 +2,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using ComposerCore.Attributes;
+using ComposerCore.Cache;
 using ComposerCore.CompositionalQueries;
-using ComposerCore.Factories;
 using ComposerCore.Implementation;
 
 namespace ComposerCore.FluentExtensions
@@ -13,7 +13,7 @@ namespace ComposerCore.FluentExtensions
         #region Constructors
 
         public FluentLocalComponentConfig(ComponentContext context) 
-            : base(context, new LocalComponentFactory(typeof(TComponent)))
+            : base(context, typeof(TComponent))
         {
         }
 
@@ -44,10 +44,11 @@ namespace ComposerCore.FluentExtensions
                 throw new ArgumentException("Member pointer should point to an immediate member. " +
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
-
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name, memberExpression.Member.MemberType,
-                required, new ComponentQuery(typeof(TPlugContract), contractName)));
-
+            
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(
+                new ComponentQuery(typeof(TPlugContract), contractName), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
+            
             return this;
         }
 
@@ -109,9 +110,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                false, new SimpleValueQuery(value)));
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new SimpleValueQuery(value), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, false);
 
             return this;
         }
@@ -127,9 +127,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                required, new FuncValueQuery(c => valueCalculator(c))));
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new FuncValueQuery(c => valueCalculator(c)), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;
         }
@@ -157,9 +156,8 @@ namespace ComposerCore.FluentExtensions
                                             "The only acceptable expression format is <x => x.MemberName>.");
             }
 
-            Factory.InitializationPoints.Add(new InitializationPointSpecification(memberExpression.Member.Name,
-                memberExpression.Member.MemberType,
-                required, new VariableQuery(variableName)));
+            _concreteTypeRegistration.AddConfiguredInitializationPoint(new VariableQuery(variableName), 
+                memberExpression.Member.Name, memberExpression.Member.MemberType, required);
 
             return this;
         }
@@ -170,22 +168,31 @@ namespace ComposerCore.FluentExtensions
             return this;
         }
 
-        public new FluentLocalComponentConfig<TComponent> UseComponentCache(Type cacheContractType, string cacheContractName = null)
-        {
-            base.UseComponentCache(cacheContractType, cacheContractName);
-            return this;
-        }
-
-        public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>(string cacheContractName = null)
-        {
-            base.UseComponentCache<TCacheContract>(cacheContractName);
-            return this;
-        }
-
         public new FluentLocalComponentConfig<TComponent> SetConstructorResolutionPolicy(ConstructorResolutionPolicy policy)
         {
             base.SetConstructorResolutionPolicy(policy);
             return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> UseComponentCache(Type cacheContractType)
+        {
+            Registration.SetCache(cacheContractType == null ? nameof(NoComponentCache) : cacheContractType.Name);
+            return this;
+        }
+
+        public new FluentLocalComponentConfig<TComponent> UseComponentCache<TCacheContract>()
+        {
+            return UseComponentCache(typeof(TCacheContract));
+        }
+
+        public new FluentLocalComponentConfig<TComponent> AsSingleton()
+        {
+            return UseComponentCache(typeof(ContractAgnosticComponentCache));
+        }
+
+        public new FluentLocalComponentConfig<TComponent> AsTransient()
+        {
+            return UseComponentCache(null);
         }
 
         #endregion

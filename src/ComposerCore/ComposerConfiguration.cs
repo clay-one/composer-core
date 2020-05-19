@@ -12,6 +12,7 @@ namespace ComposerCore
             // in the older versions without the configuration values.
             
             DisableAttributeChecking = false;
+            DisableDisposableTracking = false;
 
             ConstructorArgumentRequiredByDefault = true;
             InitializationPointsRequiredByDefault = true;
@@ -20,6 +21,7 @@ namespace ComposerCore
         }
 
         public bool DisableAttributeChecking { get; set; }
+        public bool DisableDisposableTracking { get; set; }
         
         public bool ConstructorArgumentRequiredByDefault { get; set; }
         public bool InitializationPointsRequiredByDefault { get; set; }

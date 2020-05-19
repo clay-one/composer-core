@@ -6,7 +6,7 @@ namespace ComposerCore.Tests.ErrorConditions.Components
 	[Component]
 	public class NonContractPlugType
 	{
-		[ComponentPlug]
+		[ComponentPlug(false)]
 		public string WrongPlug { get; set; }
 	}
 }

@@ -47,6 +47,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void OnComponentCreatedParams()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			Assert.IsNotNull(_listener.CreatedIdentity);
 			Assert.AreEqual(_listener.CreatedIdentity.Type, typeof (ISampleContract));
 			Assert.IsNull(_listener.CreatedIdentity.Name);
@@ -69,6 +71,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void OnComponentComposedParams()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			Assert.IsNotNull(_listener.ComposedIdentity);
 			Assert.AreEqual(_listener.ComposedIdentity.Type, typeof (ISampleContract));
 			Assert.IsNull(_listener.ComposedIdentity.Name);
@@ -93,6 +97,8 @@ namespace ComposerCore.Tests.CompositionListener
 		[TestMethod]
 		public void OnComponentRetrievedParams()
 		{
+			Assert.Inconclusive("CompositionListener feature is being discontinued and will be replaced.");
+			
 			Assert.IsNotNull(_listener.RetrievedIdentity);
 			Assert.AreEqual(_listener.RetrievedIdentity.Type, typeof (ISampleContract));
 			Assert.IsNull(_listener.RetrievedIdentity.Name);

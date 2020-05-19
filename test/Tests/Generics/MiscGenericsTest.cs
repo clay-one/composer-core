@@ -36,11 +36,10 @@ namespace ComposerCore.Tests.Generics
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void QueryWithOpenGenericContractFails()
 		{
 			_context.Register(typeof(OpenComponentOne<>));
-			_context.GetComponent(typeof (IGenericContractOne<>));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent(typeof(IGenericContractOne<>)));
 		}
 		 
 	}

@@ -36,10 +36,10 @@ namespace ComposerCore.Tests.ErrorConditions
 		#endregion
 
 		[TestMethod]
-		[ExpectedException(typeof(CompositionException))]
 		public void ParameterizedNotification()
 		{
 			_context.Register(typeof(ParameterizedNotification));
+			Expect.ToThrow<CompositionException>(() => _context.GetComponent<ParameterizedNotification>());
 		}
 	}
 }

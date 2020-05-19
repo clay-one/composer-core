@@ -19,6 +19,7 @@
     </Description>
     <Copyright>Copyright clay-one 2018</Copyright>
     <PackageTags>composer composer-core iocdi ioc-di dependency-injection</PackageTags>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="CompositionXml\Schema\compositionXml.1.0.xsd" />

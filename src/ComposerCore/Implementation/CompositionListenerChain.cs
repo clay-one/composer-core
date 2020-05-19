@@ -5,7 +5,7 @@ using ComposerCore.Extensibility;
 
 namespace ComposerCore.Implementation
 {
-    [Contract, Singleton]
+    [Component, Singleton]
     public class CompositionListenerChain : ICompositionListenerChain
     {
         private readonly Dictionary<string, ICompositionListener> _compositionListeners;
