@@ -7,6 +7,8 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[ComponentCache(null)]
 	public class UncachedComponent : ISomeContract, IAnotherContract
 	{
+		[ComponentPlug]
+		public IComposer Composer { get; set; }
 	}
 
 	[Contract]
@@ -14,6 +16,8 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[Transient]
 	public class TransientComponent : ISomeContract
 	{
+		[ComponentPlug]
+		public IComposer Composer { get; set; }
 	}
 
 	[Contract]
@@ -21,6 +25,9 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[ComponentCache(null)]
 	public class UncachedComponentWithPlugs
 	{
+		[ComponentPlug]
+		public IComposer Composer { get; set; }
+
 		[ComponentPlug]
 		public ScopedComponent ScopedComponent { get; set; }
 

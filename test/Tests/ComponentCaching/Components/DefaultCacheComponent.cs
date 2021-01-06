@@ -8,6 +8,8 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[ComponentCache(typeof(DefaultComponentCache))]
 	public class DefaultCacheComponent : ISomeContract, IAnotherContract
 	{
+		[ComponentPlug]
+		public IComposer Composer { get; set; }
 	}
 
 	[Contract]
@@ -15,6 +17,9 @@ namespace ComposerCore.Tests.ComponentCaching.Components
 	[ComponentCache(typeof(DefaultComponentCache))]
 	public class DefaultCacheComponentWithPlugs
 	{
+		[ComponentPlug]
+		public IComposer Composer { get; set; }
+
 		[ComponentPlug]
 		public ScopedComponent ScopedComponent { get; set; }
         

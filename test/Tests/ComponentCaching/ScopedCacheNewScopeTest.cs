@@ -235,6 +235,70 @@ namespace ComposerCore.Tests.ComponentCaching
         }
 
         [TestMethod]
+        public void ScopeIsInjectedToTransientComponent()
+        {
+            _context.Register(typeof(UncachedComponent));
+            
+            var scope1 = _context.CreateScope();
+            var scope2 = scope1.CreateScope();
+            var scope3 = scope2.CreateScope();
+
+            var c0 = _context.GetComponent<UncachedComponent>();
+            var c1 = scope1.GetComponent<UncachedComponent>();
+            var c2 = scope2.GetComponent<UncachedComponent>();
+            var c3 = scope3.GetComponent<UncachedComponent>();
+            
+            Assert.IsNotNull(c0);
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsNotNull(c3);
+            
+            Assert.IsNotNull(c0.Composer);
+            Assert.IsNotNull(c1.Composer);
+            Assert.IsNotNull(c2.Composer);
+            Assert.IsNotNull(c3.Composer);
+            
+            Assert.AreEqual(c0.Composer, _context);
+            Assert.AreEqual(c1.Composer, scope1);
+            Assert.AreEqual(c2.Composer, scope2);
+            Assert.AreEqual(c3.Composer, scope3);
+        }
+
+        [TestMethod]
+        public void ScopeIsNotInjectedToSingletonComponent()
+        {
+            _context.Register(typeof(SingletonComponent));
+            
+            var scope1 = _context.CreateScope();
+            var scope2 = scope1.CreateScope();
+            var scope3 = scope2.CreateScope();
+
+            var c0 = _context.GetComponent<SingletonComponent>();
+            var c1 = scope1.GetComponent<SingletonComponent>();
+            var c2 = scope2.GetComponent<SingletonComponent>();
+            var c3 = scope3.GetComponent<SingletonComponent>();
+            
+            Assert.IsNotNull(c0);
+            Assert.IsNotNull(c1);
+            Assert.IsNotNull(c2);
+            Assert.IsNotNull(c3);
+            
+            Assert.IsNotNull(c0.Composer);
+            Assert.IsNotNull(c1.Composer);
+            Assert.IsNotNull(c2.Composer);
+            Assert.IsNotNull(c3.Composer);
+            
+            Assert.AreNotEqual(c1.Composer, scope1);
+            Assert.AreNotEqual(c2.Composer, scope2);
+            Assert.AreNotEqual(c3.Composer, scope3);
+
+            Assert.AreEqual(c0.Composer, _context);
+            Assert.AreEqual(c1.Composer, _context);
+            Assert.AreEqual(c2.Composer, _context);
+            Assert.AreEqual(c3.Composer, _context);
+        }
+
+        [TestMethod]
         public void ScopeDisposalInOrder()
         {
             var scope1 = _context.CreateScope();
